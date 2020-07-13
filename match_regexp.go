@@ -9,7 +9,7 @@ import (
 * @date: 2020/6/24 15:53
 * @description：RuleTypeRegexpTag
  */
-func (this *GRule) MatchRegexpTag(ruleContent *RuleContent) ([]*Match, string, bool) {
+func (this *GRule) MatchRegexp(ruleContent *RuleContent) ([]*Match, string, bool) {
 	inputData := this.FilePolicy.FileName
 	matches, matched := matchRegexp(ruleContent, this.FilePolicy.FileName)
 	if !matched {

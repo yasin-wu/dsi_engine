@@ -90,7 +90,7 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 		matches, inputData, matched = this.MatchFuzzyWords(ruleContent)
 		break
 	case RuleTypeRegexp:
-		matches, inputData, matched = this.MatchRegexpTag(ruleContent)
+		matches, inputData, matched = this.MatchRegexp(ruleContent)
 		break
 	default:
 		break
