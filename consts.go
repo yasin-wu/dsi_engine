@@ -21,6 +21,27 @@ const (
 	DefaultAttachLength = 1000
 )
 
+var InfoTypeMaps = map[string]string{
+	"SECRET_DOCUMENT":          SecretDocumentReg,
+	"ORGANIZATION_CODE":        OrgCodeReg,
+	"EMAIL":                    EmailReg,
+	"IDENTITY_CARD":            IDCardReg,
+	"PHONE_NUMBER":             TelNumReg,
+	"QQ_NUMBER":                QQReg,
+	"POSTAL_CODE":              PostalCodeReg,
+	"IPV4":                     IPV4Reg,
+	"TAXPAYER_IDENTITY_NUMBER": TaxpayerIdentityNumReg,
+	"BANK_CARD":                BankCardNumReg,
+	"PASS_PORT":                PassPortReg,
+	"ADDRESS":                  AddressReg,
+	"ISSUED_NUMBER":            IssuedNumReg,
+	"URL":                      URLReg,
+	"TAX_NUMBER":               TaxNumReg,
+	"BUSINESS_LICENSE":         BusinessLicenseReg,
+	"MAC":                      MACReg,
+	"IPV6":                     IPV6Reg,
+}
+
 const (
 	SecretDocumentReg      = "^\\s*?(机密|绝密|秘密|商密一级|商密二级|商密三级)(\\s|☆|★|3年|3个月|6个月|1年|2年|5年|10年|15年|长期|公布前|实施前|实施后2年)*?(\\r|\\n)+?"
 	OrgCodeReg             = "([0-9ABCDEFGHJKLMNPQRTUWXY]{2})(\\d{6})([0-9ABCDEFGHJKLMNPQRTUWXY]{9})([0-9ABCDEFGHJKLMNPQRTUWXY])|([a-zA-Z0-9]{8}-[a-zA-Z0-9])"
