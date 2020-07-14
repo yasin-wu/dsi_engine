@@ -6,7 +6,7 @@ type PolicyAlarm struct {
 	Id          string      `json:"id"`
 	FileName    string      `json:"file_name"`
 	FilePath    string      `json:"file_path"`
-	FileSize    int         `json:"file_size"`
+	FileSize    int64       `json:"file_size"`
 	MatchNote   string      `json:"match_note"`
 	MatchTimes  int         `json:"match_times"`
 	PolicyId    string      `json:"policy_id"`

@@ -4,7 +4,7 @@ type FilePolicy struct {
 	Id          string        `json:"id"`
 	FileName    string        `json:"file_name"`
 	FilePath    string        `json:"file_path"`
-	FileSize    int           `json:"file_size"`
+	FileSize    int64         `json:"file_size"`
 	Content     string        `json:"content"`
 	PolicyInfos []*PolicyInfo `json:"policy_infos"`
 }

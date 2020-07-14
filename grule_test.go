@@ -21,14 +21,6 @@ func TestGRule_RunFileCheck(t *testing.T) {
 		t.Errorf("os.open err:%v", err.Error())
 		return
 	}
-	fileInfo, err := os.Stat(filePolicy.FilePath)
-	if err != nil {
-		t.Errorf("os.Stat err :%v", err.Error())
-		return
-	}
-	defer file.Close()
-
-	filePolicy.FileSize = int(fileInfo.Size())
 
 	fileParse := &fileparser.FileParser{}
 	fileParse.ParseUrl = "http://192.168.131.135:9998"
@@ -37,6 +29,7 @@ func TestGRule_RunFileCheck(t *testing.T) {
 		t.Errorf("fileParse.FileParse err :%v", err)
 		return
 	}
+	filePolicy.FileSize = f.Size
 	filePolicy.Content = f.Content
 	policy1 := &PolicyInfo{}
 	policy1.PolicyId = "1"
