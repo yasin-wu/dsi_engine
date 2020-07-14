@@ -1,4 +1,4 @@
-package models
+package dlp
 
 import (
 	"github.com/davecgh/go-spew/spew"

@@ -1,4 +1,4 @@
-package models
+package dlp
 
 type FilePolicy struct {
 	Id          string        `json:"id"`

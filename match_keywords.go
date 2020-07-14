@@ -1,4 +1,4 @@
-package models
+package dlp
 
 import (
 	"github.com/flier/gohs/hyperscan"

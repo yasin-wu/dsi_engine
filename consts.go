@@ -1,4 +1,4 @@
-package models
+package dlp
 
 const (
 	RuleTypeKeyWords   = 1
@@ -19,6 +19,11 @@ const (
 const (
 	DefaultSnapLength   = 100
 	DefaultAttachLength = 1000
+)
+
+const (
+	InfoTypeID       = 1000
+	CustomInfoTypeID = 2000
 )
 
 var InfoTypeMaps = map[string]string{
