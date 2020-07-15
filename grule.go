@@ -85,15 +85,11 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 	switch ruleType {
 	case RuleTypeKeyWords:
 		matches, inputData, matched = this.MatchKeyWords(ruleContent)
-		break
 	case RuleTypeFuzzyWords:
 		matches, inputData, matched = this.MatchFuzzyWords(ruleContent)
-		break
 	case RuleTypeRegexp:
 		matches, inputData, matched = this.MatchRegexp(ruleContent)
-		break
 	default:
-		break
 	}
 	if matched {
 		ruleSnap := &RuleSnap{}

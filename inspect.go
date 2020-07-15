@@ -127,13 +127,10 @@ func getInfoTypeName(id uint, jsonBody *js.Json) string {
 	switch _typeInt {
 	case InfoTypeID:
 		infoTypeName = jsonBody.GetPath("inspectConfig", "infoTypes").GetIndex(_indexInt).Get("name").MustString()
-		break
 	case CustomInfoTypeID:
 		infoTypeName = jsonBody.GetPath("inspectConfig", "customInfoTypes").GetIndex(_indexInt).GetPath("infoType", "name").MustString()
-		break
 	default:
 		infoTypeName = "unknown"
-		break
 	}
 	return infoTypeName
 }
