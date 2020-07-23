@@ -22,9 +22,11 @@ func TestGRule_RunFileCheck(t *testing.T) {
 		return
 	}
 
-	fileParse := &fileparser.FileParser{}
-	fileParse.ParseUrl = "http://192.168.131.135:9998"
-	f, err := fileParse.ParseFile(true, file)
+	cfg := fileparser.Config{
+		ParseUrl: "http://192.168.131.135:9998",
+	}
+	c := fileparser.NewClient(cfg)
+	f, err := c.ParseFile(true, file)
 	if err != nil {
 		t.Errorf("fileParse.FileParse err :%v", err)
 		return
