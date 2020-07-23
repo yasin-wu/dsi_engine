@@ -1,12 +1,33 @@
 package dlp
 
+import js "github.com/bitly/go-simplejson"
+
+/*FingerPrints Example
+	{
+    "filelist": [
+        {
+            "name": "test.docx",
+            "print": 18761893342504556, //int64
+        }
+    ],
+    "keylist": [
+        {
+            "name": "一页",
+            "weight": 189.170026, //float64
+            "print": 93079345118495184 //int64
+        }
+    ]
+}
+*/
 type FilePolicy struct {
-	Id          string        `json:"id"`
-	FileName    string        `json:"file_name"`
-	FilePath    string        `json:"file_path"`
-	FileSize    int64         `json:"file_size"`
-	Content     string        `json:"content"`
-	PolicyInfos []*PolicyInfo `json:"policy_infos"`
+	Id           string        `json:"id"`
+	FileName     string        `json:"file_name"`
+	FilePath     string        `json:"file_path"`
+	FileSize     int64         `json:"file_size"`
+	Content      string        `json:"content"`
+	PolicyInfos  []*PolicyInfo `json:"policy_infos"`
+	FingerRatio  int           `json:"finger_ratio"`
+	FingerPrints *js.Json      `json:"finger_prints"`
 }
 
 type PolicyInfo struct {

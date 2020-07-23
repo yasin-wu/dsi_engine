@@ -4,6 +4,7 @@ const (
 	RuleTypeKeyWords   = 1
 	RuleTypeFuzzyWords = 2
 	RuleTypeRegexp     = 3
+	RuleTypeFingerDNA  = 4
 )
 
 const (

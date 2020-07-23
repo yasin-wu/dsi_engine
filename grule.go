@@ -82,6 +82,7 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 	matched := false
 	inputData := ""
 	var matches []*Match
+	distance := 100
 	switch ruleType {
 	case RuleTypeKeyWords:
 		matches, inputData, matched = this.MatchKeyWords(ruleContent)
@@ -89,6 +90,8 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 		matches, inputData, matched = this.MatchFuzzyWords(ruleContent)
 	case RuleTypeRegexp:
 		matches, inputData, matched = this.MatchRegexp(ruleContent)
+	case RuleTypeFingerDNA:
+		distance, inputData, matched = this.MatchFinger()
 	default:
 	}
 	if matched {
@@ -101,6 +104,7 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 		ruleSnap.LevelName = ruleContent.RuleName
 		ruleSnap.Snap = this.handleSnap(matches, inputData)
 		this.RuleSnaps = append(this.RuleSnaps, ruleSnap)
+		this.PolicyAlarm.FingerRatio = distance
 	}
 	return matched
 }
@@ -175,6 +179,7 @@ func (this *GRule) handlePolicyAlarm() *PolicyAlarm {
 	policyAlarm.CreatedAt = now
 	policyAlarm.AttachWords = filePolicy.Content[0:this.AttachLength]
 	policyAlarm.MatchNote = this.handleMatchNote()
+	policyAlarm.FingerRatio = this.PolicyAlarm.FingerRatio
 	return policyAlarm
 }
 

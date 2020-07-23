@@ -13,6 +13,7 @@ type PolicyAlarm struct {
 	AttachWords string      `json:"attach_words"`
 	RuleSnaps   []*RuleSnap `json:"rule_snaps"`
 	SnapShot    string      `json:"snap_shot"`
+	FingerRatio int         `json:"finger_ratio"`
 	CreatedAt   time.Time   `json:"created_at"`
 }
 
