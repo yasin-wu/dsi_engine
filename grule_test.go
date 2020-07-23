@@ -23,7 +23,7 @@ func TestGRule_RunFileCheck(t *testing.T) {
 	}
 
 	cfg := fileparser.Config{
-		ParseUrl: "http://192.168.131.135:9998",
+		TikaUrl: "http://192.168.131.135:9998",
 	}
 	c := fileparser.NewClient(cfg)
 	f, err := c.ParseFile(true, file)
