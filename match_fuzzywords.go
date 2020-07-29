@@ -22,9 +22,9 @@ func (this *GRule) MatchFuzzyWords(ruleContent *RuleContent) ([]*Match, string, 
 }
 
 func matchFuzzyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool) {
-	baseRegexp := ruleContent.BaseRegexp
+	baseRegexp := ruleContent.ForWardKeyList
 	characterSpace := ruleContent.CharacterSpace
-	patterns := getFuzzyWordsPatterns(baseRegexp, characterSpace)
+	patterns := getFuzzyWordsPatterns(baseRegexp, fmt.Sprintf("%d", characterSpace))
 	if patterns == nil {
 		return nil, false
 	}
@@ -39,12 +39,10 @@ func matchFuzzyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool
 	return matches, true
 }
 
-//todo:正则存在问题,会出现pattern is too large
-func getFuzzyWordsPatterns(baseRegexp, characterSpace string) []*hyperscan.Pattern {
+func getFuzzyWordsPatterns(baseRegexp []string, characterSpace string) []*hyperscan.Pattern {
 	characterSpace = fmt.Sprintf(`.{0,%s}`, characterSpace)
 	var patterns []*hyperscan.Pattern
-	baseRegexpList := strings.Split(baseRegexp, ",")
-	for _, b := range baseRegexpList {
+	for _, b := range baseRegexp {
 		wordList := strings.Split(b, "")
 		word := ""
 		for _, w := range wordList {

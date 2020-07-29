@@ -37,7 +37,7 @@ func TestGRule_RunFileCheck(t *testing.T) {
 	policy1.PolicyId = "1"
 	policy1.Operators = []int{RuleAnd}
 	policyContent1 := &RuleContent{}
-	policyContent1.Type = RuleTypeRegexp
+	policyContent1.RuleType = RuleTypeRegexp
 	policyContent1.Regexp = IssuedNumReg
 	policyContent1.ForWardThreshold = 1
 
@@ -45,9 +45,9 @@ func TestGRule_RunFileCheck(t *testing.T) {
 	policy2.PolicyId = "2"
 	policy2.Operators = []int{RuleOr}
 	policyContent2 := &RuleContent{}
-	policyContent2.Type = RuleTypeFuzzyWords
-	policyContent2.BaseRegexp = "我们"
-	policyContent2.CharacterSpace = "5"
+	policyContent2.RuleType = RuleTypeFuzzyWords
+	policyContent2.ForWardKeyList = []string{"我们"}
+	policyContent2.CharacterSpace = 5
 	policyContent2.ForWardThreshold = 1
 
 	policy1.RuleContents = append(policy1.RuleContents, policyContent1, policyContent2)

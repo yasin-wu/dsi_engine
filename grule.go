@@ -78,7 +78,7 @@ func (this *GRule) RunFileCheck() error {
 func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 	policyInfo := this.FilePolicy.PolicyInfos[this.PolicyIndex]
 	ruleContent := policyInfo.RuleContents[ruleContentIndex]
-	ruleType := ruleContent.Type
+	ruleType := ruleContent.RuleType
 	matched := false
 	inputData := ""
 	var matches []*Match
