@@ -7,7 +7,7 @@ import js "github.com/bitly/go-simplejson"
     "filelist": [
         {
             "name": "test.docx",
-            "print": 18761893342504556, //int64
+            "print": 18761893342504556 //int64
         }
     ],
     "keylist": [
