@@ -15,6 +15,7 @@ type GRule struct {
 	PolicyAlarm      *PolicyAlarm
 	Matches          []*Match
 	RuleSnaps        []*RuleSnap
+	FingerRatio      int
 	Rule             string
 	MatchFuncName    string
 	CallbackFuncName string
@@ -104,7 +105,9 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 		ruleSnap.LevelName = ruleContent.RuleName
 		ruleSnap.Snap = this.handleSnap(matches, inputData)
 		this.RuleSnaps = append(this.RuleSnaps, ruleSnap)
-		this.PolicyAlarm.FingerRatio = distance
+		if ruleType == RuleTypeFingerDNA {
+			this.FingerRatio = distance
+		}
 	}
 	return matched
 }
@@ -179,7 +182,7 @@ func (this *GRule) handlePolicyAlarm() *PolicyAlarm {
 	policyAlarm.CreatedAt = now
 	policyAlarm.AttachWords = filePolicy.Content[0:this.AttachLength]
 	policyAlarm.MatchNote = this.handleMatchNote()
-	policyAlarm.FingerRatio = this.PolicyAlarm.FingerRatio
+	policyAlarm.FingerRatio = this.FingerRatio
 	return policyAlarm
 }
 

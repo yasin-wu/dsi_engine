@@ -38,7 +38,7 @@ func TestGRule_RunFileCheck(t *testing.T) {
 	policy1.Operators = []int{RuleAnd}
 	policyContent1 := &RuleContent{}
 	policyContent1.RuleType = RuleTypeRegexp
-	policyContent1.Regexp = IssuedNumReg
+	policyContent1.Regexp = AddressReg
 	policyContent1.ForWardThreshold = 1
 
 	policy2 := &PolicyInfo{}
