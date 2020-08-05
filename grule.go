@@ -12,6 +12,7 @@ import (
 
 type GRule struct {
 	FilePolicy       *FilePolicy
+	PolicyInfo       *PolicyInfo
 	PolicyAlarm      *PolicyAlarm
 	Matches          []*Match
 	RuleSnaps        []*RuleSnap
@@ -21,7 +22,6 @@ type GRule struct {
 	CallbackFuncName string
 	SnapLength       int
 	AttachLength     int
-	PolicyIndex      int64
 }
 
 /**
@@ -68,7 +68,6 @@ func (this *GRule) RunFileCheck() error {
 			return nil
 		}
 	}
-	return nil
 }
 
 /**
@@ -77,7 +76,7 @@ func (this *GRule) RunFileCheck() error {
  * @description：one match func
  */
 func (this *GRule) DoMatch(ruleContentIndex int64) bool {
-	policyInfo := this.FilePolicy.PolicyInfos[this.PolicyIndex]
+	policyInfo := this.PolicyInfo
 	ruleContent := policyInfo.RuleContents[ruleContentIndex]
 	ruleType := ruleContent.RuleType
 	matched := false
@@ -127,8 +126,7 @@ func (this *GRule) HandleResult() {
  * @description：handle policy
  */
 func (this *GRule) handlePolicy() (string, error) {
-	policyIndex := this.PolicyIndex
-	policyInfo := this.FilePolicy.PolicyInfos[policyIndex]
+	policyInfo := this.PolicyInfo
 	if len(policyInfo.RuleContents) != len(policyInfo.Operators)+1 {
 		return "", errors.New("policyInfo.RuleContents Or policyInfo.Operators Format Error ")
 	}
@@ -161,7 +159,7 @@ func (this *GRule) handlePolicy() (string, error) {
 func (this *GRule) handlePolicyAlarm() *PolicyAlarm {
 	policyAlarm := &PolicyAlarm{}
 	filePolicy := this.FilePolicy
-	policyInfo := filePolicy.PolicyInfos[this.PolicyIndex]
+	policyInfo := this.PolicyInfo
 	matchTimes := 0
 	snapShot := ""
 	now := time.Now()

@@ -1,6 +1,7 @@
 package dlp
 
 import (
+	"fmt"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/yasin-wu/fileparser"
 	"os"
@@ -12,7 +13,7 @@ import (
  * @date: 2020/7/2 16:20
  * @description：文件策略匹配
  */
-func TestGRule_RunFileCheck(t *testing.T) {
+func TestGRule(t *testing.T) {
 	filePolicy := &FilePolicy{}
 	filePolicy.FilePath = "./sample/test.docx"
 	filePolicy.FileName = "test.docx"
@@ -55,11 +56,15 @@ func TestGRule_RunFileCheck(t *testing.T) {
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy1)
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy2)
 
-	for i := 0; i < len(filePolicy.PolicyInfos); i++ {
+	for _, policyInfo := range filePolicy.PolicyInfos {
 		grule := &GRule{}
 		grule.FilePolicy = filePolicy
-		grule.PolicyIndex = int64(i)
-		grule.RunFileCheck()
+		grule.PolicyInfo = policyInfo
+		err = grule.RunFileCheck()
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
 		spew.Dump(grule.PolicyAlarm)
 	}
 }
