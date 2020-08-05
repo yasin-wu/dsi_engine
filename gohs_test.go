@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestGohs_Run(t *testing.T) {
+func TestGohs(t *testing.T) {
 	inputData := "测试IPV6地址正则:fe80::ec61:c1d1:9827:82be%13"
 	var patterns []*hyperscan.Pattern
 	pattern := hyperscan.NewPattern(IPV6Reg, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
