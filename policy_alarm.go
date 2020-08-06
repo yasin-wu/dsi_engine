@@ -18,7 +18,7 @@ type PolicyAlarm struct {
 }
 
 type RuleSnap struct {
-	RuleId     string `json:"Rule_id"`
+	RuleId     string `json:"rule_id"`
 	RuleName   string `json:"rule_name"`
 	RuleType   int    `json:"rule_type"`
 	MatchTimes int    `json:"match_times"`
