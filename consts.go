@@ -68,3 +68,9 @@ const (
 	BusinessLicenseReg     = "[IOZSV][\\dA-Z]{2}\\d{6}[IOZSV][\\dA-Z]{10}|\\d{15}"
 	MACReg                 = "\\b([0-9a-fA-F]{2})(([0-9a-fA-F]{2}){5})\\b|\\b([0-9a-fA-F]{2})(([/\\s:-][0-9a-fA-F]{2}){5})\\b"
 )
+
+const (
+	GRuleName     = "FileGRule"
+	GRuleVersion  = "0.1.1"
+	GRuleMaxCycle = 1
+)

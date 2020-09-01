@@ -51,16 +51,15 @@ func (this *GRule) RunFileCheck() error {
 	if err != nil {
 		return errors.New(fmt.Sprintf("dataContext.Add err: %v", err.Error()))
 	}
-	memory := ast.NewWorkingMemory()
-	knowledgeBase := ast.NewKnowledgeBase("FileGRule", "0.1.1")
-	ruleBuilder := builder.NewRuleBuilder(knowledgeBase, memory)
-
-	err = ruleBuilder.BuildRuleFromResource(pkg.NewBytesResource([]byte(rule)))
+	lib := ast.NewKnowledgeLibrary()
+	ruleBuilder := builder.NewRuleBuilder(lib)
+	err = ruleBuilder.BuildRuleFromResource(GRuleName, GRuleVersion, pkg.NewBytesResource([]byte(rule)))
 	if err != nil {
 		return errors.New(fmt.Sprintf("ruleBuilder.BuildRuleFromResource err: %v", err.Error()))
 	} else {
-		eng := &engine.GruleEngine{MaxCycle: 1}
-		err = eng.Execute(dataContext, knowledgeBase, memory)
+		kb := lib.NewKnowledgeBaseInstance("FileGRule", "0.1.1")
+		eng := &engine.GruleEngine{MaxCycle: GRuleMaxCycle}
+		err = eng.Execute(dataContext, kb)
 		if err != nil {
 			return errors.New(fmt.Sprintf("eng.Execute err: %v", err.Error()))
 		} else {
