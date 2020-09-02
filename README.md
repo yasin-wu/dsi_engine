@@ -48,21 +48,19 @@ input json:
     }
 output json:
     {
-        "result": {
-            "findings": [
-                {
-                    "quote": "(415) 555-0890",
-                    "infoType": {
-                        "name": "PHONE_NUMBER"
-                    },
-                    "location": {
-                        "byteRange": {
-                            "start": 19,
-                            "end": 33
-                        }
-                    },
-                    "createTime": "2018-11-13T19:29:15.412Z"
-                }
-            ]
-        }
+        "findings": [
+            {
+                "quote": "(415) 555-0890",
+                "infoType": {
+                    "name": "PHONE_NUMBER"
+                },
+                "location": {
+                    "byteRange": {
+                        "start": 19,
+                        "end": 33
+                    }
+                },
+                "createTime": "2018-11-13T19:29:15.412Z"
+            }
+        ]
     }

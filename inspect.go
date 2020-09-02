@@ -5,6 +5,7 @@ import (
 	"fmt"
 	js "github.com/bitly/go-simplejson"
 	"github.com/flier/gohs/hyperscan"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -125,7 +126,7 @@ func handleInspect(matches []*Match, jsonBody *js.Json, allCheckTypes []*js.Json
 
 		findings = append(findings, finding)
 	}
-	jsonObj.Set("result", findings)
+	jsonObj.Set("findings", findings)
 	return jsonObj
 }
 
@@ -177,5 +178,6 @@ func InfoTypeList() []string {
 	for k, _ := range InfoTypeMaps {
 		infoTypes = append(infoTypes, k)
 	}
+	sort.Strings(infoTypes)
 	return infoTypes
 }
