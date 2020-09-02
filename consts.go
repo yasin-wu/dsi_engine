@@ -25,6 +25,7 @@ const (
 const (
 	InfoTypeID       = 1000
 	CustomInfoTypeID = 2000
+	AllCheckID       = 3000
 )
 
 var InfoTypeMaps = map[string]string{

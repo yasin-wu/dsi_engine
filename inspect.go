@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func Inspect(jsonBody *js.Json) (*js.Json, error) {
+func Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error) {
 	item, ok := jsonBody.CheckGet("item")
 	if !ok {
 		return nil, errors.New("not found item")
@@ -18,15 +18,25 @@ func Inspect(jsonBody *js.Json) (*js.Json, error) {
 	if !ok {
 		return nil, errors.New("not found item.value")
 	}
-	inspectConfig, ok := jsonBody.CheckGet("inspectConfig")
-	if !ok {
-		return nil, errors.New("not found inspectConfig")
+	inspectConfig := js.New()
+	if !allCheck {
+		inspectConfig, ok = jsonBody.CheckGet("inspectConfig")
+		if !ok {
+			return nil, errors.New("not found inspectConfig")
+		}
 	}
 	var patterns []*hyperscan.Pattern
 	//infoTypes
 	infoTypePatters := handleInfoTypes(inspectConfig)
 	//customInfoTypes
 	customInfoTypePatters := handleCustomInfoTypes(inspectConfig)
+	//allCheck
+	var allCheckTypes []*js.Json
+	var allCheckPatters []*hyperscan.Pattern
+	if allCheck {
+		allCheckPatters, allCheckTypes = handleAllCheck()
+		patterns = append(patterns, allCheckPatters...)
+	}
 	patterns = append(patterns, infoTypePatters...)
 	patterns = append(patterns, customInfoTypePatters...)
 	gohs := &Gohs{
@@ -36,7 +46,7 @@ func Inspect(jsonBody *js.Json) (*js.Json, error) {
 	if err != nil {
 		return nil, err
 	}
-	return handleInspect(matches, jsonBody), nil
+	return handleInspect(matches, jsonBody, allCheckTypes), nil
 }
 
 /**
@@ -94,7 +104,7 @@ func handleCustomInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
  * @date: 2020/7/13 15:37
  * @description：
  */
-func handleInspect(matches []*Match, jsonBody *js.Json) *js.Json {
+func handleInspect(matches []*Match, jsonBody *js.Json, allCheckTypes []*js.Json) *js.Json {
 	jsonObj := js.New()
 	if matches == nil {
 		return nil
@@ -108,7 +118,7 @@ func handleInspect(matches []*Match, jsonBody *js.Json) *js.Json {
 		quote := m.InputData[start:end]
 
 		finding.Set("quote", quote)
-		finding.SetPath([]string{"infoType", "name"}, getInfoTypeName(id, jsonBody))
+		finding.SetPath([]string{"infoType", "name"}, getInfoTypeName(id, jsonBody, allCheckTypes))
 		finding.SetPath([]string{"location", "byteRange", "start"}, start)
 		finding.SetPath([]string{"location", "byteRange", "end"}, end)
 		finding.Set("createTime", time.Now())
@@ -119,7 +129,32 @@ func handleInspect(matches []*Match, jsonBody *js.Json) *js.Json {
 	return jsonObj
 }
 
-func getInfoTypeName(id uint, jsonBody *js.Json) string {
+/**
+ * @author: yasin
+ * @date: 2020/8/18 16:21
+ * @description：3000
+ */
+func handleAllCheck() ([]*hyperscan.Pattern, []*js.Json) {
+	var infoTypes []*js.Json
+	for k, _ := range InfoTypeMaps {
+		jsonObj := js.New()
+		jsonObj.Set("name", k)
+
+		infoTypes = append(infoTypes, jsonObj)
+	}
+	var patterns []*hyperscan.Pattern
+	for index := 0; index < len(infoTypes); index++ {
+		infoType := infoTypes[index]
+		name := infoType.Get("name").MustString()
+		pattern := hyperscan.NewPattern(InfoTypeMaps[name], hyperscan.SomLeftMost|hyperscan.Utf8Mode)
+		id := fmt.Sprintf("%d%d", AllCheckID, index)
+		pattern.Id, _ = strconv.Atoi(id)
+		patterns = append(patterns, pattern)
+	}
+	return patterns, infoTypes
+}
+
+func getInfoTypeName(id uint, jsonBody *js.Json, allCheckTypes []*js.Json) string {
 	idStr := fmt.Sprintf("%d", id)
 	_typeInt, _ := strconv.Atoi(idStr[0:4])
 	_indexInt, _ := strconv.Atoi(idStr[4:])
@@ -129,6 +164,8 @@ func getInfoTypeName(id uint, jsonBody *js.Json) string {
 		infoTypeName = jsonBody.GetPath("inspectConfig", "infoTypes").GetIndex(_indexInt).Get("name").MustString()
 	case CustomInfoTypeID:
 		infoTypeName = jsonBody.GetPath("inspectConfig", "customInfoTypes").GetIndex(_indexInt).GetPath("infoType", "name").MustString()
+	case AllCheckID:
+		infoTypeName = allCheckTypes[_indexInt].Get("name").MustString()
 	default:
 		infoTypeName = "unknown"
 	}
