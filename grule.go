@@ -7,7 +7,6 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"strings"
 	"time"
 )
 
@@ -61,7 +60,7 @@ func (this *GRule) RunFileCheck() error {
 		kb := lib.NewKnowledgeBaseInstance("FileGRule", "0.1.1")
 		eng := &engine.GruleEngine{MaxCycle: GRuleMaxCycle}
 		err = eng.Execute(dataContext, kb)
-		if err != nil && !strings.Contains(err.Error(), GRuleSuccessError) {
+		if err != nil {
 			return errors.New(fmt.Sprintf("eng.Execute err: %v", err.Error()))
 		} else {
 			fmt.Println("GRule run end......")
@@ -146,7 +145,7 @@ func (this *GRule) handlePolicy() (string, error) {
 			}
 		}
 	}
-	rule := fmt.Sprintf(`rule FileCheck "fileCheck" { when %v then %v; }`, patterns, this.CallbackFuncName+"()")
+	rule := fmt.Sprintf(`rule FileCheck "fileCheck" { when %v then %v; %v; }`, patterns, this.CallbackFuncName+"()", `Retract("FileCheck")`)
 	this.Rule = rule
 	return rule, nil
 }
