@@ -71,7 +71,8 @@ const (
 )
 
 const (
-	GRuleName     = "FileGRule"
-	GRuleVersion  = "0.1.1"
-	GRuleMaxCycle = 1
+	GRuleName         = "FileGRule"
+	GRuleVersion      = "0.1.1"
+	GRuleMaxCycle     = 1
+	GRuleSuccessError = "the GruleEngine successfully selected rule candidate"
 )
