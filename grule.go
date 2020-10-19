@@ -53,7 +53,8 @@ func (this *GRule) RunFileCheck() error {
 	}
 	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
-	err = ruleBuilder.BuildRuleFromResource(GRuleName, GRuleVersion, pkg.NewBytesResource([]byte(rule)))
+	ruleResource := pkg.NewBytesResource([]byte(rule))
+	err = ruleBuilder.BuildRuleFromResource(GRuleName, GRuleVersion, ruleResource)
 	if err != nil {
 		return errors.New(fmt.Sprintf("ruleBuilder.BuildRuleFromResource err: %v", err.Error()))
 	}
