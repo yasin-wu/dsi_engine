@@ -58,7 +58,7 @@ func (this *GRule) RunFileCheck() error {
 	if err != nil {
 		return errors.New(fmt.Sprintf("ruleBuilder.BuildRuleFromResource err: %v", err.Error()))
 	}
-	kb := lib.NewKnowledgeBaseInstance("FileGRule", "0.1.1")
+	kb := lib.NewKnowledgeBaseInstance(GRuleName, GRuleVersion)
 	eng := &engine.GruleEngine{MaxCycle: GRuleMaxCycle}
 	err = eng.Execute(dataContext, kb)
 	if err != nil {
