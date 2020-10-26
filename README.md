@@ -1,3 +1,22 @@
+os:
+    - linux
+    - osx
+addons:
+    apt:
+        packages:
+            - libhyperscan-dev
+            - libpcap-dev
+            - tree
+    homebrew:
+        packages:
+            - pkg-config
+            - hyperscan
+            - libpcap
+            - tree
+package:
+    go get -u github.com/flier/gohs
+    go get -u github.com/hyperjumptech/grule-rule-engine
+
 func:infotypelist
 output json:
     "data": [
