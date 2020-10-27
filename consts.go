@@ -72,6 +72,6 @@ const (
 
 const (
 	GRuleName     = "FileGRule"
-	GRuleVersion  = "0.1.1"
+	GRuleVersion  = "1.0.0"
 	GRuleMaxCycle = 1
 )
