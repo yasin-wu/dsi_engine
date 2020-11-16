@@ -2,8 +2,9 @@ package dlp
 
 import (
 	"fmt"
-	"github.com/flier/gohs/hyperscan"
 	"strings"
+
+	"github.com/flier/gohs/hyperscan"
 )
 
 /**
@@ -13,18 +14,18 @@ import (
  */
 func (this *GRule) MatchFuzzyWords(ruleContent *RuleContent) ([]*Match, string, bool) {
 	inputData := this.FilePolicy.FileName
-	matches, matched := matchFuzzyWords(ruleContent, this.FilePolicy.FileName)
+	matches, matched := this.matchFuzzyWords(ruleContent, this.FilePolicy.FileName)
 	if !matched {
 		inputData = this.FilePolicy.Content
-		matches, matched = matchFuzzyWords(ruleContent, this.FilePolicy.Content)
+		matches, matched = this.matchFuzzyWords(ruleContent, this.FilePolicy.Content)
 	}
 	return matches, inputData, matched
 }
 
-func matchFuzzyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool) {
+func (this *GRule) matchFuzzyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool) {
 	baseRegexp := ruleContent.ForWardKeyList
 	characterSpace := ruleContent.CharacterSpace
-	patterns := getFuzzyWordsPatterns(baseRegexp, fmt.Sprintf("%d", characterSpace))
+	patterns := this.getFuzzyWordsPatterns(baseRegexp, fmt.Sprintf("%d", characterSpace))
 	if patterns == nil {
 		return nil, false
 	}
@@ -39,7 +40,7 @@ func matchFuzzyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool
 	return matches, true
 }
 
-func getFuzzyWordsPatterns(baseRegexp []string, characterSpace string) []*hyperscan.Pattern {
+func (this *GRule) getFuzzyWordsPatterns(baseRegexp []string, characterSpace string) []*hyperscan.Pattern {
 	characterSpace = fmt.Sprintf(`.{0,%s}`, characterSpace)
 	var patterns []*hyperscan.Pattern
 	for _, b := range baseRegexp {

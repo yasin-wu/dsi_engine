@@ -11,18 +11,18 @@ import (
  */
 func (this *GRule) MatchKeyWords(ruleContent *RuleContent) ([]*Match, string, bool) {
 	inputData := this.FilePolicy.FileName
-	matches, matched := matchKeyWords(ruleContent, this.FilePolicy.FileName)
+	matches, matched := this.matchKeyWords(ruleContent, this.FilePolicy.FileName)
 	if !matched {
 		inputData = this.FilePolicy.Content
-		matches, matched = matchKeyWords(ruleContent, this.FilePolicy.Content)
+		matches, matched = this.matchKeyWords(ruleContent, this.FilePolicy.Content)
 	}
 	return matches, inputData, matched
 }
 
-func matchKeyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool) {
+func (this *GRule) matchKeyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool) {
 	exitReverse := len(ruleContent.ReverseKeyList) > 0
 	if exitReverse {
-		patterns := getKeyWordsPatterns(ruleContent.ReverseKeyList)
+		patterns := this.getKeyWordsPatterns(ruleContent.ReverseKeyList)
 		if patterns == nil {
 			return nil, false
 		}
@@ -35,7 +35,7 @@ func matchKeyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool) 
 			return nil, false
 		}
 	}
-	patterns := getKeyWordsPatterns(ruleContent.ForWardKeyList)
+	patterns := this.getKeyWordsPatterns(ruleContent.ForWardKeyList)
 	if patterns == nil {
 		return nil, false
 	}
@@ -50,7 +50,7 @@ func matchKeyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool) 
 	return matches, true
 }
 
-func getKeyWordsPatterns(keyWords []string) []*hyperscan.Pattern {
+func (this *GRule) getKeyWordsPatterns(keyWords []string) []*hyperscan.Pattern {
 	var patterns []*hyperscan.Pattern
 	for _, word := range keyWords {
 		pattern := hyperscan.NewPattern(word, hyperscan.SomLeftMost|hyperscan.Utf8Mode)

@@ -11,17 +11,17 @@ import (
  */
 func (this *GRule) MatchRegexp(ruleContent *RuleContent) ([]*Match, string, bool) {
 	inputData := this.FilePolicy.FileName
-	matches, matched := matchRegexp(ruleContent, this.FilePolicy.FileName)
+	matches, matched := this.matchRegexp(ruleContent, this.FilePolicy.FileName)
 	if !matched {
 		inputData = this.FilePolicy.Content
-		matches, matched = matchRegexp(ruleContent, this.FilePolicy.Content)
+		matches, matched = this.matchRegexp(ruleContent, this.FilePolicy.Content)
 	}
 	return matches, inputData, matched
 }
 
-func matchRegexp(ruleContent *RuleContent, inputData string) ([]*Match, bool) {
+func (this *GRule) matchRegexp(ruleContent *RuleContent, inputData string) ([]*Match, bool) {
 	regexp := ruleContent.Regexp
-	patterns := getRegexpPatterns(regexp)
+	patterns := this.getRegexpPatterns(regexp)
 	if patterns == nil {
 		return nil, false
 	}
@@ -36,7 +36,7 @@ func matchRegexp(ruleContent *RuleContent, inputData string) ([]*Match, bool) {
 	return matches, true
 }
 
-func getRegexpPatterns(regexp string) []*hyperscan.Pattern {
+func (this *GRule) getRegexpPatterns(regexp string) []*hyperscan.Pattern {
 	var patterns []*hyperscan.Pattern
 	pattern := hyperscan.NewPattern(regexp, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
 	patterns = append(patterns, pattern)

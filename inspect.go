@@ -3,14 +3,18 @@ package dlp
 import (
 	"errors"
 	"fmt"
-	js "github.com/bitly/go-simplejson"
-	"github.com/flier/gohs/hyperscan"
 	"sort"
 	"strconv"
 	"time"
+
+	js "github.com/bitly/go-simplejson"
+	"github.com/flier/gohs/hyperscan"
 )
 
-func Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error) {
+type Inspect struct {
+}
+
+func (this *Inspect) Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error) {
 	item, ok := jsonBody.CheckGet("item")
 	if !ok {
 		return nil, errors.New("not found item")
@@ -28,14 +32,14 @@ func Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error) {
 	}
 	var patterns []*hyperscan.Pattern
 	//infoTypes
-	infoTypePatters := handleInfoTypes(inspectConfig)
+	infoTypePatters := this.handleInfoTypes(inspectConfig)
 	//customInfoTypes
-	customInfoTypePatters := handleCustomInfoTypes(inspectConfig)
+	customInfoTypePatters := this.handleCustomInfoTypes(inspectConfig)
 	//allCheck
 	var allCheckTypes []*js.Json
 	var allCheckPatters []*hyperscan.Pattern
 	if allCheck {
-		allCheckPatters, allCheckTypes = handleAllCheck()
+		allCheckPatters, allCheckTypes = this.handleAllCheck()
 		patterns = append(patterns, allCheckPatters...)
 	}
 	patterns = append(patterns, infoTypePatters...)
@@ -47,7 +51,7 @@ func Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error) {
 	if err != nil {
 		return nil, err
 	}
-	return handleInspect(matches, jsonBody, allCheckTypes), nil
+	return this.handleInspect(matches, jsonBody, allCheckTypes), nil
 }
 
 /**
@@ -55,7 +59,7 @@ func Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error) {
  * @date: 2020/7/13 15:28
  * @description：1000
  */
-func handleInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
+func (this *Inspect) handleInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
 	infoTypes, ok := inspectConfig.CheckGet("infoTypes")
 	if !ok {
 		return nil
@@ -80,7 +84,7 @@ func handleInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
  * @date: 2020/7/13 15:28
  * @description：2000
  */
-func handleCustomInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
+func (this *Inspect) handleCustomInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
 	customInfoTypes, ok := inspectConfig.CheckGet("customInfoTypes")
 	if !ok {
 		return nil
@@ -105,7 +109,7 @@ func handleCustomInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
  * @date: 2020/7/13 15:37
  * @description：
  */
-func handleInspect(matches []*Match, jsonBody *js.Json, allCheckTypes []*js.Json) *js.Json {
+func (this *Inspect) handleInspect(matches []*Match, jsonBody *js.Json, allCheckTypes []*js.Json) *js.Json {
 	jsonObj := js.New()
 	if matches == nil {
 		return nil
@@ -119,7 +123,7 @@ func handleInspect(matches []*Match, jsonBody *js.Json, allCheckTypes []*js.Json
 		quote := m.InputData[start:end]
 
 		finding.Set("quote", quote)
-		finding.SetPath([]string{"infoType", "name"}, getInfoTypeName(id, jsonBody, allCheckTypes))
+		finding.SetPath([]string{"infoType", "name"}, this.getInfoTypeName(id, jsonBody, allCheckTypes))
 		finding.SetPath([]string{"location", "byteRange", "start"}, start)
 		finding.SetPath([]string{"location", "byteRange", "end"}, end)
 		finding.Set("createTime", time.Now())
@@ -135,7 +139,7 @@ func handleInspect(matches []*Match, jsonBody *js.Json, allCheckTypes []*js.Json
  * @date: 2020/8/18 16:21
  * @description：3000
  */
-func handleAllCheck() ([]*hyperscan.Pattern, []*js.Json) {
+func (this *Inspect) handleAllCheck() ([]*hyperscan.Pattern, []*js.Json) {
 	var infoTypes []*js.Json
 	for k, _ := range InfoTypeMaps {
 		jsonObj := js.New()
@@ -155,7 +159,7 @@ func handleAllCheck() ([]*hyperscan.Pattern, []*js.Json) {
 	return patterns, infoTypes
 }
 
-func getInfoTypeName(id uint, jsonBody *js.Json, allCheckTypes []*js.Json) string {
+func (this *Inspect) getInfoTypeName(id uint, jsonBody *js.Json, allCheckTypes []*js.Json) string {
 	idStr := fmt.Sprintf("%d", id)
 	_typeInt, _ := strconv.Atoi(idStr[0:4])
 	_indexInt, _ := strconv.Atoi(idStr[4:])
@@ -173,7 +177,7 @@ func getInfoTypeName(id uint, jsonBody *js.Json, allCheckTypes []*js.Json) strin
 	return infoTypeName
 }
 
-func InfoTypeList() []string {
+func (this *Inspect) InfoTypeList() []string {
 	var infoTypes []string
 	for k, _ := range InfoTypeMaps {
 		infoTypes = append(infoTypes, k)

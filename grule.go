@@ -3,11 +3,12 @@ package dlp
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"time"
 )
 
 type GRule struct {
@@ -198,7 +199,7 @@ func (this *GRule) handleSnap(matches []*Match, inputData string) string {
 			end = inputDataLength
 		}
 		snap += fmt.Sprintf("%s%s%s", inputData[start:from],
-			highlight(inputData[from:to]),
+			this.highlight(inputData[from:to]),
 			inputData[to:end]) + "......"
 		match.InputData = inputData
 		this.Matches = append(this.Matches, match)
@@ -207,7 +208,7 @@ func (this *GRule) handleSnap(matches []*Match, inputData string) string {
 	return snap
 }
 
-func highlight(s string) string {
+func (this *GRule) highlight(s string) string {
 	return `<b style="background:yellow">` + s + `</b>`
 	//return "\033[35m" + s + "\033[0m"
 }
