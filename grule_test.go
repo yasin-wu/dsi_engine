@@ -2,10 +2,11 @@ package dlp
 
 import (
 	"fmt"
-	"github.com/davecgh/go-spew/spew"
-	"github.com/yasin-wu/fileparser"
 	"os"
 	"testing"
+
+	"github.com/davecgh/go-spew/spew"
+	"github.com/yasin-wu/fileparser"
 )
 
 /**
@@ -24,7 +25,7 @@ func TestGRule(t *testing.T) {
 	}
 
 	cfg := fileparser.Config{
-		TikaUrl: "http://192.168.131.135:9998",
+		TikaUrl: "http://47.108.155.25:9998",
 	}
 	c := fileparser.NewClient(cfg)
 	f, err := c.ParseFile(true, file)
