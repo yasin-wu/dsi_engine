@@ -14,17 +14,17 @@ import (
  * @description：文件策略匹配
  */
 func TestGRule(t *testing.T) {
-	filePolicy := &FilePolicy{}
-	filePolicy.FilePath = "./sample/test.docx"
-	filePolicy.FileName = "test.docx"
+	filePolicy := &FilePolicy{
+		FilePath: "./sample/test.docx",
+		FileName: "test.docx",
+	}
 	file, err := os.Open(filePolicy.FilePath)
 	if err != nil {
 		t.Errorf("os.open err:%v", err.Error())
 		return
 	}
-
 	cfg := fileparser.Config{
-		TikaUrl: "http://47.108.155.25:9998",
+		TikaUrl: "http://192.168.131.135:9998",
 	}
 	c := fileparser.NewClient(cfg)
 	f, err := c.ParseFile(true, file)
@@ -34,32 +34,34 @@ func TestGRule(t *testing.T) {
 	}
 	filePolicy.FileSize = f.Size
 	filePolicy.Content = f.Content
-	policy1 := &PolicyInfo{}
-	policy1.PolicyId = "1"
-	policy1.Operators = []int{RuleAnd}
-	policyContent1 := &RuleContent{}
-	policyContent1.RuleType = RuleTypeRegexp
-	policyContent1.Regexp = AddressReg
-	policyContent1.ForWardThreshold = 1
-
-	policy2 := &PolicyInfo{}
-	policy2.PolicyId = "2"
-	policy2.Operators = []int{RuleOr}
-	policyContent2 := &RuleContent{}
-	policyContent2.RuleType = RuleTypeFuzzyWords
-	policyContent2.ForWardKeyList = []string{"我们"}
-	policyContent2.CharacterSpace = 5
-	policyContent2.ForWardThreshold = 1
-
+	policyContent1 := &RuleContent{
+		RuleType:         RuleTypeRegexp,
+		Regexp:           AddressReg,
+		ForWardThreshold: 1,
+	}
+	policyContent2 := &RuleContent{
+		RuleType:         RuleTypeFuzzyWords,
+		ForWardKeyList:   []string{"我们"},
+		CharacterSpace:   5,
+		ForWardThreshold: 1,
+	}
+	policy1 := &PolicyInfo{
+		PolicyId:  "1",
+		Operators: []int{RuleAnd},
+	}
+	policy2 := &PolicyInfo{
+		PolicyId:  "2",
+		Operators: []int{RuleOr},
+	}
 	policy1.RuleContents = append(policy1.RuleContents, policyContent1, policyContent2)
 	policy2.RuleContents = append(policy2.RuleContents, policyContent1, policyContent2)
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy1)
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy2)
-
 	for _, policyInfo := range filePolicy.PolicyInfos {
-		grule := &GRule{}
-		grule.FilePolicy = filePolicy
-		grule.PolicyInfo = policyInfo
+		grule := &GRule{
+			FilePolicy: filePolicy,
+			PolicyInfo: policyInfo,
+		}
 		err = grule.RunFileCheck()
 		if err != nil {
 			t.Errorf("grule.RunFileCheck err:%s", err.Error())
