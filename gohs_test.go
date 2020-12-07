@@ -25,6 +25,6 @@ func TestGohs(t *testing.T) {
 		return
 	}
 	for _, m := range matches {
-		t.Log("id:", m.Id, m.InputData[m.From:m.To])
+		t.Logf("命中正则id:%d;命中内容:%s", m.Id, m.InputData[m.From:m.To])
 	}
 }

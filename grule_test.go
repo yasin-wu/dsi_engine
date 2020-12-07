@@ -1,7 +1,6 @@
 package dlp
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
@@ -63,7 +62,7 @@ func TestGRule(t *testing.T) {
 		grule.PolicyInfo = policyInfo
 		err = grule.RunFileCheck()
 		if err != nil {
-			fmt.Println(err)
+			t.Errorf("grule.RunFileCheck err:%s", err.Error())
 			continue
 		}
 		spew.Dump(grule.PolicyAlarm)
