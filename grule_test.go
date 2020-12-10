@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/yasin-wu/dlp"
 	"github.com/yasin-wu/fileparser"
 )
 
@@ -16,7 +15,7 @@ import (
  * @description：文件策略匹配
  */
 func TestGRule(t *testing.T) {
-	filePolicy := &dlp.FilePolicy{
+	filePolicy := &FilePolicy{
 		FilePath: "./sample/test.docx",
 		FileName: "test.docx",
 	}
@@ -36,35 +35,35 @@ func TestGRule(t *testing.T) {
 	}
 	filePolicy.FileSize = f.Size
 	filePolicy.Content = f.Content
-	policyContent1 := &dlp.RuleContent{
+	policyContent1 := &RuleContent{
 		RuleId:           "1",
 		RuleName:         "正则匹配:地址信息",
-		RuleType:         dlp.RuleTypeRegexp,
-		Regexp:           dlp.AddressReg,
+		RuleType:         RuleTypeRegexp,
+		Regexp:           AddressReg,
 		ForWardThreshold: 1,
 	}
-	policyContent2 := &dlp.RuleContent{
+	policyContent2 := &RuleContent{
 		RuleId:           "2",
 		RuleName:         "模糊关键字:我们",
-		RuleType:         dlp.RuleTypeFuzzyWords,
+		RuleType:         RuleTypeFuzzyWords,
 		ForWardKeyList:   []string{"我们"},
 		CharacterSpace:   5,
 		ForWardThreshold: 1,
 	}
-	policy1 := &dlp.PolicyInfo{
+	policy1 := &PolicyInfo{
 		PolicyId:     "1",
-		Operators:    []int{dlp.RuleAnd},
-		RuleContents: []*dlp.RuleContent{policyContent1, policyContent2},
+		Operators:    []int{RuleAnd},
+		RuleContents: []*RuleContent{policyContent1, policyContent2},
 	}
-	policy2 := &dlp.PolicyInfo{
+	policy2 := &PolicyInfo{
 		PolicyId:     "2",
-		Operators:    []int{dlp.RuleOr},
-		RuleContents: []*dlp.RuleContent{policyContent1, policyContent2},
+		Operators:    []int{RuleOr},
+		RuleContents: []*RuleContent{policyContent1, policyContent2},
 	}
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy1)
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy2)
 	for i, policyInfo := range filePolicy.PolicyInfos {
-		grule := &dlp.GRule{
+		grule := &GRule{
 			FilePolicy: filePolicy,
 			PolicyInfo: policyInfo,
 		}
