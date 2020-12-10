@@ -1,6 +1,7 @@
 package dlp
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
@@ -35,29 +36,33 @@ func TestGRule(t *testing.T) {
 	filePolicy.FileSize = f.Size
 	filePolicy.Content = f.Content
 	policyContent1 := &RuleContent{
+		RuleId:           "1",
+		RuleName:         "正则匹配:地址信息",
 		RuleType:         RuleTypeRegexp,
 		Regexp:           AddressReg,
 		ForWardThreshold: 1,
 	}
 	policyContent2 := &RuleContent{
+		RuleId:           "2",
+		RuleName:         "模糊关键字:我们",
 		RuleType:         RuleTypeFuzzyWords,
 		ForWardKeyList:   []string{"我们"},
 		CharacterSpace:   5,
 		ForWardThreshold: 1,
 	}
 	policy1 := &PolicyInfo{
-		PolicyId:  "1",
-		Operators: []int{RuleAnd},
+		PolicyId:     "1",
+		Operators:    []int{RuleAnd},
+		RuleContents: []*RuleContent{policyContent1, policyContent2},
 	}
 	policy2 := &PolicyInfo{
-		PolicyId:  "2",
-		Operators: []int{RuleOr},
+		PolicyId:     "2",
+		Operators:    []int{RuleOr},
+		RuleContents: []*RuleContent{policyContent1, policyContent2},
 	}
-	policy1.RuleContents = append(policy1.RuleContents, policyContent1, policyContent2)
-	policy2.RuleContents = append(policy2.RuleContents, policyContent1, policyContent2)
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy1)
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy2)
-	for _, policyInfo := range filePolicy.PolicyInfos {
+	for i, policyInfo := range filePolicy.PolicyInfos {
 		grule := &GRule{
 			FilePolicy: filePolicy,
 			PolicyInfo: policyInfo,
@@ -67,6 +72,7 @@ func TestGRule(t *testing.T) {
 			t.Errorf("grule.RunFileCheck err:%s", err.Error())
 			continue
 		}
+		grule.PolicyAlarm.Id = fmt.Sprintf("%d", i)
 		spew.Dump(grule.PolicyAlarm)
 	}
 }
