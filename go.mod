@@ -8,5 +8,5 @@ require (
 	github.com/flier/gohs v1.0.0
 	github.com/hyperjumptech/grule-rule-engine v1.7.2
 	github.com/yasin-wu/fileparser v1.0.0
-	github.com/yasin-wu/similarity v1.0.0
+	github.com/yasin-wu/utils v1.0.1
 )

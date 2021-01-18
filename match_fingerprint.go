@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	js "github.com/bitly/go-simplejson"
-	"github.com/yasin-wu/similarity"
+	"github.com/yasin-wu/utils/similarity"
 )
 
 /**
