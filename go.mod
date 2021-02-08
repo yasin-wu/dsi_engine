@@ -7,6 +7,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/flier/gohs v1.0.0
 	github.com/hyperjumptech/grule-rule-engine v1.7.2
-	github.com/yasin-wu/fileparser v1.0.0
+	github.com/yasin-wu/fileparser v1.0.1
 	github.com/yasin-wu/utils v1.0.1
 )

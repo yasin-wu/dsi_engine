@@ -102,14 +102,10 @@ github.com/xanzy/ssh-agent v0.2.1 h1:TCbipTQL2JiiCprBWx9frJ2eJlCYT00NmctrHxVAr70
 github.com/xanzy/ssh-agent v0.2.1/go.mod h1:mLlQY/MoOhWBj+gOGMQkOeiEvkx+8pJSI+0Bx9h2kr4=
 github.com/yanyiwu/gojieba v1.1.2 h1:BMwKCwg3G+Nw/Ctqzm/gNgN/6Ljf0Y4f7ddKlzTA+TM=
 github.com/yanyiwu/gojieba v1.1.2/go.mod h1:54wkP7sMJ6bklf7yPl6F+JG71dzVUU1WigZbR47nGdY=
-github.com/yasin-wu/fileparser v1.0.0 h1:+3tDHSGS0iquva9a2KIypLAlIaJjIXx70v0nUUlEGLM=
-github.com/yasin-wu/fileparser v1.0.0/go.mod h1:gVRr/YKr3sTgJuwMdZDpgNmHqzRYTiQJPwIaFC41LtM=
+github.com/yasin-wu/fileparser v1.0.1 h1:v3fCBv5iZLz/qX3QqTjmImZZktNKq33oGm2gOUKlzsQ=
+github.com/yasin-wu/fileparser v1.0.1/go.mod h1:5rOCylA1K+6XajCl51pTljBL6A5su95gDCqKvLOx5Hk=
 github.com/yasin-wu/go-tika v0.2.0 h1:vtQCPjfNA8gzzaPwS2FrjeKoo6OwwnKXc+oUBovsRvQ=
 github.com/yasin-wu/go-tika v0.2.0/go.mod h1:MbWHSiiExeHjyMjrn1GFaZ1Y9O/IA4OdVkZKlDljmg4=
-github.com/yasin-wu/similarity v1.0.0 h1:wyG0iNb4fxqvOIznAoSd8uQeQWGAvnOdo33uzqV5lZQ=
-github.com/yasin-wu/similarity v1.0.0/go.mod h1:wArpoCQGaKPcx+V7gB77orS2PgDfexbRWWl1IH9SJTo=
-github.com/yasin-wu/utils v1.0.0 h1:wq3aqca47+fgQ8mF1mqsHZc5KjjPY5lAbZNmykRrrx0=
-github.com/yasin-wu/utils v1.0.0/go.mod h1:7FelsMJhZZnL4mUIcWMgDrN7VbJIgaYDIXOZ0LP4QMQ=
 github.com/yasin-wu/utils v1.0.1 h1:b4myzDaE9D9f4+P5qtyhCs27QmSXSv8xR6GBW0VLGmo=
 github.com/yasin-wu/utils v1.0.1/go.mod h1:CcDJFWcPvQbXIJJ8mJnAOItFYvjxsPHxgXdIokZUaKc=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
