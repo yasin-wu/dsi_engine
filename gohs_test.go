@@ -4,6 +4,7 @@ import (
 	"fmt"
 	gohs2 "github.com/yasin-wu/dlp/gohs"
 	"github.com/yasin-wu/dlp/rule"
+	"os"
 	"testing"
 
 	"github.com/flier/gohs/hyperscan"
@@ -15,6 +16,8 @@ func TestGohs(t *testing.T) {
 		fmt.Println(err)
 		return
 	}
+	pwd, _ := os.Getwd()
+	err = rule.AddRule(pwd + "/rules.json")
 	rm := rule.RulesMap
 	inputData := "My name is Bob;" +
 		"电话号码:18108279331;" +
@@ -23,7 +26,7 @@ func TestGohs(t *testing.T) {
 	var patterns []*hyperscan.Pattern
 	pattern1 := hyperscan.NewPattern(rm["IPV6"].(map[string]interface{})["rule"].(string), hyperscan.SomLeftMost|hyperscan.Utf8Mode)
 	pattern1.Id = 1
-	pattern2 := hyperscan.NewPattern("Bob", hyperscan.SomLeftMost|hyperscan.Utf8Mode)
+	pattern2 := hyperscan.NewPattern(rm["USER_NAME"].(map[string]interface{})["rule"].(string), hyperscan.SomLeftMost|hyperscan.Utf8Mode)
 	pattern2.Id = 2
 	pattern3 := hyperscan.NewPattern(rm["PHONE_NUMBER"].(map[string]interface{})["rule"].(string), hyperscan.SomLeftMost|hyperscan.Utf8Mode)
 	pattern3.Id = 3

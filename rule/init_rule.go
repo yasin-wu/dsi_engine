@@ -1,8 +1,8 @@
 package rule
 
 import (
-	"fmt"
 	js "github.com/bitly/go-simplejson"
+	"github.com/yasin-wu/dlp/consts"
 	"io/ioutil"
 	"os"
 )
@@ -10,8 +10,22 @@ import (
 var RulesMap = make(map[string]interface{})
 
 func InitRule() error {
-	pwd, _ := os.Getwd()
-	filePath := fmt.Sprintf("%s/%s", pwd, "rule/rules.json")
+	ruleBytes := []byte(rule)
+	j, err := js.NewJson(ruleBytes)
+	if err != nil {
+		return err
+	}
+	RulesMap, err = j.Map()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func AddRule(filePath string) error {
+	if filePath == "" {
+		return consts.ErrParameterEmpty
+	}
 	file, err := os.Open(filePath)
 	if err != nil {
 		return err
@@ -21,14 +35,16 @@ func InitRule() error {
 	if err != nil {
 		return err
 	}
-
 	j, err := js.NewJson(content)
 	if err != nil {
 		return err
 	}
-	RulesMap, err = j.Map()
+	m, err := j.Map()
 	if err != nil {
 		return err
+	}
+	for k, v := range m {
+		RulesMap[k] = v
 	}
 	return nil
 }

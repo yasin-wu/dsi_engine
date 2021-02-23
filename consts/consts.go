@@ -1,5 +1,7 @@
 package consts
 
+import "errors"
+
 const (
 	RuleTypeKeyWords   = 1
 	RuleTypeFuzzyWords = 2
@@ -32,4 +34,8 @@ const (
 	GRuleName     = "FileGRule"
 	GRuleVersion  = "1.0.0"
 	GRuleMaxCycle = 1
+)
+
+var (
+	ErrParameterEmpty = errors.New("parameter is empty")
 )

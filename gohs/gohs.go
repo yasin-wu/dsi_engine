@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/flier/gohs/hyperscan"
+	"github.com/yasin-wu/dlp/rule"
 )
 
 type Match struct {
@@ -20,7 +21,9 @@ type Gohs struct {
 }
 
 func (this *Gohs) Run(inputData string) ([]*Match, error) {
-
+	if rule.RulesMap == nil || len(rule.RulesMap) == 0 {
+		return nil, errors.New("RulesMap is nil")
+	}
 	db, err := hyperscan.NewBlockDatabase(this.Patterns...)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("NewBlockDatabase err: %v", err.Error()))
