@@ -3,6 +3,9 @@ package dlp
 import (
 	"errors"
 	"fmt"
+	"github.com/yasin-wu/dlp/consts"
+	"github.com/yasin-wu/dlp/gohs"
+	"github.com/yasin-wu/dlp/rule"
 	"sort"
 	"strconv"
 	"time"
@@ -44,7 +47,7 @@ func (this *Inspect) Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error)
 	}
 	patterns = append(patterns, infoTypePatters...)
 	patterns = append(patterns, customInfoTypePatters...)
-	gohs := &Gohs{
+	gohs := &gohs.Gohs{
 		Patterns: patterns,
 	}
 	matches, err := gohs.Run(inputData.MustString())
@@ -60,6 +63,10 @@ func (this *Inspect) Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error)
  * @description：1000
  */
 func (this *Inspect) handleInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
+	err := rule.InitRule()
+	if err != nil {
+		return nil
+	}
 	infoTypes, ok := inspectConfig.CheckGet("infoTypes")
 	if !ok {
 		return nil
@@ -71,8 +78,8 @@ func (this *Inspect) handleInfoTypes(inspectConfig *js.Json) []*hyperscan.Patter
 			break
 		}
 		name := infoType.Get("name").MustString()
-		pattern := hyperscan.NewPattern(InfoTypeMaps[name], hyperscan.SomLeftMost|hyperscan.Utf8Mode)
-		id := fmt.Sprintf("%d%d", InfoTypeID, index)
+		pattern := hyperscan.NewPattern(rule.RulesMap[name].(map[string]interface{})["rule"].(string), hyperscan.SomLeftMost|hyperscan.Utf8Mode)
+		id := fmt.Sprintf("%d%d", consts.InfoTypeID, index)
 		pattern.Id, _ = strconv.Atoi(id)
 		patterns = append(patterns, pattern)
 	}
@@ -97,7 +104,7 @@ func (this *Inspect) handleCustomInfoTypes(inspectConfig *js.Json) []*hyperscan.
 		}
 		patternStr := infoType.GetPath("regex", "pattern").MustString()
 		pattern := hyperscan.NewPattern(patternStr, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
-		id := fmt.Sprintf("%d%d", CustomInfoTypeID, index)
+		id := fmt.Sprintf("%d%d", consts.CustomInfoTypeID, index)
 		pattern.Id, _ = strconv.Atoi(id)
 		patterns = append(patterns, pattern)
 	}
@@ -109,7 +116,7 @@ func (this *Inspect) handleCustomInfoTypes(inspectConfig *js.Json) []*hyperscan.
  * @date: 2020/7/13 15:37
  * @description：
  */
-func (this *Inspect) handleInspect(matches []*Match, jsonBody *js.Json, allCheckTypes []*js.Json) *js.Json {
+func (this *Inspect) handleInspect(matches []*gohs.Match, jsonBody *js.Json, allCheckTypes []*js.Json) *js.Json {
 	jsonObj := js.New()
 	if matches == nil {
 		return nil
@@ -140,8 +147,12 @@ func (this *Inspect) handleInspect(matches []*Match, jsonBody *js.Json, allCheck
  * @description：3000
  */
 func (this *Inspect) handleAllCheck() ([]*hyperscan.Pattern, []*js.Json) {
+	err := rule.InitRule()
+	if err != nil {
+		return nil, nil
+	}
 	var infoTypes []*js.Json
-	for k, _ := range InfoTypeMaps {
+	for k, _ := range rule.RulesMap {
 		jsonObj := js.New()
 		jsonObj.Set("name", k)
 
@@ -151,8 +162,8 @@ func (this *Inspect) handleAllCheck() ([]*hyperscan.Pattern, []*js.Json) {
 	for index := 0; index < len(infoTypes); index++ {
 		infoType := infoTypes[index]
 		name := infoType.Get("name").MustString()
-		pattern := hyperscan.NewPattern(InfoTypeMaps[name], hyperscan.SomLeftMost|hyperscan.Utf8Mode)
-		id := fmt.Sprintf("%d%d", AllCheckID, index)
+		pattern := hyperscan.NewPattern(rule.RulesMap[name].(map[string]interface{})["rule"].(string), hyperscan.SomLeftMost|hyperscan.Utf8Mode)
+		id := fmt.Sprintf("%d%d", consts.AllCheckID, index)
 		pattern.Id, _ = strconv.Atoi(id)
 		patterns = append(patterns, pattern)
 	}
@@ -165,11 +176,11 @@ func (this *Inspect) getInfoTypeName(id uint, jsonBody *js.Json, allCheckTypes [
 	_indexInt, _ := strconv.Atoi(idStr[4:])
 	infoTypeName := ""
 	switch _typeInt {
-	case InfoTypeID:
+	case consts.InfoTypeID:
 		infoTypeName = jsonBody.GetPath("inspectConfig", "infoTypes").GetIndex(_indexInt).Get("name").MustString()
-	case CustomInfoTypeID:
+	case consts.CustomInfoTypeID:
 		infoTypeName = jsonBody.GetPath("inspectConfig", "customInfoTypes").GetIndex(_indexInt).GetPath("infoType", "name").MustString()
-	case AllCheckID:
+	case consts.AllCheckID:
 		infoTypeName = allCheckTypes[_indexInt].Get("name").MustString()
 	default:
 		infoTypeName = "unknown"
@@ -178,8 +189,12 @@ func (this *Inspect) getInfoTypeName(id uint, jsonBody *js.Json, allCheckTypes [
 }
 
 func (this *Inspect) InfoTypeList() []string {
+	err := rule.InitRule()
+	if err != nil {
+		return nil
+	}
 	var infoTypes []string
-	for k, _ := range InfoTypeMaps {
+	for k, _ := range rule.RulesMap {
 		infoTypes = append(infoTypes, k)
 	}
 	sort.Strings(infoTypes)

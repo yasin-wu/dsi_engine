@@ -1,4 +1,4 @@
-package dlp
+package grule
 
 import (
 	"fmt"

@@ -2,6 +2,10 @@ package dlp
 
 import (
 	"fmt"
+	"github.com/yasin-wu/dlp/consts"
+	grule2 "github.com/yasin-wu/dlp/grule"
+	"github.com/yasin-wu/dlp/policy"
+	"github.com/yasin-wu/dlp/rule"
 	"os"
 	"testing"
 
@@ -15,7 +19,13 @@ import (
  * @description：文件策略匹配
  */
 func TestGRule(t *testing.T) {
-	filePolicy := &FilePolicy{
+	err := rule.InitRule()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	rm := rule.RulesMap
+	filePolicy := &policy.FilePolicy{
 		FilePath: "./sample/test.docx",
 		FileName: "test.docx",
 	}
@@ -35,35 +45,35 @@ func TestGRule(t *testing.T) {
 	}
 	filePolicy.FileSize = f.Size
 	filePolicy.Content = f.Content
-	policyContent1 := &RuleContent{
+	policyContent1 := &policy.RuleContent{
 		RuleId:           "1",
 		RuleName:         "正则匹配:地址信息",
-		RuleType:         RuleTypeRegexp,
-		Regexp:           AddressReg,
+		RuleType:         consts.RuleTypeRegexp,
+		Regexp:           rm["ADDRESS"].(map[string]interface{})["rule"].(string),
 		ForWardThreshold: 1,
 	}
-	policyContent2 := &RuleContent{
+	policyContent2 := &policy.RuleContent{
 		RuleId:           "2",
 		RuleName:         "模糊关键字:我们",
-		RuleType:         RuleTypeFuzzyWords,
+		RuleType:         consts.RuleTypeFuzzyWords,
 		ForWardKeyList:   []string{"我们"},
 		CharacterSpace:   5,
 		ForWardThreshold: 1,
 	}
-	policy1 := &PolicyInfo{
+	policy1 := &policy.PolicyInfo{
 		PolicyId:     "1",
-		Operators:    []int{RuleAnd},
-		RuleContents: []*RuleContent{policyContent1, policyContent2},
+		Operators:    []int{consts.RuleAnd},
+		RuleContents: []*policy.RuleContent{policyContent1, policyContent2},
 	}
-	policy2 := &PolicyInfo{
+	policy2 := &policy.PolicyInfo{
 		PolicyId:     "2",
-		Operators:    []int{RuleOr},
-		RuleContents: []*RuleContent{policyContent1, policyContent2},
+		Operators:    []int{consts.RuleOr},
+		RuleContents: []*policy.RuleContent{policyContent1, policyContent2},
 	}
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy1)
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy2)
 	for i, policyInfo := range filePolicy.PolicyInfos {
-		grule := &GRule{
+		grule := &grule2.GRule{
 			FilePolicy: filePolicy,
 			PolicyInfo: policyInfo,
 		}

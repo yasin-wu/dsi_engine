@@ -1,8 +1,11 @@
-package dlp
+package grule
 
 import (
 	"errors"
 	"fmt"
+	"github.com/yasin-wu/dlp/consts"
+	"github.com/yasin-wu/dlp/gohs"
+	"github.com/yasin-wu/dlp/policy"
 	"time"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
@@ -12,11 +15,11 @@ import (
 )
 
 type GRule struct {
-	FilePolicy       *FilePolicy
-	PolicyInfo       *PolicyInfo
-	PolicyAlarm      *PolicyAlarm
-	Matches          []*Match
-	RuleSnaps        []*RuleSnap
+	FilePolicy       *policy.FilePolicy
+	PolicyInfo       *policy.PolicyInfo
+	PolicyAlarm      *policy.PolicyAlarm
+	Matches          []*gohs.Match
+	RuleSnaps        []*policy.RuleSnap
 	FingerRatio      int
 	Rule             string
 	MatchFuncName    string
@@ -32,16 +35,16 @@ type GRule struct {
  */
 func (this *GRule) RunFileCheck() error {
 	if this.MatchFuncName == "" {
-		this.MatchFuncName = GRuleMatchFuncName
+		this.MatchFuncName = consts.GRuleMatchFuncName
 	}
 	if this.CallbackFuncName == "" {
-		this.CallbackFuncName = GRuleCallbackFuncName
+		this.CallbackFuncName = consts.GRuleCallbackFuncName
 	}
 	if this.AttachLength == 0 {
-		this.AttachLength = DefaultAttachLength
+		this.AttachLength = consts.DefaultAttachLength
 	}
 	if this.SnapLength == 0 {
-		this.SnapLength = DefaultSnapLength
+		this.SnapLength = consts.DefaultSnapLength
 	}
 	rule, err := this.handlePolicy()
 	if err != nil {
@@ -55,12 +58,12 @@ func (this *GRule) RunFileCheck() error {
 	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	ruleResource := pkg.NewBytesResource([]byte(rule))
-	err = ruleBuilder.BuildRuleFromResource(GRuleName, GRuleVersion, ruleResource)
+	err = ruleBuilder.BuildRuleFromResource(consts.GRuleName, consts.GRuleVersion, ruleResource)
 	if err != nil {
 		return errors.New(fmt.Sprintf("ruleBuilder.BuildRuleFromResource err: %v", err.Error()))
 	}
-	kb := lib.NewKnowledgeBaseInstance(GRuleName, GRuleVersion)
-	eng := &engine.GruleEngine{MaxCycle: GRuleMaxCycle}
+	kb := lib.NewKnowledgeBaseInstance(consts.GRuleName, consts.GRuleVersion)
+	eng := &engine.GruleEngine{MaxCycle: consts.GRuleMaxCycle}
 	err = eng.Execute(dataContext, kb)
 	if err != nil {
 		return errors.New(fmt.Sprintf("eng.Execute err: %v", err.Error()))
@@ -80,21 +83,21 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 	ruleType := ruleContent.RuleType
 	matched := false
 	inputData := ""
-	var matches []*Match
+	var matches []*gohs.Match
 	distance := 100
 	switch ruleType {
-	case RuleTypeKeyWords:
+	case consts.RuleTypeKeyWords:
 		matches, inputData, matched = this.MatchKeyWords(ruleContent)
-	case RuleTypeFuzzyWords:
+	case consts.RuleTypeFuzzyWords:
 		matches, inputData, matched = this.MatchFuzzyWords(ruleContent)
-	case RuleTypeRegexp:
+	case consts.RuleTypeRegexp:
 		matches, inputData, matched = this.MatchRegexp(ruleContent)
-	case RuleTypeFingerDNA:
+	case consts.RuleTypeFingerDNA:
 		distance, inputData, matched = this.MatchFinger()
 	default:
 	}
 	if matched {
-		ruleSnap := &RuleSnap{}
+		ruleSnap := &policy.RuleSnap{}
 		ruleSnap.RuleId = ruleContent.RuleId
 		ruleSnap.RuleName = ruleContent.RuleName
 		ruleSnap.RuleType = ruleType
@@ -103,7 +106,7 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 		ruleSnap.LevelName = ruleContent.RuleName
 		ruleSnap.Snap = this.handleSnap(matches, inputData)
 		this.RuleSnaps = append(this.RuleSnaps, ruleSnap)
-		if ruleType == RuleTypeFingerDNA {
+		if ruleType == consts.RuleTypeFingerDNA {
 			this.FingerRatio = distance
 		}
 	}
@@ -138,9 +141,9 @@ func (this *GRule) handlePolicy() (string, error) {
 			if i == 0 {
 				patterns = fmt.Sprintf(`%v(%d)`, this.MatchFuncName, i)
 			}
-			if operator == RuleAnd {
+			if operator == consts.RuleAnd {
 				patterns += fmt.Sprintf(` && %v(%d)`, this.MatchFuncName, i+1)
-			} else if operator == RuleOr {
+			} else if operator == consts.RuleOr {
 				patterns += fmt.Sprintf(` || %v(%d)`, this.MatchFuncName, i+1)
 			}
 		}
@@ -155,8 +158,8 @@ func (this *GRule) handlePolicy() (string, error) {
  * @date: 2020/6/28 13:44
  * @description：handle policyAlarm
  */
-func (this *GRule) handlePolicyAlarm() *PolicyAlarm {
-	policyAlarm := &PolicyAlarm{}
+func (this *GRule) handlePolicyAlarm() *policy.PolicyAlarm {
+	policyAlarm := &policy.PolicyAlarm{}
 	filePolicy := this.FilePolicy
 	policyInfo := this.PolicyInfo
 	matchTimes := 0
@@ -183,7 +186,7 @@ func (this *GRule) handlePolicyAlarm() *PolicyAlarm {
 	return policyAlarm
 }
 
-func (this *GRule) handleSnap(matches []*Match, inputData string) string {
+func (this *GRule) handleSnap(matches []*gohs.Match, inputData string) string {
 	snap := ""
 	snapLength := uint64(this.SnapLength)
 	inputDataLength := uint64(len(inputData))

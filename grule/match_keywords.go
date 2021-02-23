@@ -1,7 +1,9 @@
-package dlp
+package grule
 
 import (
 	"github.com/flier/gohs/hyperscan"
+	"github.com/yasin-wu/dlp/gohs"
+	"github.com/yasin-wu/dlp/policy"
 )
 
 /**
@@ -9,7 +11,7 @@ import (
  * @date: 2020/6/24 15:53
  * @description：RuleTypeKeyWords
  */
-func (this *GRule) MatchKeyWords(ruleContent *RuleContent) ([]*Match, string, bool) {
+func (this *GRule) MatchKeyWords(ruleContent *policy.RuleContent) ([]*gohs.Match, string, bool) {
 	inputData := this.FilePolicy.FileName
 	matches, matched := this.matchKeyWords(ruleContent, this.FilePolicy.FileName)
 	if !matched {
@@ -19,14 +21,14 @@ func (this *GRule) MatchKeyWords(ruleContent *RuleContent) ([]*Match, string, bo
 	return matches, inputData, matched
 }
 
-func (this *GRule) matchKeyWords(ruleContent *RuleContent, inputData string) ([]*Match, bool) {
+func (this *GRule) matchKeyWords(ruleContent *policy.RuleContent, inputData string) ([]*gohs.Match, bool) {
 	exitReverse := len(ruleContent.ReverseKeyList) > 0
 	if exitReverse {
 		patterns := this.getKeyWordsPatterns(ruleContent.ReverseKeyList)
 		if patterns == nil {
 			return nil, false
 		}
-		gohs := &Gohs{Patterns: patterns}
+		gohs := &gohs.Gohs{Patterns: patterns}
 		matches, err := gohs.Run(inputData)
 		if err != nil {
 			return nil, false
@@ -39,7 +41,7 @@ func (this *GRule) matchKeyWords(ruleContent *RuleContent, inputData string) ([]
 	if patterns == nil {
 		return nil, false
 	}
-	gohs := &Gohs{Patterns: patterns}
+	gohs := &gohs.Gohs{Patterns: patterns}
 	matches, err := gohs.Run(inputData)
 	if err != nil {
 		return nil, false

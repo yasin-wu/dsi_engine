@@ -1,4 +1,4 @@
-package dlp
+package policy
 
 import js "github.com/bitly/go-simplejson"
 
