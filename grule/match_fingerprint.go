@@ -14,17 +14,17 @@ import (
  * @date: 2020/7/23 08:53
  * @description：RuleTypeFingerDNA
  */
-func (this *GRule) MatchFinger() (int, string, bool) {
-	inputData := this.FilePolicy.FileName
-	distance, matched := this.matchFinger(this.FilePolicy.FingerPrints, this.FilePolicy.FingerRatio, this.FilePolicy.FileName)
+func (this *GRule) matchFinger() (int, string, bool) {
+	inputData := this.filePolicy.FileName
+	distance, matched := this.doMatchFinger(this.filePolicy.FingerPrints, this.filePolicy.FingerRatio, this.filePolicy.FileName)
 	if !matched {
-		inputData = this.FilePolicy.Content
-		distance, matched = this.matchFinger(this.FilePolicy.FingerPrints, this.FilePolicy.FingerRatio, this.FilePolicy.Content)
+		inputData = this.filePolicy.Content
+		distance, matched = this.doMatchFinger(this.filePolicy.FingerPrints, this.filePolicy.FingerRatio, this.filePolicy.Content)
 	}
 	return distance, inputData, matched
 }
 
-func (this *GRule) matchFinger(fingerPrints *js.Json, fingerRatio int, inputData string) (int, bool) {
+func (this *GRule) doMatchFinger(fingerPrints *js.Json, fingerRatio int, inputData string) (int, bool) {
 	_, dstFinger := similarity.ExtractWithWeight(inputData, 0, nil)
 	distance := this.computeFileHammingDistance(fingerPrints, dstFinger)
 	distance2 := this.computeWordHammingDistance(fingerPrints, dstFinger)

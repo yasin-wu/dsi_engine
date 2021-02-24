@@ -1,8 +1,7 @@
 package grule
 
 import (
-	"github.com/flier/gohs/hyperscan"
-	"github.com/yasin-wu/dlp/gohs"
+	gohs2 "github.com/yasin-wu/dlp/gohs"
 	"github.com/yasin-wu/dlp/policy"
 )
 
@@ -11,23 +10,22 @@ import (
 * @date: 2020/6/24 15:53
 * @description：RuleTypeRegexpTag
  */
-func (this *GRule) MatchRegexp(ruleContent *policy.RuleContent) ([]*gohs.Match, string, bool) {
-	inputData := this.FilePolicy.FileName
-	matches, matched := this.matchRegexp(ruleContent, this.FilePolicy.FileName)
+func (this *GRule) matchRegexp(ruleContent *policy.RuleContent) ([]*gohs2.Match, string, bool) {
+	inputData := this.filePolicy.FileName
+	matches, matched := this.doMatchRegexp(ruleContent, this.filePolicy.FileName)
 	if !matched {
-		inputData = this.FilePolicy.Content
-		matches, matched = this.matchRegexp(ruleContent, this.FilePolicy.Content)
+		inputData = this.filePolicy.Content
+		matches, matched = this.doMatchRegexp(ruleContent, this.filePolicy.Content)
 	}
 	return matches, inputData, matched
 }
 
-func (this *GRule) matchRegexp(ruleContent *policy.RuleContent, inputData string) ([]*gohs.Match, bool) {
+func (this *GRule) doMatchRegexp(ruleContent *policy.RuleContent, inputData string) ([]*gohs2.Match, bool) {
 	regexp := ruleContent.Regexp
-	patterns := this.getRegexpPatterns(regexp)
-	if patterns == nil {
+	if regexp == "" {
 		return nil, false
 	}
-	gohs := &gohs.Gohs{Patterns: patterns}
+	gohs := gohs2.New(&gohs2.Regexp{Regexp: regexp})
 	matches, err := gohs.Run(inputData)
 	if err != nil {
 		return nil, false
@@ -36,11 +34,4 @@ func (this *GRule) matchRegexp(ruleContent *policy.RuleContent, inputData string
 		return nil, false
 	}
 	return matches, true
-}
-
-func (this *GRule) getRegexpPatterns(regexp string) []*hyperscan.Pattern {
-	var patterns []*hyperscan.Pattern
-	pattern := hyperscan.NewPattern(regexp, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
-	patterns = append(patterns, pattern)
-	return patterns
 }

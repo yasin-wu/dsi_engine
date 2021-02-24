@@ -1,8 +1,7 @@
 package grule
 
 import (
-	"github.com/flier/gohs/hyperscan"
-	"github.com/yasin-wu/dlp/gohs"
+	gohs2 "github.com/yasin-wu/dlp/gohs"
 	"github.com/yasin-wu/dlp/policy"
 )
 
@@ -11,24 +10,24 @@ import (
  * @date: 2020/6/24 15:53
  * @description：RuleTypeKeyWords
  */
-func (this *GRule) MatchKeyWords(ruleContent *policy.RuleContent) ([]*gohs.Match, string, bool) {
-	inputData := this.FilePolicy.FileName
-	matches, matched := this.matchKeyWords(ruleContent, this.FilePolicy.FileName)
+func (this *GRule) matchKeyWords(ruleContent *policy.RuleContent) ([]*gohs2.Match, string, bool) {
+	inputData := this.filePolicy.FileName
+	matches, matched := this.doMatchKeyWords(ruleContent, this.filePolicy.FileName)
 	if !matched {
-		inputData = this.FilePolicy.Content
-		matches, matched = this.matchKeyWords(ruleContent, this.FilePolicy.Content)
+		inputData = this.filePolicy.Content
+		matches, matched = this.doMatchKeyWords(ruleContent, this.filePolicy.Content)
 	}
 	return matches, inputData, matched
 }
 
-func (this *GRule) matchKeyWords(ruleContent *policy.RuleContent, inputData string) ([]*gohs.Match, bool) {
+func (this *GRule) doMatchKeyWords(ruleContent *policy.RuleContent, inputData string) ([]*gohs2.Match, bool) {
 	exitReverse := len(ruleContent.ReverseKeyList) > 0
 	if exitReverse {
-		patterns := this.getKeyWordsPatterns(ruleContent.ReverseKeyList)
-		if patterns == nil {
+		regexps := this.getKeyWordsRegexps(ruleContent.ReverseKeyList)
+		if regexps == nil {
 			return nil, false
 		}
-		gohs := &gohs.Gohs{Patterns: patterns}
+		gohs := gohs2.New(regexps...)
 		matches, err := gohs.Run(inputData)
 		if err != nil {
 			return nil, false
@@ -37,11 +36,11 @@ func (this *GRule) matchKeyWords(ruleContent *policy.RuleContent, inputData stri
 			return nil, false
 		}
 	}
-	patterns := this.getKeyWordsPatterns(ruleContent.ForWardKeyList)
-	if patterns == nil {
+	regexps := this.getKeyWordsRegexps(ruleContent.ForWardKeyList)
+	if regexps == nil {
 		return nil, false
 	}
-	gohs := &gohs.Gohs{Patterns: patterns}
+	gohs := gohs2.New(regexps...)
 	matches, err := gohs.Run(inputData)
 	if err != nil {
 		return nil, false
@@ -52,11 +51,13 @@ func (this *GRule) matchKeyWords(ruleContent *policy.RuleContent, inputData stri
 	return matches, true
 }
 
-func (this *GRule) getKeyWordsPatterns(keyWords []string) []*hyperscan.Pattern {
-	var patterns []*hyperscan.Pattern
+func (this *GRule) getKeyWordsRegexps(keyWords []string) []*gohs2.Regexp {
+	var regexps []*gohs2.Regexp
 	for _, word := range keyWords {
-		pattern := hyperscan.NewPattern(word, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
-		patterns = append(patterns, pattern)
+		regexp := &gohs2.Regexp{
+			Regexp: word,
+		}
+		regexps = append(regexps, regexp)
 	}
-	return patterns
+	return regexps
 }

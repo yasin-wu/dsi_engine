@@ -16,7 +16,7 @@ type Match struct {
 }
 
 type Gohs struct {
-	Patterns []*hyperscan.Pattern
+	patterns []*hyperscan.Pattern
 }
 
 type Regexp struct {
@@ -24,11 +24,15 @@ type Regexp struct {
 	Regexp string
 }
 
+func New(regexps ...*Regexp) *Gohs {
+	return &Gohs{patterns: addRegexps(regexps...)}
+}
+
 func (this *Gohs) Run(inputData string) ([]*Match, error) {
-	if this.Patterns == nil || len(this.Patterns) == 0 {
+	if this.patterns == nil || len(this.patterns) == 0 {
 		return nil, errors.New("patterns is nil")
 	}
-	db, err := hyperscan.NewBlockDatabase(this.Patterns...)
+	db, err := hyperscan.NewBlockDatabase(this.patterns...)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("NewBlockDatabase err: %v", err.Error()))
 	}
@@ -51,12 +55,12 @@ func (this *Gohs) Run(inputData string) ([]*Match, error) {
 	return matches, nil
 }
 
-func (this *Gohs) AddPattern(regexps ...*Regexp) {
+func addRegexps(regexps ...*Regexp) []*hyperscan.Pattern {
 	var patterns []*hyperscan.Pattern
 	for _, v := range regexps {
 		pattern := hyperscan.NewPattern(v.Regexp, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
 		pattern.Id = v.Id
 		patterns = append(patterns, pattern)
 	}
-	this.Patterns = patterns
+	return patterns
 }

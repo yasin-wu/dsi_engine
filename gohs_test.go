@@ -21,7 +21,6 @@ func TestGohs(t *testing.T) {
 		"电话号码:18108279331;" +
 		"测试IPV6地址正则:fe80::ec61:c1d1:9827:82be%13;" +
 		"地址信息:四川省成都市武侯区府城大道天府新谷6号楼607室."
-	var regexps []*gohs2.Regexp
 	regexp1 := &gohs2.Regexp{
 		Id:     1,
 		Regexp: rm["IPV6"].(map[string]interface{})["rule"].(string),
@@ -38,9 +37,7 @@ func TestGohs(t *testing.T) {
 		Id:     4,
 		Regexp: rm["ADDRESS"].(map[string]interface{})["rule"].(string),
 	}
-	regexps = append(regexps, regexp1, regexp2, regexp3, regexp4)
-	gohs := &gohs2.Gohs{}
-	gohs.AddPattern(regexps...)
+	gohs := gohs2.New(regexp1, regexp2, regexp3, regexp4)
 	matches, err := gohs.Run(inputData)
 	if err != nil {
 		t.Error(err.Error())

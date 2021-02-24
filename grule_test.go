@@ -73,11 +73,8 @@ func TestGRule(t *testing.T) {
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy1)
 	filePolicy.PolicyInfos = append(filePolicy.PolicyInfos, policy2)
 	for i, policyInfo := range filePolicy.PolicyInfos {
-		grule := &grule2.GRule{
-			FilePolicy: filePolicy,
-			PolicyInfo: policyInfo,
-		}
-		err = grule.RunFileCheck()
+		grule := grule2.New(filePolicy, policyInfo)
+		err = grule.RunCheckFile()
 		if err != nil {
 			t.Errorf("grule.RunFileCheck err:%s", err.Error())
 			continue

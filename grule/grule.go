@@ -15,17 +15,42 @@ import (
 )
 
 type GRule struct {
-	FilePolicy       *policy.FilePolicy
-	PolicyInfo       *policy.PolicyInfo
-	PolicyAlarm      *policy.PolicyAlarm
-	Matches          []*gohs.Match
-	RuleSnaps        []*policy.RuleSnap
-	FingerRatio      int
-	Rule             string
-	MatchFuncName    string
-	CallbackFuncName string
-	SnapLength       int
-	AttachLength     int
+	PolicyAlarm *policy.PolicyAlarm
+
+	filePolicy       *policy.FilePolicy
+	policyInfo       *policy.PolicyInfo
+	fingerRatio      int
+	snapLength       int
+	attachLength     int
+	matchFuncName    string
+	callbackFuncName string
+	rule             string
+	matches          []*gohs.Match
+	ruleSnaps        []*policy.RuleSnap
+}
+
+func New(filePolicy *policy.FilePolicy, policyInfo *policy.PolicyInfo) *GRule {
+	return &GRule{filePolicy: filePolicy, policyInfo: policyInfo}
+}
+
+func (this *GRule) SetFingerRatio(fingerRatio int) {
+	this.fingerRatio = fingerRatio
+}
+
+func (this *GRule) SetSnapLength(snapLength int) {
+	this.snapLength = snapLength
+}
+
+func (this *GRule) SetAttachLength(attachLength int) {
+	this.attachLength = attachLength
+}
+
+func (this *GRule) SetMatchFuncName(matchFuncName string) {
+	this.matchFuncName = matchFuncName
+}
+
+func (this *GRule) SetCallbackFuncName(callbackFuncName string) {
+	this.callbackFuncName = callbackFuncName
 }
 
 /**
@@ -33,18 +58,18 @@ type GRule struct {
  * @date: 2020/6/28 13:42
  * @description：main func
  */
-func (this *GRule) RunFileCheck() error {
-	if this.MatchFuncName == "" {
-		this.MatchFuncName = consts.GRuleMatchFuncName
+func (this *GRule) RunCheckFile() error {
+	if this.matchFuncName == "" {
+		this.matchFuncName = consts.GRuleMatchFuncName
 	}
-	if this.CallbackFuncName == "" {
-		this.CallbackFuncName = consts.GRuleCallbackFuncName
+	if this.callbackFuncName == "" {
+		this.callbackFuncName = consts.GRuleCallbackFuncName
 	}
-	if this.AttachLength == 0 {
-		this.AttachLength = consts.DefaultAttachLength
+	if this.attachLength == 0 {
+		this.attachLength = consts.DefaultAttachLength
 	}
-	if this.SnapLength == 0 {
-		this.SnapLength = consts.DefaultSnapLength
+	if this.snapLength == 0 {
+		this.snapLength = consts.DefaultSnapLength
 	}
 	rule, err := this.handlePolicy()
 	if err != nil {
@@ -78,7 +103,7 @@ func (this *GRule) RunFileCheck() error {
  * @description：one match func
  */
 func (this *GRule) DoMatch(ruleContentIndex int64) bool {
-	policyInfo := this.PolicyInfo
+	policyInfo := this.policyInfo
 	ruleContent := policyInfo.RuleContents[ruleContentIndex]
 	ruleType := ruleContent.RuleType
 	matched := false
@@ -87,13 +112,13 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 	distance := 100
 	switch ruleType {
 	case consts.RuleTypeKeyWords:
-		matches, inputData, matched = this.MatchKeyWords(ruleContent)
+		matches, inputData, matched = this.matchKeyWords(ruleContent)
 	case consts.RuleTypeFuzzyWords:
-		matches, inputData, matched = this.MatchFuzzyWords(ruleContent)
+		matches, inputData, matched = this.matchFuzzyWords(ruleContent)
 	case consts.RuleTypeRegexp:
-		matches, inputData, matched = this.MatchRegexp(ruleContent)
+		matches, inputData, matched = this.matchRegexp(ruleContent)
 	case consts.RuleTypeFingerDNA:
-		distance, inputData, matched = this.MatchFinger()
+		distance, inputData, matched = this.matchFinger()
 	default:
 	}
 	if matched {
@@ -105,9 +130,9 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 		ruleSnap.Level = ruleContent.Level
 		ruleSnap.LevelName = ruleContent.RuleName
 		ruleSnap.Snap = this.handleSnap(matches, inputData)
-		this.RuleSnaps = append(this.RuleSnaps, ruleSnap)
+		this.ruleSnaps = append(this.ruleSnaps, ruleSnap)
 		if ruleType == consts.RuleTypeFingerDNA {
-			this.FingerRatio = distance
+			this.fingerRatio = distance
 		}
 	}
 	return matched
@@ -128,28 +153,28 @@ func (this *GRule) HandleResult() {
  * @description：handle policy
  */
 func (this *GRule) handlePolicy() (string, error) {
-	policyInfo := this.PolicyInfo
+	policyInfo := this.policyInfo
 	if len(policyInfo.RuleContents) != len(policyInfo.Operators)+1 {
 		return "", errors.New("policyInfo.RuleContents Or policyInfo.Operators Format Error ")
 	}
 	patterns := ""
 	if len(policyInfo.Operators) == 0 {
-		patterns = fmt.Sprintf(`%v(%d)`, this.MatchFuncName, 0)
+		patterns = fmt.Sprintf(`%v(%d)`, this.matchFuncName, 0)
 	} else {
 		for i := 0; i < len(policyInfo.Operators); i++ {
 			operator := policyInfo.Operators[i]
 			if i == 0 {
-				patterns = fmt.Sprintf(`%v(%d)`, this.MatchFuncName, i)
+				patterns = fmt.Sprintf(`%v(%d)`, this.matchFuncName, i)
 			}
 			if operator == consts.RuleAnd {
-				patterns += fmt.Sprintf(` && %v(%d)`, this.MatchFuncName, i+1)
+				patterns += fmt.Sprintf(` && %v(%d)`, this.matchFuncName, i+1)
 			} else if operator == consts.RuleOr {
-				patterns += fmt.Sprintf(` || %v(%d)`, this.MatchFuncName, i+1)
+				patterns += fmt.Sprintf(` || %v(%d)`, this.matchFuncName, i+1)
 			}
 		}
 	}
-	rule := fmt.Sprintf(`rule FileCheck "fileCheck" { when %v then %v; %v; }`, patterns, this.CallbackFuncName+"()", `Retract("FileCheck")`)
-	this.Rule = rule
+	rule := fmt.Sprintf(`rule FileCheck "fileCheck" { when %v then %v; %v; }`, patterns, this.callbackFuncName+"()", `Retract("FileCheck")`)
+	this.rule = rule
 	return rule, nil
 }
 
@@ -160,19 +185,19 @@ func (this *GRule) handlePolicy() (string, error) {
  */
 func (this *GRule) handlePolicyAlarm() *policy.PolicyAlarm {
 	policyAlarm := &policy.PolicyAlarm{}
-	filePolicy := this.FilePolicy
-	policyInfo := this.PolicyInfo
+	filePolicy := this.filePolicy
+	policyInfo := this.policyInfo
 	matchTimes := 0
 	snapShot := ""
 	now := time.Now()
-	for _, rs := range this.RuleSnaps {
+	for _, rs := range this.ruleSnaps {
 		matchTimes += rs.MatchTimes
 		snapShot += rs.Snap
 	}
-	if this.AttachLength > len(filePolicy.Content) {
-		this.AttachLength = len(filePolicy.Content)
+	if this.attachLength > len(filePolicy.Content) {
+		this.attachLength = len(filePolicy.Content)
 	}
-	policyAlarm.RuleSnaps = this.RuleSnaps
+	policyAlarm.RuleSnaps = this.ruleSnaps
 	policyAlarm.PolicyId = policyInfo.PolicyId
 	policyAlarm.FilePath = filePolicy.FilePath
 	policyAlarm.FileSize = filePolicy.FileSize
@@ -180,15 +205,15 @@ func (this *GRule) handlePolicyAlarm() *policy.PolicyAlarm {
 	policyAlarm.MatchTimes = matchTimes
 	policyAlarm.SnapShot = snapShot
 	policyAlarm.CreatedAt = now
-	policyAlarm.AttachWords = filePolicy.Content[0:this.AttachLength]
+	policyAlarm.AttachWords = filePolicy.Content[0:this.attachLength]
 	policyAlarm.MatchNote = this.handleMatchNote()
-	policyAlarm.FingerRatio = this.FingerRatio
+	policyAlarm.FingerRatio = this.fingerRatio
 	return policyAlarm
 }
 
 func (this *GRule) handleSnap(matches []*gohs.Match, inputData string) string {
 	snap := ""
-	snapLength := uint64(this.SnapLength)
+	snapLength := uint64(this.snapLength)
 	inputDataLength := uint64(len(inputData))
 	for _, match := range matches {
 		start := match.From - snapLength
@@ -205,7 +230,7 @@ func (this *GRule) handleSnap(matches []*gohs.Match, inputData string) string {
 			this.highlight(inputData[from:to]),
 			inputData[to:end]) + "......"
 		match.InputData = inputData
-		this.Matches = append(this.Matches, match)
+		this.matches = append(this.matches, match)
 	}
 
 	return snap
@@ -219,7 +244,7 @@ func (this *GRule) highlight(s string) string {
 func (this *GRule) handleMatchNote() string {
 	matchNote := ""
 	matchNoteMap := make(map[string]int)
-	for _, m := range this.Matches {
+	for _, m := range this.matches {
 		key := m.InputData[m.From:m.To]
 		matchNoteMap[key] += 1
 	}

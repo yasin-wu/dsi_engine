@@ -10,7 +10,7 @@ import (
 var RulesMap = make(map[string]interface{})
 
 func InitRule() error {
-	ruleBytes := []byte(rule)
+	ruleBytes := []byte(defaultRule)
 	j, err := js.NewJson(ruleBytes)
 	if err != nil {
 		return err

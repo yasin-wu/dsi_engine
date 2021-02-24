@@ -11,7 +11,6 @@ import (
 	"time"
 
 	js "github.com/bitly/go-simplejson"
-	"github.com/flier/gohs/hyperscan"
 )
 
 type Inspect struct {
@@ -33,23 +32,21 @@ func (this *Inspect) Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error)
 			return nil, errors.New("not found inspectConfig")
 		}
 	}
-	var patterns []*hyperscan.Pattern
+	var regexps []*gohs.Regexp
 	//infoTypes
-	infoTypePatters := this.handleInfoTypes(inspectConfig)
+	infoTypeRegexps := this.handleInfoTypes(inspectConfig)
 	//customInfoTypes
-	customInfoTypePatters := this.handleCustomInfoTypes(inspectConfig)
+	customInfoTypeRegexps := this.handleCustomInfoTypes(inspectConfig)
 	//allCheck
 	var allCheckTypes []*js.Json
-	var allCheckPatters []*hyperscan.Pattern
+	var allCheckRegexps []*gohs.Regexp
 	if allCheck {
-		allCheckPatters, allCheckTypes = this.handleAllCheck()
-		patterns = append(patterns, allCheckPatters...)
+		allCheckRegexps, allCheckTypes = this.handleAllCheck()
+		regexps = append(regexps, allCheckRegexps...)
 	}
-	patterns = append(patterns, infoTypePatters...)
-	patterns = append(patterns, customInfoTypePatters...)
-	gohs := &gohs.Gohs{
-		Patterns: patterns,
-	}
+	regexps = append(regexps, infoTypeRegexps...)
+	regexps = append(regexps, customInfoTypeRegexps...)
+	gohs := gohs.New(regexps...)
 	matches, err := gohs.Run(inputData.MustString())
 	if err != nil {
 		return nil, err
@@ -62,7 +59,7 @@ func (this *Inspect) Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error)
  * @date: 2020/7/13 15:28
  * @description：1000
  */
-func (this *Inspect) handleInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
+func (this *Inspect) handleInfoTypes(inspectConfig *js.Json) []*gohs.Regexp {
 	err := rule.InitRule()
 	if err != nil {
 		return nil
@@ -71,19 +68,22 @@ func (this *Inspect) handleInfoTypes(inspectConfig *js.Json) []*hyperscan.Patter
 	if !ok {
 		return nil
 	}
-	var patterns []*hyperscan.Pattern
+	var regexps []*gohs.Regexp
 	for index := 0; ; index++ {
 		infoType := infoTypes.GetIndex(index)
 		if infoType.Interface() == nil {
 			break
 		}
 		name := infoType.Get("name").MustString()
-		pattern := hyperscan.NewPattern(rule.RulesMap[name].(map[string]interface{})["rule"].(string), hyperscan.SomLeftMost|hyperscan.Utf8Mode)
 		id := fmt.Sprintf("%d%d", consts.InfoTypeID, index)
-		pattern.Id, _ = strconv.Atoi(id)
-		patterns = append(patterns, pattern)
+		idInt, _ := strconv.Atoi(id)
+		regexp := &gohs.Regexp{
+			Id:     idInt,
+			Regexp: rule.RulesMap[name].(map[string]interface{})["rule"].(string),
+		}
+		regexps = append(regexps, regexp)
 	}
-	return patterns
+	return regexps
 }
 
 /**
@@ -91,24 +91,26 @@ func (this *Inspect) handleInfoTypes(inspectConfig *js.Json) []*hyperscan.Patter
  * @date: 2020/7/13 15:28
  * @description：2000
  */
-func (this *Inspect) handleCustomInfoTypes(inspectConfig *js.Json) []*hyperscan.Pattern {
+func (this *Inspect) handleCustomInfoTypes(inspectConfig *js.Json) []*gohs.Regexp {
 	customInfoTypes, ok := inspectConfig.CheckGet("customInfoTypes")
 	if !ok {
 		return nil
 	}
-	var patterns []*hyperscan.Pattern
+	var regexps []*gohs.Regexp
 	for index := 0; ; index++ {
 		infoType := customInfoTypes.GetIndex(index)
 		if infoType.Interface() == nil {
 			break
 		}
-		patternStr := infoType.GetPath("regex", "pattern").MustString()
-		pattern := hyperscan.NewPattern(patternStr, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
 		id := fmt.Sprintf("%d%d", consts.CustomInfoTypeID, index)
-		pattern.Id, _ = strconv.Atoi(id)
-		patterns = append(patterns, pattern)
+		idInt, _ := strconv.Atoi(id)
+		regexp := &gohs.Regexp{
+			Id:     idInt,
+			Regexp: infoType.GetPath("regex", "pattern").MustString(),
+		}
+		regexps = append(regexps, regexp)
 	}
-	return patterns
+	return regexps
 }
 
 /**
@@ -146,7 +148,7 @@ func (this *Inspect) handleInspect(matches []*gohs.Match, jsonBody *js.Json, all
  * @date: 2020/8/18 16:21
  * @description：3000
  */
-func (this *Inspect) handleAllCheck() ([]*hyperscan.Pattern, []*js.Json) {
+func (this *Inspect) handleAllCheck() ([]*gohs.Regexp, []*js.Json) {
 	err := rule.InitRule()
 	if err != nil {
 		return nil, nil
@@ -158,16 +160,19 @@ func (this *Inspect) handleAllCheck() ([]*hyperscan.Pattern, []*js.Json) {
 
 		infoTypes = append(infoTypes, jsonObj)
 	}
-	var patterns []*hyperscan.Pattern
+	var regexps []*gohs.Regexp
 	for index := 0; index < len(infoTypes); index++ {
 		infoType := infoTypes[index]
 		name := infoType.Get("name").MustString()
-		pattern := hyperscan.NewPattern(rule.RulesMap[name].(map[string]interface{})["rule"].(string), hyperscan.SomLeftMost|hyperscan.Utf8Mode)
 		id := fmt.Sprintf("%d%d", consts.AllCheckID, index)
-		pattern.Id, _ = strconv.Atoi(id)
-		patterns = append(patterns, pattern)
+		idInt, _ := strconv.Atoi(id)
+		regexp := &gohs.Regexp{
+			Id:     idInt,
+			Regexp: rule.RulesMap[name].(map[string]interface{})["rule"].(string),
+		}
+		regexps = append(regexps, regexp)
 	}
-	return patterns, infoTypes
+	return regexps, infoTypes
 }
 
 func (this *Inspect) getInfoTypeName(id uint, jsonBody *js.Json, allCheckTypes []*js.Json) string {

@@ -2,11 +2,9 @@ package grule
 
 import (
 	"fmt"
-	"github.com/yasin-wu/dlp/gohs"
+	gohs2 "github.com/yasin-wu/dlp/gohs"
 	"github.com/yasin-wu/dlp/policy"
 	"strings"
-
-	"github.com/flier/gohs/hyperscan"
 )
 
 /**
@@ -14,24 +12,24 @@ import (
  * @date: 2020/6/24 15:53
  * @description：RuleTypeFuzzyWords
  */
-func (this *GRule) MatchFuzzyWords(ruleContent *policy.RuleContent) ([]*gohs.Match, string, bool) {
-	inputData := this.FilePolicy.FileName
-	matches, matched := this.matchFuzzyWords(ruleContent, this.FilePolicy.FileName)
+func (this *GRule) matchFuzzyWords(ruleContent *policy.RuleContent) ([]*gohs2.Match, string, bool) {
+	inputData := this.filePolicy.FileName
+	matches, matched := this.doMatchFuzzyWords(ruleContent, this.filePolicy.FileName)
 	if !matched {
-		inputData = this.FilePolicy.Content
-		matches, matched = this.matchFuzzyWords(ruleContent, this.FilePolicy.Content)
+		inputData = this.filePolicy.Content
+		matches, matched = this.doMatchFuzzyWords(ruleContent, this.filePolicy.Content)
 	}
 	return matches, inputData, matched
 }
 
-func (this *GRule) matchFuzzyWords(ruleContent *policy.RuleContent, inputData string) ([]*gohs.Match, bool) {
+func (this *GRule) doMatchFuzzyWords(ruleContent *policy.RuleContent, inputData string) ([]*gohs2.Match, bool) {
 	baseRegexp := ruleContent.ForWardKeyList
 	characterSpace := ruleContent.CharacterSpace
-	patterns := this.getFuzzyWordsPatterns(baseRegexp, fmt.Sprintf("%d", characterSpace))
-	if patterns == nil {
+	regexps := this.getFuzzyWordsRegexps(baseRegexp, fmt.Sprintf("%d", characterSpace))
+	if regexps == nil {
 		return nil, false
 	}
-	gohs := &gohs.Gohs{Patterns: patterns}
+	gohs := gohs2.New(regexps...)
 	matches, err := gohs.Run(inputData)
 	if err != nil {
 		return nil, false
@@ -42,9 +40,9 @@ func (this *GRule) matchFuzzyWords(ruleContent *policy.RuleContent, inputData st
 	return matches, true
 }
 
-func (this *GRule) getFuzzyWordsPatterns(baseRegexp []string, characterSpace string) []*hyperscan.Pattern {
+func (this *GRule) getFuzzyWordsRegexps(baseRegexp []string, characterSpace string) []*gohs2.Regexp {
 	characterSpace = fmt.Sprintf(`.{0,%s}`, characterSpace)
-	var patterns []*hyperscan.Pattern
+	var regexps []*gohs2.Regexp
 	for _, b := range baseRegexp {
 		wordList := strings.Split(b, "")
 		word := ""
@@ -52,8 +50,10 @@ func (this *GRule) getFuzzyWordsPatterns(baseRegexp []string, characterSpace str
 			word += w + characterSpace
 		}
 		word = word[0:strings.LastIndex(word, characterSpace)]
-		pattern := hyperscan.NewPattern(word, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
-		patterns = append(patterns, pattern)
+		regexp := &gohs2.Regexp{
+			Regexp: word,
+		}
+		regexps = append(regexps, regexp)
 	}
-	return patterns
+	return regexps
 }
