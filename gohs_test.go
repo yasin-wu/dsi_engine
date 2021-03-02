@@ -37,7 +37,11 @@ func TestGohs(t *testing.T) {
 		Id:     4,
 		Regexp: rm["ADDRESS"].(map[string]interface{})["rule"].(string),
 	}
-	gohs := gohs2.New(regexp1, regexp2, regexp3, regexp4)
+	gohs, err := gohs2.New(regexp1, regexp2, regexp3, regexp4)
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
 	matches, err := gohs.Run(inputData)
 	if err != nil {
 		t.Error(err.Error())

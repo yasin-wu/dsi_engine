@@ -46,7 +46,10 @@ func (this *Inspect) Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error)
 	}
 	regexps = append(regexps, infoTypeRegexps...)
 	regexps = append(regexps, customInfoTypeRegexps...)
-	gohs := gohs.New(regexps...)
+	gohs, err := gohs.New(regexps...)
+	if err != nil {
+		return nil, err
+	}
 	matches, err := gohs.Run(inputData.MustString())
 	if err != nil {
 		return nil, err

@@ -25,7 +25,10 @@ func (this *GRule) doMatchRegexp(ruleContent *policy.RuleContent, inputData stri
 	if regexp == "" {
 		return nil, false
 	}
-	gohs := gohs2.New(&gohs2.Regexp{Regexp: regexp})
+	gohs, err := gohs2.New(&gohs2.Regexp{Regexp: regexp})
+	if err != nil {
+		return nil, false
+	}
 	matches, err := gohs.Run(inputData)
 	if err != nil {
 		return nil, false

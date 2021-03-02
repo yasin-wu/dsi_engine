@@ -24,14 +24,14 @@ type Regexp struct {
 	Regexp string
 }
 
-func New(regexps ...*Regexp) *Gohs {
-	return &Gohs{patterns: addRegexps(regexps...)}
+func New(regexps ...*Regexp) (*Gohs, error) {
+	if regexps == nil || len(regexps) == 0 {
+		return nil, errors.New("parameter is empty")
+	}
+	return &Gohs{patterns: addRegexps(regexps...)}, nil
 }
 
 func (this *Gohs) Run(inputData string) ([]*Match, error) {
-	if this.patterns == nil || len(this.patterns) == 0 {
-		return nil, errors.New("patterns is nil")
-	}
 	db, err := hyperscan.NewBlockDatabase(this.patterns...)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("NewBlockDatabase err: %v", err.Error()))

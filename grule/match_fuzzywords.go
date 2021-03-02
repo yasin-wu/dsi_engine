@@ -29,7 +29,10 @@ func (this *GRule) doMatchFuzzyWords(ruleContent *policy.RuleContent, inputData 
 	if regexps == nil {
 		return nil, false
 	}
-	gohs := gohs2.New(regexps...)
+	gohs, err := gohs2.New(regexps...)
+	if err != nil {
+		return nil, false
+	}
 	matches, err := gohs.Run(inputData)
 	if err != nil {
 		return nil, false
