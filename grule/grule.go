@@ -29,8 +29,14 @@ type GRule struct {
 	ruleSnaps        []*policy.RuleSnap
 }
 
-func New(filePolicy *policy.FilePolicy, policyInfo *policy.PolicyInfo) *GRule {
-	return &GRule{filePolicy: filePolicy, policyInfo: policyInfo}
+func New(filePolicy *policy.FilePolicy, policyInfo *policy.PolicyInfo) (*GRule, error) {
+	if filePolicy == nil {
+		return nil, errors.New("filePolicy is nil")
+	}
+	if policyInfo == nil {
+		return nil, errors.New("policyInfo is nil")
+	}
+	return &GRule{filePolicy: filePolicy, policyInfo: policyInfo}, nil
 }
 
 func (this *GRule) SetFingerRatio(fingerRatio int) {
