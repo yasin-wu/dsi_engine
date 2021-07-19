@@ -11,7 +11,7 @@ import (
 	"github.com/yasin-wu/dlp/rule"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/yasin-wu/fileparser"
+	"github.com/yasin-wu/fileparser/parser"
 )
 
 /**
@@ -35,10 +35,10 @@ func TestGRule(t *testing.T) {
 		t.Errorf("os.open err:%v", err.Error())
 		return
 	}
-	cfg := fileparser.Config{
+	cfg := parser.Config{
 		TikaUrl: "http://47.108.155.25:9998",
 	}
-	c := fileparser.NewClient(cfg)
+	c := parser.NewClient(cfg)
 	f, err := c.ParseFile(true, file)
 	if err != nil {
 		t.Errorf("fileParse.FileParse err :%v", err)

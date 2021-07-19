@@ -1,3 +1,7 @@
+## 介绍
+Golang版本的自定义规则文件敏感信息识别
+## 安装
+````
 os:
     - linux
     - osx
@@ -13,10 +17,17 @@ addons:
             - hyperscan
             - libpcap
             - tree
-package:
-    go get -u github.com/flier/gohs
-    go get -u github.com/hyperjumptech/grule-rule-engine
-
+            package:
+go get -u github.com/flier/gohs
+go get -u github.com/hyperjumptech/grule-rule-engine
+go get -u github.com/yasin-wu/dlp
+````
+推荐使用go.mod
+````
+require github.com/yasin-wu/dlp v1.2.0
+````
+## 其他
+````
 func:infotypelist
 output json:
     "data": [
@@ -83,3 +94,4 @@ output json:
             }
         ]
     }
+````
