@@ -1,11 +1,11 @@
-package dlp
+package test
 
 import (
 	"fmt"
+	"testing"
+
 	gohs2 "github.com/yasin-wu/dlp/gohs"
 	"github.com/yasin-wu/dlp/rule"
-	"os"
-	"testing"
 )
 
 func TestGohs(t *testing.T) {
@@ -14,8 +14,7 @@ func TestGohs(t *testing.T) {
 		fmt.Println(err)
 		return
 	}
-	pwd, _ := os.Getwd()
-	err = rule.AddRule(pwd + "/rules.json")
+	err = rule.AddRule("../scripts/rules.json")
 	rm := rule.RulesMap
 	inputData := "My name is Bob;" +
 		"电话号码:18108279331;" +

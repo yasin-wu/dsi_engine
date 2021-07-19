@@ -1,13 +1,14 @@
-package dlp
+package test
 
 import (
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/yasin-wu/dlp/consts"
 	grule2 "github.com/yasin-wu/dlp/grule"
 	"github.com/yasin-wu/dlp/policy"
 	"github.com/yasin-wu/dlp/rule"
-	"os"
-	"testing"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/yasin-wu/fileparser"

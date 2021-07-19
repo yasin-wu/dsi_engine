@@ -1,14 +1,15 @@
-package dlp
+package grule
 
 import (
 	"errors"
 	"fmt"
-	"github.com/yasin-wu/dlp/consts"
-	"github.com/yasin-wu/dlp/gohs"
-	"github.com/yasin-wu/dlp/rule"
 	"sort"
 	"strconv"
 	"time"
+
+	"github.com/yasin-wu/dlp/consts"
+	"github.com/yasin-wu/dlp/gohs"
+	"github.com/yasin-wu/dlp/rule"
 
 	js "github.com/bitly/go-simplejson"
 )
@@ -157,7 +158,7 @@ func (this *Inspect) handleAllCheck() ([]*gohs.Regexp, []*js.Json) {
 		return nil, nil
 	}
 	var infoTypes []*js.Json
-	for k, _ := range rule.RulesMap {
+	for k := range rule.RulesMap {
 		jsonObj := js.New()
 		jsonObj.Set("name", k)
 
@@ -202,7 +203,7 @@ func (this *Inspect) InfoTypeList() []string {
 		return nil
 	}
 	var infoTypes []string
-	for k, _ := range rule.RulesMap {
+	for k := range rule.RulesMap {
 		infoTypes = append(infoTypes, k)
 	}
 	sort.Strings(infoTypes)
