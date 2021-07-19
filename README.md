@@ -1,6 +1,7 @@
 ## 介绍
-Golang版本的自定义规则文件敏感信息识别
+Golang版本的自定义规则文件敏感信息识别，使用了Intel的高性能正则表达式匹配库Hyperscan
 ## 安装
+可使用Dockerfile安装Hyperscan环境
 ````
 os:
     - linux
