@@ -3,10 +3,11 @@ package grule
 import (
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/yasin-wu/dlp/consts"
 	"github.com/yasin-wu/dlp/gohs"
 	"github.com/yasin-wu/dlp/policy"
-	"time"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
@@ -59,11 +60,6 @@ func (this *GRule) SetCallbackFuncName(callbackFuncName string) {
 	this.callbackFuncName = callbackFuncName
 }
 
-/**
- * @author: yasin
- * @date: 2020/6/28 13:42
- * @description：main func
- */
 func (this *GRule) RunCheckFile() error {
 	if this.matchFuncName == "" {
 		this.matchFuncName = consts.GRuleMatchFuncName
@@ -103,11 +99,6 @@ func (this *GRule) RunCheckFile() error {
 	return nil
 }
 
-/**
- * @author: yasin
- * @date: 2020/6/28 13:43
- * @description：one match func
- */
 func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 	policyInfo := this.policyInfo
 	ruleContent := policyInfo.RuleContents[ruleContentIndex]
@@ -144,20 +135,10 @@ func (this *GRule) DoMatch(ruleContentIndex int64) bool {
 	return matched
 }
 
-/**
- * @author: yasin
- * @date: 2020/6/28 13:43
- * @description：callback func
- */
 func (this *GRule) HandleResult() {
 	this.PolicyAlarm = this.handlePolicyAlarm()
 }
 
-/**
- * @author: yasin
- * @date: 2020/6/28 13:43
- * @description：handle policy
- */
 func (this *GRule) handlePolicy() (string, error) {
 	policyInfo := this.policyInfo
 	if len(policyInfo.RuleContents) != len(policyInfo.Operators)+1 {
@@ -184,11 +165,6 @@ func (this *GRule) handlePolicy() (string, error) {
 	return rule, nil
 }
 
-/**
- * @author: yasin
- * @date: 2020/6/28 13:44
- * @description：handle policyAlarm
- */
 func (this *GRule) handlePolicyAlarm() *policy.PolicyAlarm {
 	policyAlarm := &policy.PolicyAlarm{}
 	filePolicy := this.filePolicy

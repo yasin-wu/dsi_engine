@@ -5,11 +5,6 @@ import (
 	"github.com/yasin-wu/dlp/policy"
 )
 
-/**
-* @author: yasin
-* @date: 2020/6/24 15:53
-* @description：RuleTypeRegexpTag
- */
 func (this *GRule) matchRegexp(ruleContent *policy.RuleContent) ([]*gohs2.Match, string, bool) {
 	inputData := this.filePolicy.FileName
 	matches, matched := this.doMatchRegexp(ruleContent, this.filePolicy.FileName)

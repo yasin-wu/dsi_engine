@@ -9,11 +9,6 @@ import (
 	"github.com/yasin-wu/utils/similarity"
 )
 
-/**
- * @author: yasin
- * @date: 2020/7/23 08:53
- * @description：RuleTypeFingerDNA
- */
 func (this *GRule) matchFinger() (int, string, bool) {
 	inputData := this.filePolicy.FileName
 	distance, matched := this.doMatchFinger(this.filePolicy.FingerPrints, this.filePolicy.FingerRatio, this.filePolicy.FileName)

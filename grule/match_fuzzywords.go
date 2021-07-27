@@ -2,16 +2,12 @@ package grule
 
 import (
 	"fmt"
+	"strings"
+
 	gohs2 "github.com/yasin-wu/dlp/gohs"
 	"github.com/yasin-wu/dlp/policy"
-	"strings"
 )
 
-/**
- * @author: yasin
- * @date: 2020/6/24 15:53
- * @description：RuleTypeFuzzyWords
- */
 func (this *GRule) matchFuzzyWords(ruleContent *policy.RuleContent) ([]*gohs2.Match, string, bool) {
 	inputData := this.filePolicy.FileName
 	matches, matched := this.doMatchFuzzyWords(ruleContent, this.filePolicy.FileName)

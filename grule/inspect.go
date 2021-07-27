@@ -58,11 +58,6 @@ func (this *Inspect) Inspect(jsonBody *js.Json, allCheck bool) (*js.Json, error)
 	return this.handleInspect(matches, jsonBody, allCheckTypes), nil
 }
 
-/**
- * @author: yasin
- * @date: 2020/7/13 15:28
- * @description：1000
- */
 func (this *Inspect) handleInfoTypes(inspectConfig *js.Json) []*gohs.Regexp {
 	err := rule.InitRule()
 	if err != nil {
@@ -90,11 +85,6 @@ func (this *Inspect) handleInfoTypes(inspectConfig *js.Json) []*gohs.Regexp {
 	return regexps
 }
 
-/**
- * @author: yasin
- * @date: 2020/7/13 15:28
- * @description：2000
- */
 func (this *Inspect) handleCustomInfoTypes(inspectConfig *js.Json) []*gohs.Regexp {
 	customInfoTypes, ok := inspectConfig.CheckGet("customInfoTypes")
 	if !ok {
@@ -117,11 +107,6 @@ func (this *Inspect) handleCustomInfoTypes(inspectConfig *js.Json) []*gohs.Regex
 	return regexps
 }
 
-/**
- * @author: yasin
- * @date: 2020/7/13 15:37
- * @description：
- */
 func (this *Inspect) handleInspect(matches []*gohs.Match, jsonBody *js.Json, allCheckTypes []*js.Json) *js.Json {
 	jsonObj := js.New()
 	if matches == nil {
@@ -147,11 +132,6 @@ func (this *Inspect) handleInspect(matches []*gohs.Match, jsonBody *js.Json, all
 	return jsonObj
 }
 
-/**
- * @author: yasin
- * @date: 2020/8/18 16:21
- * @description：3000
- */
 func (this *Inspect) handleAllCheck() ([]*gohs.Regexp, []*js.Json) {
 	err := rule.InitRule()
 	if err != nil {

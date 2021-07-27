@@ -2,23 +2,6 @@ package policy
 
 import js "github.com/bitly/go-simplejson"
 
-/*FingerPrints Example
-	{
-    "filelist": [
-        {
-            "name": "test.docx",
-            "print": 18761893342504556 //int64
-        }
-    ],
-    "keylist": [
-        {
-            "name": "一页",
-            "weight": 189.170026, //float64
-            "print": 93079345118495184 //int64
-        }
-    ]
-}
-*/
 type FilePolicy struct {
 	Id           string        `json:"id"`
 	FileName     string        `json:"file_name"`
