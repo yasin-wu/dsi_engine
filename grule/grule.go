@@ -18,14 +18,14 @@ import (
 type GRule struct {
 	PolicyAlarm *policy.PolicyAlarm
 
-	filePolicy       *policy.FilePolicy
-	policyInfo       *policy.PolicyInfo
 	fingerRatio      int
 	snapLength       int
 	attachLength     int
 	matchFuncName    string
 	callbackFuncName string
 	rule             string
+	filePolicy       *policy.FilePolicy
+	policyInfo       *policy.PolicyInfo
 	matches          []*gohs.Match
 	ruleSnaps        []*policy.RuleSnap
 }
