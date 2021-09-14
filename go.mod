@@ -10,5 +10,3 @@ require (
 	github.com/yasin-wu/fileparser v1.1.0
 	github.com/yasin-wu/utils v1.2.0
 )
-
-replace github.com/yasin-wu/dlp => ./
