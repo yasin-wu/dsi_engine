@@ -2,7 +2,6 @@ package test
 
 import (
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/yasin-wu/dlp/consts"
@@ -11,7 +10,7 @@ import (
 	"github.com/yasin-wu/dlp/rule"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/yasin-wu/fileparser/parser"
+	"github.com/yasin-wu/utils/file_parser"
 )
 
 /**
@@ -30,16 +29,13 @@ func TestGRule(t *testing.T) {
 		FilePath: "./sample/test.docx",
 		FileName: "test.docx",
 	}
-	file, err := os.Open(filePolicy.FilePath)
+	parser, err := file_parser.New("http://47.108.155.25:9998", nil, nil)
 	if err != nil {
-		t.Errorf("os.open err:%v", err.Error())
+		t.Error(err)
 		return
 	}
-	cfg := parser.Config{
-		TikaUrl: "http://47.108.155.25:9998",
-	}
-	c := parser.NewClient(cfg)
-	f, err := c.ParseFile(true, file)
+	filePath := "/Users/yasin/GolandProjects/yasin-wu/dlp/sample/test.docx"
+	f, err := parser.Parser(filePath, true)
 	if err != nil {
 		t.Errorf("fileParse.FileParse err :%v", err)
 		return
