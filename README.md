@@ -25,7 +25,7 @@ go get -u github.com/yasin-wu/dlp
 ````
 推荐使用go.mod
 ````
-require github.com/yasin-wu/dlp v1.2.0
+require github.com/yasin-wu/dlp v1.3.0
 ````
 ## 其他
 ````
