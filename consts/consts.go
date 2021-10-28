@@ -3,20 +3,20 @@ package consts
 import "errors"
 
 const (
-	RuleTypeKeyWords   = 1
-	RuleTypeFuzzyWords = 2
-	RuleTypeRegexp     = 3
-	RuleTypeFingerDNA  = 4
+	KeyWords   = 1
+	FuzzyWords = 2
+	Regexp     = 3
+	FingerDNA  = 4
 )
 
 const (
-	RuleAnd = 0
-	RuleOr  = 1
+	And = 0
+	Or  = 1
 )
 
 const (
-	GRuleMatchFuncName    = "FileGRule.DoMatch"
-	GRuleCallbackFuncName = "FileGRule.HandleResult"
+	MatchFuncName    = "Engine.DoMatch"
+	CallbackFuncName = "Engine.HandleResult"
 )
 
 const (
@@ -25,13 +25,7 @@ const (
 )
 
 const (
-	InfoTypeID       = 1000
-	CustomInfoTypeID = 2000
-	AllCheckID       = 3000
-)
-
-const (
-	GRuleName     = "FileGRule"
+	GRuleName     = "DSIEngine"
 	GRuleVersion  = "1.0.0"
 	GRuleMaxCycle = 1
 )

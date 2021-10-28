@@ -2,7 +2,7 @@ package policy
 
 import "time"
 
-type PolicyAlarm struct {
+type Alarm struct {
 	Id          string      `json:"id"`
 	FileName    string      `json:"file_name"`
 	FilePath    string      `json:"file_path"`
@@ -18,11 +18,10 @@ type PolicyAlarm struct {
 }
 
 type RuleSnap struct {
-	RuleId     string `json:"rule_id"`
-	RuleName   string `json:"rule_name"`
-	RuleType   int    `json:"rule_type"`
+	Id         string `json:"id"`
+	Name       string `json:"name"`
+	Type       int    `json:"type"`
 	MatchTimes int    `json:"match_times"`
 	Level      int    `json:"level"`
-	LevelName  string `json:"level_name"`
 	Snap       string `json:"snap"`
 }

@@ -1,4 +1,4 @@
-package grule
+package dsi_engine
 
 import (
 	"errors"
@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/yasin-wu/dsi_engine/consts"
-	"github.com/yasin-wu/dsi_engine/gohs"
 	"github.com/yasin-wu/dsi_engine/policy"
+	"github.com/yasin-wu/dsi_engine/regexp_engine"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
@@ -15,57 +15,53 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
-type GRule struct {
-	PolicyAlarm *policy.PolicyAlarm
-
+type DsiEngine struct {
 	fingerRatio      int
 	snapLength       int
 	attachLength     int
 	matchFuncName    string
 	callbackFuncName string
 	rule             string
-	filePolicy       *policy.FilePolicy
-	policyInfo       *policy.PolicyInfo
-	matches          []*gohs.Match
+	alarm            *policy.Alarm
+	sensitiveData    *policy.SensitiveData
+	policyInfo       *policy.Policy
+	matches          []*regexp_engine.Match
 	ruleSnaps        []*policy.RuleSnap
 }
 
-func New(filePolicy *policy.FilePolicy, policyInfo *policy.PolicyInfo) (*GRule, error) {
-	if filePolicy == nil {
-		return nil, errors.New("filePolicy is nil")
+func New(sensitiveData *policy.SensitiveData) (*DsiEngine, error) {
+	if sensitiveData == nil {
+		return nil, errors.New("sensitiveData is nil")
 	}
-	if policyInfo == nil {
-		return nil, errors.New("policyInfo is nil")
-	}
-	return &GRule{filePolicy: filePolicy, policyInfo: policyInfo}, nil
+	return &DsiEngine{sensitiveData: sensitiveData}, nil
 }
 
-func (this *GRule) SetFingerRatio(fingerRatio int) {
+func (this *DsiEngine) SetFingerRatio(fingerRatio int) {
 	this.fingerRatio = fingerRatio
 }
 
-func (this *GRule) SetSnapLength(snapLength int) {
+func (this *DsiEngine) SetSnapLength(snapLength int) {
 	this.snapLength = snapLength
 }
 
-func (this *GRule) SetAttachLength(attachLength int) {
+func (this *DsiEngine) SetAttachLength(attachLength int) {
 	this.attachLength = attachLength
 }
 
-func (this *GRule) SetMatchFuncName(matchFuncName string) {
+func (this *DsiEngine) SetMatchFuncName(matchFuncName string) {
 	this.matchFuncName = matchFuncName
 }
 
-func (this *GRule) SetCallbackFuncName(callbackFuncName string) {
+func (this *DsiEngine) SetCallbackFuncName(callbackFuncName string) {
 	this.callbackFuncName = callbackFuncName
 }
 
-func (this *GRule) RunCheckFile() error {
+func (this *DsiEngine) Run(policyInfo *policy.Policy) (*policy.Alarm, error) {
 	if this.matchFuncName == "" {
-		this.matchFuncName = consts.GRuleMatchFuncName
+		this.matchFuncName = consts.MatchFuncName
 	}
 	if this.callbackFuncName == "" {
-		this.callbackFuncName = consts.GRuleCallbackFuncName
+		this.callbackFuncName = consts.CallbackFuncName
 	}
 	if this.attachLength == 0 {
 		this.attachLength = consts.DefaultAttachLength
@@ -73,76 +69,74 @@ func (this *GRule) RunCheckFile() error {
 	if this.snapLength == 0 {
 		this.snapLength = consts.DefaultSnapLength
 	}
+	if policyInfo == nil {
+		return nil, errors.New("policyInfo is nil")
+	}
+	this.policyInfo = policyInfo
 	rule, err := this.handlePolicy()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	dataContext := ast.NewDataContext()
-	err = dataContext.Add("FileGRule", this)
+	err = dataContext.Add("Engine", this)
 	if err != nil {
-		return errors.New(fmt.Sprintf("dataContext.Add err: %v", err.Error()))
+		return nil, fmt.Errorf("dataContext.Add err: %v", err.Error())
 	}
 	lib := ast.NewKnowledgeLibrary()
 	ruleBuilder := builder.NewRuleBuilder(lib)
 	ruleResource := pkg.NewBytesResource([]byte(rule))
 	err = ruleBuilder.BuildRuleFromResource(consts.GRuleName, consts.GRuleVersion, ruleResource)
 	if err != nil {
-		return errors.New(fmt.Sprintf("ruleBuilder.BuildRuleFromResource err: %v", err.Error()))
+		return nil, fmt.Errorf("ruleBuilder.BuildRuleFromResource err: %v", err.Error())
 	}
 	kb := lib.NewKnowledgeBaseInstance(consts.GRuleName, consts.GRuleVersion)
 	eng := &engine.GruleEngine{MaxCycle: consts.GRuleMaxCycle}
 	err = eng.Execute(dataContext, kb)
 	if err != nil {
-		return errors.New(fmt.Sprintf("eng.Execute err: %v", err.Error()))
+		return nil, fmt.Errorf("eng.Execute err: %v", err.Error())
 	}
-	fmt.Println("RunFileCheck end......")
-	return nil
+	return this.alarm, nil
 }
 
-func (this *GRule) DoMatch(ruleContentIndex int64) bool {
+func (this *DsiEngine) DoMatch(ruleIndex int64) bool {
 	policyInfo := this.policyInfo
-	ruleContent := policyInfo.RuleContents[ruleContentIndex]
-	ruleType := ruleContent.RuleType
+	rule := policyInfo.Rules[ruleIndex]
+	ruleType := rule.Type
 	matched := false
 	inputData := ""
-	var matches []*gohs.Match
 	distance := 100
-	switch ruleType {
-	case consts.RuleTypeKeyWords:
-		matches, inputData, matched = this.matchKeyWords(ruleContent)
-	case consts.RuleTypeFuzzyWords:
-		matches, inputData, matched = this.matchFuzzyWords(ruleContent)
-	case consts.RuleTypeRegexp:
-		matches, inputData, matched = this.matchRegexp(ruleContent)
-	case consts.RuleTypeFingerDNA:
-		distance, inputData, matched = this.matchFinger()
-	default:
+	var matches []*regexp_engine.Match
+	matchEngine := NewEngine(ruleType, this)
+	if matchEngine == nil {
+		fmt.Println("rule type is error")
+		return false
 	}
+	matches, inputData, matched = matchEngine.match(rule)
 	if matched {
 		ruleSnap := &policy.RuleSnap{}
-		ruleSnap.RuleId = ruleContent.RuleId
-		ruleSnap.RuleName = ruleContent.RuleName
-		ruleSnap.RuleType = ruleType
+		ruleSnap.Id = rule.Id
+		ruleSnap.Name = rule.Name
+		ruleSnap.Type = ruleType
 		ruleSnap.MatchTimes = len(matches)
-		ruleSnap.Level = ruleContent.Level
-		ruleSnap.LevelName = ruleContent.RuleName
+		ruleSnap.Level = rule.Level
 		ruleSnap.Snap = this.handleSnap(matches, inputData)
 		this.ruleSnaps = append(this.ruleSnaps, ruleSnap)
-		if ruleType == consts.RuleTypeFingerDNA {
+		if ruleType == consts.FingerDNA {
+			distance = matches[0].Distance
 			this.fingerRatio = distance
 		}
 	}
 	return matched
 }
 
-func (this *GRule) HandleResult() {
-	this.PolicyAlarm = this.handlePolicyAlarm()
+func (this *DsiEngine) HandleResult() {
+	this.alarm = this.handlePolicyAlarm()
 }
 
-func (this *GRule) handlePolicy() (string, error) {
+func (this *DsiEngine) handlePolicy() (string, error) {
 	policyInfo := this.policyInfo
-	if len(policyInfo.RuleContents) != len(policyInfo.Operators)+1 {
-		return "", errors.New("policyInfo.RuleContents Or policyInfo.Operators Format Error ")
+	if len(policyInfo.Rules) != len(policyInfo.Operators)+1 {
+		return "", errors.New("policyInfo.Rules Or policyInfo.Operators Format Error ")
 	}
 	patterns := ""
 	if len(policyInfo.Operators) == 0 {
@@ -153,21 +147,22 @@ func (this *GRule) handlePolicy() (string, error) {
 			if i == 0 {
 				patterns = fmt.Sprintf(`%v(%d)`, this.matchFuncName, i)
 			}
-			if operator == consts.RuleAnd {
+			if operator == consts.And {
 				patterns += fmt.Sprintf(` && %v(%d)`, this.matchFuncName, i+1)
-			} else if operator == consts.RuleOr {
+			} else if operator == consts.Or {
 				patterns += fmt.Sprintf(` || %v(%d)`, this.matchFuncName, i+1)
 			}
 		}
 	}
-	rule := fmt.Sprintf(`rule FileCheck "fileCheck" { when %v then %v; %v; }`, patterns, this.callbackFuncName+"()", `Retract("FileCheck")`)
+	rule := fmt.Sprintf(`rule Check "Check" { when %v then %v; %v; }`,
+		patterns, this.callbackFuncName+"()", `Retract("Check")`)
 	this.rule = rule
 	return rule, nil
 }
 
-func (this *GRule) handlePolicyAlarm() *policy.PolicyAlarm {
-	policyAlarm := &policy.PolicyAlarm{}
-	filePolicy := this.filePolicy
+func (this *DsiEngine) handlePolicyAlarm() *policy.Alarm {
+	policyAlarm := &policy.Alarm{}
+	sensitiveData := this.sensitiveData
 	policyInfo := this.policyInfo
 	matchTimes := 0
 	snapShot := ""
@@ -176,24 +171,24 @@ func (this *GRule) handlePolicyAlarm() *policy.PolicyAlarm {
 		matchTimes += rs.MatchTimes
 		snapShot += rs.Snap
 	}
-	if this.attachLength > len(filePolicy.Content) {
-		this.attachLength = len(filePolicy.Content)
+	if this.attachLength > len(sensitiveData.Content) {
+		this.attachLength = len(sensitiveData.Content)
 	}
 	policyAlarm.RuleSnaps = this.ruleSnaps
-	policyAlarm.PolicyId = policyInfo.PolicyId
-	policyAlarm.FilePath = filePolicy.FilePath
-	policyAlarm.FileSize = filePolicy.FileSize
-	policyAlarm.FileName = filePolicy.FileName
+	policyAlarm.PolicyId = policyInfo.Id
+	policyAlarm.FilePath = sensitiveData.FilePath
+	policyAlarm.FileSize = sensitiveData.FileSize
+	policyAlarm.FileName = sensitiveData.FileName
 	policyAlarm.MatchTimes = matchTimes
 	policyAlarm.SnapShot = snapShot
 	policyAlarm.CreatedAt = now
-	policyAlarm.AttachWords = filePolicy.Content[0:this.attachLength]
+	policyAlarm.AttachWords = sensitiveData.Content[0:this.attachLength]
 	policyAlarm.MatchNote = this.handleMatchNote()
 	policyAlarm.FingerRatio = this.fingerRatio
 	return policyAlarm
 }
 
-func (this *GRule) handleSnap(matches []*gohs.Match, inputData string) string {
+func (this *DsiEngine) handleSnap(matches []*regexp_engine.Match, inputData string) string {
 	snap := ""
 	snapLength := uint64(this.snapLength)
 	inputDataLength := uint64(len(inputData))
@@ -218,12 +213,12 @@ func (this *GRule) handleSnap(matches []*gohs.Match, inputData string) string {
 	return snap
 }
 
-func (this *GRule) highlight(s string) string {
-	return `<b style="background:yellow">` + s + `</b>`
+func (this *DsiEngine) highlight(s string) string {
+	return `<b style="background:red">` + s + `</b>`
 	//return "\033[35m" + s + "\033[0m"
 }
 
-func (this *GRule) handleMatchNote() string {
+func (this *DsiEngine) handleMatchNote() string {
 	matchNote := ""
 	matchNoteMap := make(map[string]int)
 	for _, m := range this.matches {

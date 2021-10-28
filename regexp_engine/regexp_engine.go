@@ -1,8 +1,9 @@
-package gohs
+package regexp_engine
 
 import (
 	"errors"
 	"fmt"
+
 	"github.com/flier/gohs/hyperscan"
 )
 
@@ -13,10 +14,7 @@ type Match struct {
 	Flags     uint
 	Context   interface{}
 	InputData string
-}
-
-type Gohs struct {
-	patterns []*hyperscan.Pattern
+	Distance  int
 }
 
 type Regexp struct {
@@ -24,14 +22,18 @@ type Regexp struct {
 	Regexp string
 }
 
-func New(regexps ...*Regexp) (*Gohs, error) {
+type RegexpEngine struct {
+	patterns []*hyperscan.Pattern
+}
+
+func New(regexps ...*Regexp) (*RegexpEngine, error) {
 	if regexps == nil || len(regexps) == 0 {
 		return nil, errors.New("parameter is empty")
 	}
-	return &Gohs{patterns: addRegexps(regexps...)}, nil
+	return &RegexpEngine{patterns: addRegexps(regexps...)}, nil
 }
 
-func (this *Gohs) Run(inputData string) ([]*Match, error) {
+func (this *RegexpEngine) Run(inputData string) ([]*Match, error) {
 	db, err := hyperscan.NewBlockDatabase(this.patterns...)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("NewBlockDatabase err: %v", err.Error()))
