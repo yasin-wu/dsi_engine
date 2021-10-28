@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/yasin-wu/dlp/consts"
-	"github.com/yasin-wu/dlp/gohs"
-	"github.com/yasin-wu/dlp/policy"
+	"github.com/yasin-wu/dsi_engine/consts"
+	"github.com/yasin-wu/dsi_engine/gohs"
+	"github.com/yasin-wu/dsi_engine/policy"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"

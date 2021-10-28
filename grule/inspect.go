@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/yasin-wu/dlp/consts"
-	"github.com/yasin-wu/dlp/gohs"
-	"github.com/yasin-wu/dlp/rule"
+	"github.com/yasin-wu/dsi_engine/consts"
+	"github.com/yasin-wu/dsi_engine/gohs"
+	"github.com/yasin-wu/dsi_engine/rule"
 
 	js "github.com/bitly/go-simplejson"
 )

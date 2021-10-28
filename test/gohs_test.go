@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	gohs2 "github.com/yasin-wu/dlp/gohs"
-	"github.com/yasin-wu/dlp/rule"
+	gohs2 "github.com/yasin-wu/dsi_engine/gohs"
+	"github.com/yasin-wu/dsi_engine/rule"
 )
 
 func TestGohs(t *testing.T) {

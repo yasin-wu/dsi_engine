@@ -1,4 +1,4 @@
-module github.com/yasin-wu/dlp
+module github.com/yasin-wu/dsi_engine
 
 go 1.16
 

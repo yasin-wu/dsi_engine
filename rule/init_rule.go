@@ -1,10 +1,11 @@
 package rule
 
 import (
-	js "github.com/bitly/go-simplejson"
-	"github.com/yasin-wu/dlp/consts"
 	"io/ioutil"
 	"os"
+
+	js "github.com/bitly/go-simplejson"
+	"github.com/yasin-wu/dsi_engine/consts"
 )
 
 var RulesMap = make(map[string]interface{})

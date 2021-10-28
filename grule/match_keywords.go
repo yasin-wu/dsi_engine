@@ -1,8 +1,8 @@
 package grule
 
 import (
-	gohs2 "github.com/yasin-wu/dlp/gohs"
-	"github.com/yasin-wu/dlp/policy"
+	gohs2 "github.com/yasin-wu/dsi_engine/gohs"
+	"github.com/yasin-wu/dsi_engine/policy"
 )
 
 func (this *GRule) matchKeyWords(ruleContent *policy.RuleContent) ([]*gohs2.Match, string, bool) {

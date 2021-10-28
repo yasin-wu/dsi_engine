@@ -21,11 +21,11 @@ addons:
             package:
 go get -u github.com/flier/gohs
 go get -u github.com/hyperjumptech/grule-rule-engine
-go get -u github.com/yasin-wu/dlp
+go get -u github.com/yasin-wu/dsi_engine
 ````
 推荐使用go.mod
 ````
-require github.com/yasin-wu/dlp v1.3.0
+require github.com/yasin-wu/dsi_engine v1.3.1
 ````
 ## 其他
 ````

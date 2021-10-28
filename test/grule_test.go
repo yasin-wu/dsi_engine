@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/yasin-wu/dlp/consts"
-	grule2 "github.com/yasin-wu/dlp/grule"
-	"github.com/yasin-wu/dlp/policy"
-	"github.com/yasin-wu/dlp/rule"
+	"github.com/yasin-wu/dsi_engine/consts"
+	grule2 "github.com/yasin-wu/dsi_engine/grule"
+	"github.com/yasin-wu/dsi_engine/policy"
+	"github.com/yasin-wu/dsi_engine/rule"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/yasin-wu/utils/file_parser"
@@ -34,7 +34,7 @@ func TestGRule(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	filePath := "/Users/yasin/GolandProjects/yasin-wu/dlp/sample/test.docx"
+	filePath := "/Users/yasin/GolandProjects/yasin-wu/dsi_engine/sample/test.docx"
 	f, err := parser.Parser(filePath, true)
 	if err != nil {
 		t.Errorf("fileParse.FileParse err :%v", err)
