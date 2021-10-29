@@ -12,6 +12,8 @@ type FuzzyWords struct {
 	dsiEngine *DsiEngine
 }
 
+var _ MatchEngine = (*FuzzyWords)(nil)
+
 func (this *FuzzyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := this.dsiEngine.sensitiveData.FileName
 	matches, matched := this.do(rule, this.dsiEngine.sensitiveData.FileName)

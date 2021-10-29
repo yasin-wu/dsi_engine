@@ -9,6 +9,8 @@ type Regexp struct {
 	dsiEngine *DsiEngine
 }
 
+var _ MatchEngine = (*Regexp)(nil)
+
 func (this *Regexp) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := this.dsiEngine.sensitiveData.FileName
 	matches, matched := this.regexp(rule, this.dsiEngine.sensitiveData.FileName)

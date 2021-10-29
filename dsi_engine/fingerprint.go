@@ -17,6 +17,8 @@ type FingerPrint struct {
 	dsiEngine *DsiEngine
 }
 
+var _ MatchEngine = (*FingerPrint)(nil)
+
 func (this *FingerPrint) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := this.dsiEngine.sensitiveData.FileName
 	distance, matched := this.do(this.dsiEngine.sensitiveData.FingerPrints,
