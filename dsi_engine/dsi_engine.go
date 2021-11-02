@@ -24,7 +24,7 @@ type DsiEngine struct {
 	rule             string
 	alarm            *policy.Alarm
 	sensitiveData    *policy.SensitiveData
-	policyInfo       *policy.Policy
+	policy           *policy.Policy
 	matches          []*regexp_engine.Match
 	ruleSnaps        []*policy.RuleSnap
 }
@@ -33,6 +33,7 @@ func New(sensitiveData *policy.SensitiveData) (*DsiEngine, error) {
 	if sensitiveData == nil {
 		return nil, errors.New("sensitiveData is nil")
 	}
+
 	return &DsiEngine{sensitiveData: sensitiveData}, nil
 }
 
@@ -56,7 +57,7 @@ func (this *DsiEngine) SetCallbackFuncName(callbackFuncName string) {
 	this.callbackFuncName = callbackFuncName
 }
 
-func (this *DsiEngine) Run(policyInfo *policy.Policy) (*policy.Alarm, error) {
+func (this *DsiEngine) Run() ([]*policy.Alarm, error) {
 	if this.matchFuncName == "" {
 		this.matchFuncName = consts.MatchFuncName
 	}
@@ -69,10 +70,29 @@ func (this *DsiEngine) Run(policyInfo *policy.Policy) (*policy.Alarm, error) {
 	if this.snapLength == 0 {
 		this.snapLength = consts.DefaultSnapLength
 	}
+	var err error
+	var errMsg string
+	var alarms []*policy.Alarm
+	for _, policyInfo := range this.sensitiveData.Policies {
+		alarm, err := this.run(policyInfo)
+		if err != nil {
+			errMsg += fmt.Sprintf("run err:%s;", err.Error())
+			continue
+		}
+		alarm.Id = fmt.Sprintf("alarm-%s", policyInfo.Id)
+		alarms = append(alarms, alarm)
+	}
+	if len(errMsg) > 0 {
+		err = errors.New(errMsg)
+	}
+	return alarms, err
+}
+
+func (this *DsiEngine) run(policyInfo *policy.Policy) (*policy.Alarm, error) {
 	if policyInfo == nil {
 		return nil, errors.New("policyInfo is nil")
 	}
-	this.policyInfo = policyInfo
+	this.policy = policyInfo
 	rule, err := this.handlePolicy()
 	if err != nil {
 		return nil, err
@@ -99,7 +119,7 @@ func (this *DsiEngine) Run(policyInfo *policy.Policy) (*policy.Alarm, error) {
 }
 
 func (this *DsiEngine) DoMatch(ruleIndex int64) bool {
-	policyInfo := this.policyInfo
+	policyInfo := this.policy
 	rule := policyInfo.Rules[ruleIndex]
 	ruleType := rule.Type
 	matched := false
@@ -134,7 +154,7 @@ func (this *DsiEngine) HandleResult() {
 }
 
 func (this *DsiEngine) handlePolicy() (string, error) {
-	policyInfo := this.policyInfo
+	policyInfo := this.policy
 	if len(policyInfo.Rules) != len(policyInfo.Operators)+1 {
 		return "", errors.New("policyInfo.Rules Or policyInfo.Operators Format Error ")
 	}
@@ -161,9 +181,9 @@ func (this *DsiEngine) handlePolicy() (string, error) {
 }
 
 func (this *DsiEngine) handlePolicyAlarm() *policy.Alarm {
-	policyAlarm := &policy.Alarm{}
+	alarm := &policy.Alarm{}
 	sensitiveData := this.sensitiveData
-	policyInfo := this.policyInfo
+	policyInfo := this.policy
 	matchTimes := 0
 	snapShot := ""
 	now := time.Now()
@@ -174,18 +194,19 @@ func (this *DsiEngine) handlePolicyAlarm() *policy.Alarm {
 	if this.attachLength > len(sensitiveData.Content) {
 		this.attachLength = len(sensitiveData.Content)
 	}
-	policyAlarm.RuleSnaps = this.ruleSnaps
-	policyAlarm.PolicyId = policyInfo.Id
-	policyAlarm.FilePath = sensitiveData.FilePath
-	policyAlarm.FileSize = sensitiveData.FileSize
-	policyAlarm.FileName = sensitiveData.FileName
-	policyAlarm.MatchTimes = matchTimes
-	policyAlarm.SnapShot = snapShot
-	policyAlarm.CreatedAt = now
-	policyAlarm.AttachWords = sensitiveData.Content[0:this.attachLength]
-	policyAlarm.MatchNote = this.handleMatchNote()
-	policyAlarm.FingerRatio = this.fingerRatio
-	return policyAlarm
+	alarm.RuleSnaps = this.ruleSnaps
+	alarm.PolicyId = policyInfo.Id
+	alarm.FileName = sensitiveData.FileName
+	alarm.FileType = sensitiveData.FileType
+	alarm.FilePath = sensitiveData.FilePath
+	alarm.FileSize = sensitiveData.FileSize
+	alarm.MatchTimes = matchTimes
+	alarm.SnapShot = snapShot
+	alarm.CreatedAt = now
+	alarm.AttachWords = sensitiveData.Content[0:this.attachLength]
+	alarm.MatchNote = this.handleMatchNote()
+	alarm.FingerRatio = this.fingerRatio
+	return alarm
 }
 
 func (this *DsiEngine) handleSnap(matches []*regexp_engine.Match, inputData string) string {

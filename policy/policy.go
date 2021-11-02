@@ -3,13 +3,13 @@ package policy
 import js "github.com/bitly/go-simplejson"
 
 type SensitiveData struct {
-	Id           string   `json:"id"`
-	FileName     string   `json:"file_name"`
-	FilePath     string   `json:"file_path"`
-	FileSize     int64    `json:"file_size"`
-	Content      string   `json:"content"`
-	FingerRatio  int      `json:"finger_ratio"`
-	FingerPrints *js.Json `json:"finger_prints"`
+	Id       string    `json:"id"`
+	FileName string    `json:"file_name"`
+	FileType string    `json:"file_type"`
+	FilePath string    `json:"file_path"`
+	FileSize int64     `json:"file_size"`
+	Content  string    `json:"content"`
+	Policies []*Policy `json:"policies"`
 }
 
 type Policy struct {
@@ -29,4 +29,6 @@ type Rule struct {
 	ReverseKeyList   []string `json:"reverse_key_list"`  //反向关键字
 	Regexp           string   `json:"regexp"`            //正则和数据标识符
 	CharacterSpace   int      `json:"character_space"`   //字符间距<=5
+	FingerRatio      int      `json:"finger_ratio"`      //指纹相似度
+	FingerPrints     *js.Json `json:"finger_prints"`     //指纹
 }

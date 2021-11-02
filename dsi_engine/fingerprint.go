@@ -21,12 +21,12 @@ var _ MatchEngine = (*FingerPrint)(nil)
 
 func (this *FingerPrint) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := this.dsiEngine.sensitiveData.FileName
-	distance, matched := this.do(this.dsiEngine.sensitiveData.FingerPrints,
-		this.dsiEngine.sensitiveData.FingerRatio, this.dsiEngine.sensitiveData.FileName)
+	distance, matched := this.do(rule.FingerPrints,
+		rule.FingerRatio, this.dsiEngine.sensitiveData.FileName)
 	if !matched {
 		inputData = this.dsiEngine.sensitiveData.Content
-		distance, matched = this.do(this.dsiEngine.sensitiveData.FingerPrints,
-			this.dsiEngine.sensitiveData.FingerRatio, this.dsiEngine.sensitiveData.Content)
+		distance, matched = this.do(rule.FingerPrints,
+			rule.FingerRatio, this.dsiEngine.sensitiveData.Content)
 	}
 	return []*regexp_engine.Match{{Distance: distance}}, inputData, matched
 }
