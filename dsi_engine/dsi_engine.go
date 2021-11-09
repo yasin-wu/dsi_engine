@@ -15,6 +15,8 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
+type Option func(dsiEngine *DsiEngine)
+
 type DsiEngine struct {
 	fingerRatio      int
 	snapLength       int
@@ -29,47 +31,60 @@ type DsiEngine struct {
 	ruleSnaps        []*policy.RuleSnap
 }
 
-func New(sensitiveData *policy.SensitiveData) (*DsiEngine, error) {
+func New(sensitiveData *policy.SensitiveData, options ...Option) (*DsiEngine, error) {
 	if sensitiveData == nil {
 		return nil, errors.New("sensitiveData is nil")
 	}
-
-	return &DsiEngine{sensitiveData: sensitiveData}, nil
+	dsiEngine := &DsiEngine{sensitiveData: sensitiveData}
+	for _, f := range options {
+		f(dsiEngine)
+	}
+	if dsiEngine.matchFuncName == "" {
+		dsiEngine.matchFuncName = consts.MatchFuncName
+	}
+	if dsiEngine.callbackFuncName == "" {
+		dsiEngine.callbackFuncName = consts.CallbackFuncName
+	}
+	if dsiEngine.attachLength == 0 {
+		dsiEngine.attachLength = consts.DefaultAttachLength
+	}
+	if dsiEngine.snapLength == 0 {
+		dsiEngine.snapLength = consts.DefaultSnapLength
+	}
+	return dsiEngine, nil
 }
 
-func (this *DsiEngine) SetFingerRatio(fingerRatio int) {
-	this.fingerRatio = fingerRatio
+func WithFingerRatio(fingerRatio int) Option {
+	return func(dsiEngine *DsiEngine) {
+		dsiEngine.fingerRatio = fingerRatio
+	}
 }
 
-func (this *DsiEngine) SetSnapLength(snapLength int) {
-	this.snapLength = snapLength
+func WithSnapLength(snapLength int) Option {
+	return func(dsiEngine *DsiEngine) {
+		dsiEngine.snapLength = snapLength
+	}
 }
 
-func (this *DsiEngine) SetAttachLength(attachLength int) {
-	this.attachLength = attachLength
+func WithAttachLength(attachLength int) Option {
+	return func(dsiEngine *DsiEngine) {
+		dsiEngine.attachLength = attachLength
+	}
 }
 
-func (this *DsiEngine) SetMatchFuncName(matchFuncName string) {
-	this.matchFuncName = matchFuncName
+func WithMatchFuncName(matchFuncName string) Option {
+	return func(dsiEngine *DsiEngine) {
+		dsiEngine.matchFuncName = matchFuncName
+	}
 }
 
-func (this *DsiEngine) SetCallbackFuncName(callbackFuncName string) {
-	this.callbackFuncName = callbackFuncName
+func WithCallbackFuncName(callbackFuncName string) Option {
+	return func(dsiEngine *DsiEngine) {
+		dsiEngine.callbackFuncName = callbackFuncName
+	}
 }
 
 func (this *DsiEngine) Run() ([]*policy.Alarm, error) {
-	if this.matchFuncName == "" {
-		this.matchFuncName = consts.MatchFuncName
-	}
-	if this.callbackFuncName == "" {
-		this.callbackFuncName = consts.CallbackFuncName
-	}
-	if this.attachLength == 0 {
-		this.attachLength = consts.DefaultAttachLength
-	}
-	if this.snapLength == 0 {
-		this.snapLength = consts.DefaultSnapLength
-	}
 	var err error
 	var errMsg string
 	var alarms []*policy.Alarm
