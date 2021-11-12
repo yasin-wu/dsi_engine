@@ -25,5 +25,5 @@ go get -u github.com/yasin-wu/dsi_engine
 ````
 推荐使用go.mod
 ````
-require github.com/yasin-wu/dsi_engine v2.1.1
+require github.com/yasin-wu/dsi_engine v2.0.0
 ````

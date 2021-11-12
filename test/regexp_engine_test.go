@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/yasin-wu/dsi_engine/regexp_engine"
-	"github.com/yasin-wu/dsi_engine/rule"
+	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
+	"github.com/yasin-wu/dsi_engine/v2/rule"
 )
 
 func TestRegexpEngine(t *testing.T) {

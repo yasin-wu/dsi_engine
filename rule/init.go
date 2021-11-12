@@ -5,7 +5,7 @@ import (
 	"os"
 
 	js "github.com/bitly/go-simplejson"
-	"github.com/yasin-wu/dsi_engine/consts"
+	"github.com/yasin-wu/dsi_engine/v2/consts"
 )
 
 var RulesMap = make(map[string]interface{})

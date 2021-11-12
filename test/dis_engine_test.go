@@ -6,10 +6,10 @@ import (
 
 	"github.com/davecgh/go-spew/spew"
 
-	"github.com/yasin-wu/dsi_engine/consts"
-	"github.com/yasin-wu/dsi_engine/dsi_engine"
-	"github.com/yasin-wu/dsi_engine/policy"
-	"github.com/yasin-wu/dsi_engine/rule"
+	"github.com/yasin-wu/dsi_engine/v2/consts"
+	"github.com/yasin-wu/dsi_engine/v2/dsi_engine"
+	"github.com/yasin-wu/dsi_engine/v2/policy"
+	"github.com/yasin-wu/dsi_engine/v2/rule"
 
 	"github.com/yasin-wu/utils/file_parser"
 )

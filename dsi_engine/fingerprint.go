@@ -5,9 +5,9 @@ import (
 	"hash/fnv"
 	"strings"
 
-	"github.com/yasin-wu/dsi_engine/policy"
+	"github.com/yasin-wu/dsi_engine/v2/policy"
 
-	"github.com/yasin-wu/dsi_engine/regexp_engine"
+	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
 
 	js "github.com/bitly/go-simplejson"
 	"github.com/yasin-wu/utils/similarity"

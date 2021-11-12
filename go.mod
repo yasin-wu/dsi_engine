@@ -1,4 +1,4 @@
-module github.com/yasin-wu/dsi_engine
+module github.com/yasin-wu/dsi_engine/v2
 
 go 1.16
 

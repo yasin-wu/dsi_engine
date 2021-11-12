@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/yasin-wu/dsi_engine/policy"
-	"github.com/yasin-wu/dsi_engine/regexp_engine"
+	"github.com/yasin-wu/dsi_engine/v2/policy"
+	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
 )
 
 type FuzzyWords struct {
