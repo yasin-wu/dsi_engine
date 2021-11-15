@@ -14,7 +14,7 @@ func TestRegexpEngine(t *testing.T) {
 		fmt.Println(err)
 		return
 	}
-	err = rule.AddRule("../scripts/rules.json")
+	err = rule.AddRule("../conf/rules.json")
 	if err != nil {
 		t.Error(err.Error())
 		return
