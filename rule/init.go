@@ -1,6 +1,7 @@
 package rule
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"os"
 
@@ -8,22 +9,40 @@ import (
 	"github.com/yasin-wu/dsi_engine/v2/consts"
 )
 
-var RulesMap = make(map[string]interface{})
+type Rule struct {
+	RuleMap map[string]R
+}
 
-func InitRule() error {
+type R struct {
+	Regexp string `json:"regexp"`
+	Desc   string `json:"desc"`
+}
+
+func New() (*Rule, error) {
 	ruleBytes := []byte(defaultRule)
 	j, err := js.NewJson(ruleBytes)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	RulesMap, err = j.Map()
+	ruleMap, err := j.Map()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	var rm = make(map[string]R)
+	for k, v := range ruleMap {
+		var r R
+		err = unmarshal(v, &r)
+		if err != nil {
+			continue
+		}
+		rm[k] = r
+	}
+	return &Rule{
+		RuleMap: rm,
+	}, nil
 }
 
-func AddRule(filePath string) error {
+func (this *Rule) Add(filePath string, ruleMap ...map[string]R) error {
 	if filePath == "" {
 		return consts.ErrParameterEmpty
 	}
@@ -45,7 +64,29 @@ func AddRule(filePath string) error {
 		return err
 	}
 	for k, v := range m {
-		RulesMap[k] = v
+		var r R
+		err = unmarshal(v, &r)
+		if err != nil {
+			continue
+		}
+		this.RuleMap[k] = r
+	}
+	for _, v := range ruleMap {
+		for k, v1 := range v {
+			this.RuleMap[k] = v1
+		}
+	}
+	return nil
+}
+
+func unmarshal(data interface{}, v *R) error {
+	buff, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(buff, &v)
+	if err != nil {
+		return err
 	}
 	return nil
 }

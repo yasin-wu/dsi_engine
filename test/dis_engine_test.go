@@ -9,18 +9,18 @@ import (
 	"github.com/yasin-wu/dsi_engine/v2/consts"
 	"github.com/yasin-wu/dsi_engine/v2/dsi_engine"
 	"github.com/yasin-wu/dsi_engine/v2/policy"
-	"github.com/yasin-wu/dsi_engine/v2/rule"
+	rule2 "github.com/yasin-wu/dsi_engine/v2/rule"
 
 	"github.com/yasin-wu/utils/file_parser"
 )
 
 func TestDsiEngine(t *testing.T) {
-	err := rule.InitRule()
+	rule, err := rule2.New()
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	rulesMap := rule.RulesMap
+	rulesMap := rule.RuleMap
 	sensitiveData := &policy.SensitiveData{
 		FilePath: "../sample/test.docx",
 	}
@@ -53,12 +53,12 @@ func parser(sensitiveData *policy.SensitiveData) {
 	sensitiveData.Content = f.Content
 }
 
-func handlePolicies(rulesMap map[string]interface{}) []*policy.Policy {
+func handlePolicies(rulesMap map[string]rule2.R) []*policy.Policy {
 	rule1 := &policy.Rule{
 		Id:               "1",
 		Name:             "正则匹配:地址信息",
 		Type:             consts.Regexp,
-		Regexp:           rulesMap["ADDRESS"].(map[string]interface{})["rule"].(string),
+		Regexp:           rulesMap["ADDRESS"].Regexp,
 		ForWardThreshold: 1,
 	}
 	rule2 := &policy.Rule{
