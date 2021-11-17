@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/apolloconfig/agollo/v4"
+	"github.com/apolloconfig/agollo/v4/env/config"
+
 	"github.com/davecgh/go-spew/spew"
 
 	"github.com/yasin-wu/dsi_engine/v2/consts"
@@ -37,7 +40,13 @@ func TestDsiEngine(t *testing.T) {
 }
 
 func parser(sensitiveData *policy.SensitiveData) {
-	parser, err := file_parser.New("http://47.108.155.25:9998", nil, nil)
+	client, _ := agollo.StartWithConfig(func() (*config.AppConfig, error) {
+		return apolloConf, nil
+	})
+	fmt.Println("初始化Apollo配置成功")
+	cache := client.GetConfigCache(apolloConf.NamespaceName)
+	url, _ := cache.Get("tika.url")
+	parser, err := file_parser.New(url.(string), nil, nil)
 	if err != nil {
 		fmt.Println(err)
 		return
