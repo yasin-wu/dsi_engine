@@ -1,6 +1,10 @@
 package policy
 
-import "time"
+import (
+	"time"
+
+	"github.com/yasin-wu/dsi_engine/v2/enum"
+)
 
 type Alarm struct {
 	Id          string      `json:"id"`
@@ -19,10 +23,10 @@ type Alarm struct {
 }
 
 type RuleSnap struct {
-	Id         string `json:"id"`
-	Name       string `json:"name"`
-	Type       int    `json:"type"`
-	MatchTimes int    `json:"match_times"`
-	Level      int    `json:"level"`
-	Snap       string `json:"snap"`
+	Id         string        `json:"id"`
+	Name       string        `json:"name"`
+	Type       enum.RuleType `json:"type"`
+	MatchTimes int           `json:"match_times"`
+	Level      int           `json:"level"`
+	Snap       string        `json:"snap"`
 }

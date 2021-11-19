@@ -3,18 +3,6 @@ package consts
 import "errors"
 
 const (
-	KeyWords   = 1
-	FuzzyWords = 2
-	Regexp     = 3
-	FingerDNA  = 4
-)
-
-const (
-	And = 0
-	Or  = 1
-)
-
-const (
 	MatchFuncName    = "Engine.DoMatch"
 	CallbackFuncName = "Engine.HandleResult"
 )

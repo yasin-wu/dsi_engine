@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/yasin-wu/dsi_engine/v2/enum"
+
 	"github.com/yasin-wu/dsi_engine/v2/consts"
 	"github.com/yasin-wu/dsi_engine/v2/policy"
 	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
@@ -141,7 +143,7 @@ func (this *DsiEngine) DoMatch(ruleIndex int64) bool {
 	inputData := ""
 	distance := 100
 	var matches []*regexp_engine.Match
-	matchEngine := NewEngine(ruleType, this)
+	matchEngine := NewEngine(enum.RuleType(ruleType), this)
 	if matchEngine == nil {
 		fmt.Println("rule type is error")
 		return false
@@ -156,7 +158,7 @@ func (this *DsiEngine) DoMatch(ruleIndex int64) bool {
 		ruleSnap.Level = rule.Level
 		ruleSnap.Snap = this.handleSnap(matches, inputData)
 		this.ruleSnaps = append(this.ruleSnaps, ruleSnap)
-		if ruleType == consts.FingerDNA {
+		if ruleType == enum.FINGERDNA_RULETYPE {
 			distance = matches[0].Distance
 			this.fingerRatio = distance
 		}
@@ -182,9 +184,9 @@ func (this *DsiEngine) handlePolicy() (string, error) {
 			if i == 0 {
 				patterns = fmt.Sprintf(`%v(%d)`, this.matchFuncName, i)
 			}
-			if operator == consts.And {
+			if operator == enum.AND_OPERATOR {
 				patterns += fmt.Sprintf(` && %v(%d)`, this.matchFuncName, i+1)
-			} else if operator == consts.Or {
+			} else if operator == enum.OR_OPERATOR {
 				patterns += fmt.Sprintf(` || %v(%d)`, this.matchFuncName, i+1)
 			}
 		}
