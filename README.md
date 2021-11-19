@@ -18,7 +18,7 @@ addons:
             - hyperscan
             - libpcap
             - tree
-            package:
+package:
 go get -u github.com/flier/gohs
 go get -u github.com/hyperjumptech/grule-rule-engine
 go get -u github.com/yasin-wu/dsi_engine
