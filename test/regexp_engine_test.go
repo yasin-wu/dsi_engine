@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/yasin-wu/dsi_engine/v2/consts"
+
 	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
 	rule2 "github.com/yasin-wu/dsi_engine/v2/rule"
 )
@@ -60,6 +62,7 @@ func TestRegexpEngine(t *testing.T) {
 		return
 	}
 	for _, m := range matches {
-		t.Logf("命中正则id:%d;命中内容:%s", m.Id, m.InputData[m.From:m.To])
+		fmt.Println(fmt.Sprintf("命中规则ID:%s%v%s;命中内容:%s%v%s",
+			consts.Red, m.Id, consts.Reset, consts.Red, m.InputData[m.From:m.To], consts.Reset))
 	}
 }

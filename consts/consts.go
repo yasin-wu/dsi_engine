@@ -21,3 +21,8 @@ const (
 var (
 	ErrParameterEmpty = errors.New("parameter is empty")
 )
+
+var (
+	Red   = string([]byte{27, 91, 51, 49, 109})
+	Reset = string([]byte{27, 91, 48, 109})
+)

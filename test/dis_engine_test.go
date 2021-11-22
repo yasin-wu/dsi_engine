@@ -1,6 +1,7 @@
 package test
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -8,8 +9,6 @@ import (
 
 	"github.com/apolloconfig/agollo/v4"
 	"github.com/apolloconfig/agollo/v4/env/config"
-
-	"github.com/davecgh/go-spew/spew"
 
 	"github.com/yasin-wu/dsi_engine/v2/dsi_engine"
 	"github.com/yasin-wu/dsi_engine/v2/policy"
@@ -36,8 +35,16 @@ func TestDsiEngine(t *testing.T) {
 		return
 	}
 	alarms, err := engine.Run()
-	spew.Dump(err)
-	spew.Dump(alarms)
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	buff, err := json.MarshalIndent(alarms, "", "\t")
+	if err != nil {
+		t.Error(err.Error())
+		return
+	}
+	fmt.Println(string(buff))
 }
 
 func parser(sensitiveData *policy.SensitiveData) {

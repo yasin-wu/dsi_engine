@@ -253,6 +253,7 @@ func (this *DsiEngine) handleSnap(matches []*regexp_engine.Match, inputData stri
 
 func (this *DsiEngine) highlight(s string) string {
 	return `<b style="background:red">` + s + `</b>`
+	//return fmt.Sprintf("%s%s%s", consts.Red, s, consts.Reset)
 	//return "\033[35m" + s + "\033[0m"
 }
 
