@@ -60,6 +60,9 @@ func (this *RegexpEngine) Run(inputData string) ([]*Match, error) {
 func addRegexps(regexps ...*Regexp) []*hyperscan.Pattern {
 	var patterns []*hyperscan.Pattern
 	for _, v := range regexps {
+		if v.Regexp == "" {
+			continue
+		}
 		pattern := hyperscan.NewPattern(v.Regexp, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
 		pattern.Id = v.Id
 		patterns = append(patterns, pattern)
