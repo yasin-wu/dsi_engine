@@ -27,10 +27,11 @@ type RegexpEngine struct {
 }
 
 func New(regexps ...*Regexp) (*RegexpEngine, error) {
-	if regexps == nil || len(regexps) == 0 {
+	patterns := addRegexps(regexps...)
+	if patterns == nil || len(patterns) == 0 {
 		return nil, errors.New("parameter is empty")
 	}
-	return &RegexpEngine{patterns: addRegexps(regexps...)}, nil
+	return &RegexpEngine{patterns: patterns}, nil
 }
 
 func (this *RegexpEngine) Run(inputData string) ([]*Match, error) {
