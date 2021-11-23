@@ -13,7 +13,7 @@ import (
 func TestRegexpEngine(t *testing.T) {
 	rule, err := rule2.New()
 	if err != nil {
-		fmt.Println(err)
+		t.Error(err)
 		return
 	}
 	var m = make(map[string]rule2.R)

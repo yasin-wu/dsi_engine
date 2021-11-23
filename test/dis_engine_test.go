@@ -20,7 +20,7 @@ import (
 func TestDsiEngine(t *testing.T) {
 	rule, err := rule2.New()
 	if err != nil {
-		fmt.Println(err)
+		t.Error(err)
 		return
 	}
 	rulesMap := rule.RuleMap
@@ -39,11 +39,7 @@ func TestDsiEngine(t *testing.T) {
 		t.Error(err.Error())
 		return
 	}
-	buff, err := json.MarshalIndent(alarms, "", "\t")
-	if err != nil {
-		t.Error(err.Error())
-		return
-	}
+	buff, _ := json.MarshalIndent(alarms, "", "\t")
 	fmt.Println(string(buff))
 }
 
