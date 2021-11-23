@@ -145,7 +145,6 @@ func (this *DsiEngine) DoMatch(ruleIndex int64) bool {
 	var matches []*regexp_engine.Match
 	matchEngine := NewEngine(ruleType, this)
 	if matchEngine == nil {
-		fmt.Println("rule type is error")
 		return false
 	}
 	matches, inputData, matched = matchEngine.match(rule)
