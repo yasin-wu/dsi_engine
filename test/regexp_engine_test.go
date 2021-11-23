@@ -2,6 +2,7 @@ package test
 
 import (
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/yasin-wu/dsi_engine/v2/consts"
@@ -10,11 +11,14 @@ import (
 	rule2 "github.com/yasin-wu/dsi_engine/v2/rule"
 )
 
+func init() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+}
+
 func TestRegexpEngine(t *testing.T) {
 	rule, err := rule2.New()
 	if err != nil {
-		t.Error(err)
-		return
+		log.Fatal(err)
 	}
 	var m = make(map[string]rule2.R)
 	m["TEST"] = rule2.R{
@@ -23,8 +27,7 @@ func TestRegexpEngine(t *testing.T) {
 	}
 	err = rule.Add("../conf/rules.json", m)
 	if err != nil {
-		t.Error(err.Error())
-		return
+		log.Fatal(err)
 	}
 	rulesMap := rule.RuleMap
 	inputData := "My name is Bob;" +
@@ -53,16 +56,14 @@ func TestRegexpEngine(t *testing.T) {
 	}
 	engine, err := regexp_engine.New(regexp1, regexp2, regexp3, regexp4, regexp5)
 	if err != nil {
-		t.Error(err.Error())
-		return
+		log.Fatal(err)
 	}
 	matches, err := engine.Run(inputData)
 	if err != nil {
-		t.Error(err.Error())
-		return
+		log.Fatal(err)
 	}
 	for _, m := range matches {
-		fmt.Println(fmt.Sprintf("命中规则ID:%s%v%s;命中内容:%s%v%s",
-			consts.Red, m.Id, consts.Reset, consts.Red, m.InputData[m.From:m.To], consts.Reset))
+		fmt.Printf("命中规则ID:%s%v%s;命中内容:%s%v%s\n",
+			consts.Red, m.Id, consts.Reset, consts.Red, m.InputData[m.From:m.To], consts.Reset)
 	}
 }

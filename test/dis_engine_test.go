@@ -3,6 +3,7 @@ package test
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"testing"
 
 	"github.com/yasin-wu/dsi_engine/v2/enum"
@@ -17,11 +18,14 @@ import (
 	"github.com/yasin-wu/utils/file_parser"
 )
 
+func init() {
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+}
+
 func TestDsiEngine(t *testing.T) {
 	rule, err := rule2.New()
 	if err != nil {
-		t.Error(err)
-		return
+		log.Fatal(err)
 	}
 	rulesMap := rule.RuleMap
 	sensitiveData := &policy.SensitiveData{
@@ -31,13 +35,11 @@ func TestDsiEngine(t *testing.T) {
 	sensitiveData.Policies = handlePolicies(rulesMap)
 	engine, err := dsi_engine.New(sensitiveData)
 	if err != nil {
-		t.Error(err.Error())
-		return
+		log.Fatal(err)
 	}
 	alarms, err := engine.Run()
 	if err != nil {
-		t.Error(err.Error())
-		return
+		log.Fatal(err)
 	}
 	buff, _ := json.MarshalIndent(alarms, "", "\t")
 	fmt.Println(string(buff))
@@ -52,13 +54,11 @@ func parser(sensitiveData *policy.SensitiveData) {
 	url, _ := cache.Get("tika.url")
 	parser, err := file_parser.New(url.(string), nil, nil)
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
 	f, err := parser.Parser(sensitiveData.FilePath, true)
 	if err != nil {
-		fmt.Println("fileParse.FileParse err :" + err.Error())
-		return
+		log.Fatal(err)
 	}
 	sensitiveData.FileName = f.Name
 	sensitiveData.FileType = f.FileType
