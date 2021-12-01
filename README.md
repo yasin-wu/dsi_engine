@@ -1,5 +1,5 @@
 ## 介绍
-Golang版本的自定义规则的敏感信息识别引擎(Detection Sensitive Information Engine)，使用了Intel的高性能正则表达式匹配库Hyperscan
+Golang版本的自定义规则的敏感信息识别引擎(Detection Sensitive Information Engine)，使用了Intel的高性能正则表达式匹配库Hyperscan；只适用X86架构，如果是M1芯片，请使用docker编译。
 ## 安装
 可使用Dockerfile安装Hyperscan环境
 ````
