@@ -30,10 +30,7 @@ func TestRegexpEngine(t *testing.T) {
 		log.Fatal(err)
 	}
 	rulesMap := rule.RuleMap
-	inputData := "My name is Bob;" +
-		"电话号码:18108379230;" +
-		"测试IPV6地址正则:fe80::ec61:c1d1:9827:82be%13;" +
-		"地址信息:四川省成都市武侯区府城大道天府新谷8号楼1007室."
+	inputData := "My name is Bob;电话号码:18108379230;测试IPV6地址正则:fe80::ec61:c1d1:9827:82be%13;地址信息:四川省成都市武侯区府城大道天府新谷8号楼1007室."
 	regexp1 := &regexp_engine.Regexp{
 		Id:     1,
 		Regexp: rulesMap["IPV6"].Regexp,
