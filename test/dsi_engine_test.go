@@ -18,6 +18,15 @@ import (
 	"github.com/yasin-wu/utils/file_parser"
 )
 
+var apolloConf = &config.AppConfig{
+	AppID:          "SampleApp",
+	Cluster:        "dev",
+	IP:             "http://localhost:8080",
+	NamespaceName:  "application",
+	IsBackupConfig: true,
+	Secret:         "49792384a8e14a999e13df1f7aa064fe",
+}
+
 func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
@@ -52,8 +61,7 @@ func parser(sensitiveData *policy.SensitiveData) {
 	fmt.Println("初始化Apollo配置成功")
 	cache := client.GetConfigCache(apolloConf.NamespaceName)
 	url, _ := cache.Get("tika.url")
-	parser := file_parser.New(url.(string), nil, nil)
-
+	parser := file_parser.New(url.(string))
 	f, err := parser.Parse(sensitiveData.FilePath, true)
 	if err != nil {
 		log.Fatal(err)
