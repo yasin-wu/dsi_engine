@@ -7,7 +7,7 @@ require (
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/flier/gohs v1.0.0
 	github.com/hyperjumptech/grule-rule-engine v1.7.2
-	github.com/yasin-wu/utils v1.3.1
+	github.com/yasin-wu/utils v1.5.0
 )
 
 require (
@@ -36,7 +36,6 @@ require (
 	github.com/subosito/gotenv v1.2.0 // indirect
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
 	github.com/yanyiwu/gojieba v1.1.2 // indirect
-	github.com/yasin-wu/go-tika v0.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect

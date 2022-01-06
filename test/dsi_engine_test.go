@@ -52,11 +52,9 @@ func parser(sensitiveData *policy.SensitiveData) {
 	fmt.Println("初始化Apollo配置成功")
 	cache := client.GetConfigCache(apolloConf.NamespaceName)
 	url, _ := cache.Get("tika.url")
-	parser, err := file_parser.New(url.(string), nil, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	f, err := parser.Parser(sensitiveData.FilePath, true)
+	parser := file_parser.New(url.(string), nil, nil)
+
+	f, err := parser.Parse(sensitiveData.FilePath, true)
 	if err != nil {
 		log.Fatal(err)
 	}
