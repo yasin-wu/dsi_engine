@@ -7,25 +7,47 @@ import (
 	"github.com/flier/gohs/hyperscan"
 )
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:48
+ * @description: 命中信息
+ */
 type Match struct {
-	Id        uint
-	From      uint64
-	To        uint64
-	Flags     uint
-	Context   interface{}
-	InputData string
-	Distance  int
+	Id        uint        //命中信息id
+	From      uint64      //命中开始位置
+	To        uint64      //名字结束位置
+	Flags     uint        //flags
+	Context   interface{} //命中内容
+	InputData string      //输入内容
+	Distance  int         //汉明距离
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:49
+ * @description: 正则信息
+ */
 type Regexp struct {
-	Id     int
-	Regexp string
+	Id     int    //正则id
+	Regexp string //正则表达式
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:49
+ * @description: RegexpEngine Client
+ */
 type RegexpEngine struct {
 	patterns []*hyperscan.Pattern
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:50
+ * @params: regexps ...*Regexp
+ * @return: *RegexpEngine, error
+ * @description: 新建RegexpEngine Client
+ */
 func New(regexps ...*Regexp) (*RegexpEngine, error) {
 	patterns := addRegexps(regexps...)
 	if patterns == nil || len(patterns) == 0 {
@@ -34,6 +56,13 @@ func New(regexps ...*Regexp) (*RegexpEngine, error) {
 	return &RegexpEngine{patterns: patterns}, nil
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:50
+ * @params: inputData string
+ * @return: []*Match, error
+ * @description: 检测输入内容敏感信息
+ */
 func (this *RegexpEngine) Run(inputData string) ([]*Match, error) {
 	db, err := hyperscan.NewBlockDatabase(this.patterns...)
 	if err != nil {

@@ -9,15 +9,31 @@ import (
 	"github.com/yasin-wu/dsi_engine/v2/consts"
 )
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:51
+ * @description: Rule
+ */
 type Rule struct {
 	RuleMap map[string]R
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:51
+ * @description: R
+ */
 type R struct {
 	Regexp string `json:"regexp"`
 	Desc   string `json:"desc"`
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:51
+ * @return: *Rule, error
+ * @description: 获取系统内置规则
+ */
 func New() (*Rule, error) {
 	ruleBytes := []byte(defaultRule)
 	j, err := js.NewJson(ruleBytes)
@@ -42,6 +58,13 @@ func New() (*Rule, error) {
 	}, nil
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:52
+ * @params: filePath string, ruleMap ...map[string]R
+ * @return: error
+ * @description: 添加自定义规则集
+ */
 func (this *Rule) Add(filePath string, ruleMap ...map[string]R) error {
 	if filePath == "" {
 		return consts.ErrParameterEmpty

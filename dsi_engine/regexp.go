@@ -5,13 +5,13 @@ import (
 	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
 )
 
-type Regexp struct {
+type regexp struct {
 	dsiEngine *DsiEngine
 }
 
-var _ MatchEngine = (*Regexp)(nil)
+var _ matchEngine = (*regexp)(nil)
 
-func (this *Regexp) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
+func (this *regexp) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := this.dsiEngine.sensitiveData.FileName
 	matches, matched := this.regexp(rule, this.dsiEngine.sensitiveData.FileName)
 	if !matched {
@@ -21,7 +21,7 @@ func (this *Regexp) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bo
 	return matches, inputData, matched
 }
 
-func (this *Regexp) regexp(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
+func (this *regexp) regexp(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
 	regexp := rule.Regexp
 	if regexp == "" {
 		return nil, false

@@ -8,13 +8,13 @@ import (
 	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
 )
 
-type FuzzyWords struct {
+type fuzzyWords struct {
 	dsiEngine *DsiEngine
 }
 
-var _ MatchEngine = (*FuzzyWords)(nil)
+var _ matchEngine = (*fuzzyWords)(nil)
 
-func (this *FuzzyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
+func (this *fuzzyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := this.dsiEngine.sensitiveData.FileName
 	matches, matched := this.do(rule, this.dsiEngine.sensitiveData.FileName)
 	if !matched {
@@ -24,7 +24,7 @@ func (this *FuzzyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string
 	return matches, inputData, matched
 }
 
-func (this *FuzzyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
+func (this *fuzzyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
 	baseRegexp := rule.ForWardKeyList
 	characterSpace := rule.CharacterSpace
 	regexps := this.regexps(baseRegexp, fmt.Sprintf("%d", characterSpace))
@@ -45,7 +45,7 @@ func (this *FuzzyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engin
 	return matches, true
 }
 
-func (this *FuzzyWords) regexps(baseRegexp []string, characterSpace string) []*regexp_engine.Regexp {
+func (this *fuzzyWords) regexps(baseRegexp []string, characterSpace string) []*regexp_engine.Regexp {
 	characterSpace = fmt.Sprintf(`.{0,%s}`, characterSpace)
 	var regexps []*regexp_engine.Regexp
 	for _, b := range baseRegexp {

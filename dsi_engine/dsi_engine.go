@@ -17,8 +17,18 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
 )
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:27
+ * @description: DsiEngine配置项选择器
+ */
 type Option func(dsiEngine *DsiEngine)
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:28
+ * @description: DsiEngine Client
+ */
 type DsiEngine struct {
 	fingerRatio      int
 	snapLength       int
@@ -33,19 +43,24 @@ type DsiEngine struct {
 	ruleSnaps        []*policy.RuleSnap
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:28
+ * @params: sensitiveData *policy.SensitiveData, options ...Option
+ * @return: *DsiEngine, error
+ * @description: 新建DsiEngine Client
+ */
 func New(sensitiveData *policy.SensitiveData, options ...Option) (*DsiEngine, error) {
 	if sensitiveData == nil {
 		return nil, errors.New("sensitiveData is nil")
 	}
-	dsiEngine := &DsiEngine{sensitiveData: sensitiveData}
+	dsiEngine := &DsiEngine{
+		sensitiveData:    sensitiveData,
+		matchFuncName:    consts.MatchFuncName,
+		callbackFuncName: consts.CallbackFuncName,
+	}
 	for _, f := range options {
 		f(dsiEngine)
-	}
-	if dsiEngine.matchFuncName == "" {
-		dsiEngine.matchFuncName = consts.MatchFuncName
-	}
-	if dsiEngine.callbackFuncName == "" {
-		dsiEngine.callbackFuncName = consts.CallbackFuncName
 	}
 	if dsiEngine.attachLength == 0 {
 		dsiEngine.attachLength = consts.DefaultAttachLength
@@ -56,36 +71,51 @@ func New(sensitiveData *policy.SensitiveData, options ...Option) (*DsiEngine, er
 	return dsiEngine, nil
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:29
+ * @params: fingerRatio int
+ * @return: Option
+ * @description: 配置指纹相似度
+ */
 func WithFingerRatio(fingerRatio int) Option {
 	return func(dsiEngine *DsiEngine) {
 		dsiEngine.fingerRatio = fingerRatio
 	}
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:30
+ * @params: snapLength int
+ * @return: Option
+ * @description: 配置告警信息快照长度
+ */
 func WithSnapLength(snapLength int) Option {
 	return func(dsiEngine *DsiEngine) {
 		dsiEngine.snapLength = snapLength
 	}
 }
 
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:30
+ * @params: attachLength int
+ * @return: Option
+ * @description: 配置附件信息长度
+ */
 func WithAttachLength(attachLength int) Option {
 	return func(dsiEngine *DsiEngine) {
 		dsiEngine.attachLength = attachLength
 	}
 }
 
-func WithMatchFuncName(matchFuncName string) Option {
-	return func(dsiEngine *DsiEngine) {
-		dsiEngine.matchFuncName = matchFuncName
-	}
-}
-
-func WithCallbackFuncName(callbackFuncName string) Option {
-	return func(dsiEngine *DsiEngine) {
-		dsiEngine.callbackFuncName = callbackFuncName
-	}
-}
-
+/**
+ * @author: yasin
+ * @date: 2022/1/13 13:32
+ * @return: []*policy.Alarm, error
+ * @description: 运行检测
+ */
 func (this *DsiEngine) Run() ([]*policy.Alarm, error) {
 	var err error
 	var errMsg string

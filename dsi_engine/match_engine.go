@@ -6,20 +6,20 @@ import (
 	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
 )
 
-type MatchEngine interface {
+type matchEngine interface {
 	match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool)
 }
 
-func NewEngine(ruleType enum.RuleType, dsiEngine *DsiEngine) MatchEngine {
+func NewEngine(ruleType enum.RuleType, dsiEngine *DsiEngine) matchEngine {
 	switch ruleType {
 	case enum.KEYWORDS_RULETYPE:
-		return &KeyWords{dsiEngine: dsiEngine}
+		return &keyWords{dsiEngine: dsiEngine}
 	case enum.FUZZYWORDS_RULETYPE:
-		return &FuzzyWords{dsiEngine: dsiEngine}
+		return &fuzzyWords{dsiEngine: dsiEngine}
 	case enum.REGEXP_RULETYPE:
-		return &Regexp{dsiEngine: dsiEngine}
+		return &regexp{dsiEngine: dsiEngine}
 	case enum.FINGERDNA_RULETYPE:
-		return &FingerPrint{dsiEngine: dsiEngine}
+		return &fingerPrint{dsiEngine: dsiEngine}
 	default:
 		return nil
 	}

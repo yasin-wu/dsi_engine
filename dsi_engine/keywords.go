@@ -5,13 +5,13 @@ import (
 	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
 )
 
-type KeyWords struct {
+type keyWords struct {
 	dsiEngine *DsiEngine
 }
 
-var _ MatchEngine = (*KeyWords)(nil)
+var _ matchEngine = (*keyWords)(nil)
 
-func (this *KeyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
+func (this *keyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := this.dsiEngine.sensitiveData.FileName
 	matches, matched := this.do(rule, this.dsiEngine.sensitiveData.FileName)
 	if !matched {
@@ -21,7 +21,7 @@ func (this *KeyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, 
 	return matches, inputData, matched
 }
 
-func (this *KeyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
+func (this *keyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
 	exitReverse := len(rule.ReverseKeyList) > 0
 	if exitReverse {
 		regexps := this.regexps(rule.ReverseKeyList)
@@ -58,7 +58,7 @@ func (this *KeyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.
 	return matches, true
 }
 
-func (this *KeyWords) regexps(keyWords []string) []*regexp_engine.Regexp {
+func (this *keyWords) regexps(keyWords []string) []*regexp_engine.Regexp {
 	var regexps []*regexp_engine.Regexp
 	for _, word := range keyWords {
 		regexp := &regexp_engine.Regexp{

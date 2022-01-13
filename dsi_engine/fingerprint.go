@@ -13,13 +13,13 @@ import (
 	"github.com/yasin-wu/utils/similarity"
 )
 
-type FingerPrint struct {
+type fingerPrint struct {
 	dsiEngine *DsiEngine
 }
 
-var _ MatchEngine = (*FingerPrint)(nil)
+var _ matchEngine = (*fingerPrint)(nil)
 
-func (this *FingerPrint) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
+func (this *fingerPrint) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := this.dsiEngine.sensitiveData.FileName
 	distance, matched := this.do(rule.FingerPrints,
 		rule.FingerRatio, this.dsiEngine.sensitiveData.FileName)
@@ -31,7 +31,7 @@ func (this *FingerPrint) match(rule *policy.Rule) ([]*regexp_engine.Match, strin
 	return []*regexp_engine.Match{{Distance: distance}}, inputData, matched
 }
 
-func (this *FingerPrint) do(fingerPrints *js.Json, fingerRatio int, inputData string) (int, bool) {
+func (this *fingerPrint) do(fingerPrints *js.Json, fingerRatio int, inputData string) (int, bool) {
 	_, dstFinger := similarity.ExtractWithWeight(inputData, 0, nil)
 	distance := this.computeFileHammingDistance(fingerPrints, dstFinger)
 	distance2 := this.computeWordHammingDistance(fingerPrints, dstFinger)
@@ -44,7 +44,7 @@ func (this *FingerPrint) do(fingerPrints *js.Json, fingerRatio int, inputData st
 	return distance, false
 }
 
-func (this *FingerPrint) computeFileHammingDistance(fingerPrints *js.Json, dstFinger []string) int {
+func (this *fingerPrint) computeFileHammingDistance(fingerPrints *js.Json, dstFinger []string) int {
 	distance := 100
 	fileList, ok := fingerPrints.CheckGet("filelist")
 	if !ok {
@@ -63,7 +63,7 @@ func (this *FingerPrint) computeFileHammingDistance(fingerPrints *js.Json, dstFi
 	}
 	return distance
 }
-func (this *FingerPrint) computeWordHammingDistance(fingerPrints *js.Json, dstFinger []string) int {
+func (this *fingerPrint) computeWordHammingDistance(fingerPrints *js.Json, dstFinger []string) int {
 	var err error
 	distance := 100
 	keyList, ok := fingerPrints.CheckGet("keylist")
@@ -95,14 +95,14 @@ func (this *FingerPrint) computeWordHammingDistance(fingerPrints *js.Json, dstFi
 	return distance
 }
 
-func (this *FingerPrint) strHashBitCode(str string) string {
+func (this *fingerPrint) strHashBitCode(str string) string {
 	h := fnv.New32a()
 	h.Write([]byte(str))
 	b := int64(h.Sum32())
 	return fmt.Sprintf("%032b", b)
 }
 
-func (this *FingerPrint) calcWithWeight(bitHash string, weight float64) []float64 {
+func (this *fingerPrint) calcWithWeight(bitHash string, weight float64) []float64 {
 	bitHashes := strings.Split(bitHash, "")
 	binaries := make([]float64, 0)
 
@@ -116,7 +116,7 @@ func (this *FingerPrint) calcWithWeight(bitHash string, weight float64) []float6
 	return binaries
 }
 
-func (this *FingerPrint) sliceInnerPlus(arr1, arr2 []float64) (dstArr []float64, err error) {
+func (this *fingerPrint) sliceInnerPlus(arr1, arr2 []float64) (dstArr []float64, err error) {
 	dstArr = make([]float64, len(arr1), len(arr1))
 
 	if arr1 == nil || arr2 == nil {

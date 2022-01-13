@@ -14,9 +14,9 @@ func _() {
 	_ = x[FINGERDNA_RULETYPE-4]
 }
 
-const _RuleType_name = "关键字模糊关键字正则表达式文件指纹"
+const _RuleType_name = "关键字模糊关键字正则表达式指纹相似度"
 
-var _RuleType_index = [...]uint8{0, 9, 24, 39, 51}
+var _RuleType_index = [...]uint8{0, 9, 24, 39, 54}
 
 func (i RuleType) String() string {
 	i -= 1
