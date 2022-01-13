@@ -8,24 +8,12 @@ import (
 
 	"github.com/yasin-wu/dsi_engine/v2/enum"
 
-	"github.com/apolloconfig/agollo/v4"
-	"github.com/apolloconfig/agollo/v4/env/config"
-
 	"github.com/yasin-wu/dsi_engine/v2/dsi_engine"
 	"github.com/yasin-wu/dsi_engine/v2/policy"
 	rule2 "github.com/yasin-wu/dsi_engine/v2/rule"
 
 	"github.com/yasin-wu/utils/file_parser"
 )
-
-var apolloConf = &config.AppConfig{
-	AppID:          "SampleApp",
-	Cluster:        "dev",
-	IP:             "http://localhost:8080",
-	NamespaceName:  "application",
-	IsBackupConfig: true,
-	Secret:         "49792384a8e14a999e13df1f7aa064fe",
-}
 
 func init() {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
@@ -55,13 +43,7 @@ func TestDsiEngine(t *testing.T) {
 }
 
 func parser(sensitiveData *policy.SensitiveData) {
-	client, _ := agollo.StartWithConfig(func() (*config.AppConfig, error) {
-		return apolloConf, nil
-	})
-	fmt.Println("初始化Apollo配置成功")
-	cache := client.GetConfigCache(apolloConf.NamespaceName)
-	url, _ := cache.Get("tika.url")
-	parser := file_parser.New(url.(string))
+	parser := file_parser.New("http://47.108.155.25:9998")
 	f, err := parser.Parse(sensitiveData.FilePath, true)
 	if err != nil {
 		log.Fatal(err)
