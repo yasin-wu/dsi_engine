@@ -7,7 +7,7 @@ import (
 )
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:42
  * @description: 告警信息
  */
@@ -28,7 +28,7 @@ type Alarm struct {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:42
  * @description: 命中规则快照
  */

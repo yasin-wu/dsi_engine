@@ -6,7 +6,7 @@ import (
 )
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:45
  * @description: 敏感数据
  */
@@ -21,7 +21,7 @@ type SensitiveData struct {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:46
  * @description: 策略信息
  */
@@ -32,7 +32,7 @@ type Policy struct {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:47
  * @description: 规则信息
  */

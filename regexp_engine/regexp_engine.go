@@ -8,7 +8,7 @@ import (
 )
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:48
  * @description: 命中信息
  */
@@ -23,7 +23,7 @@ type Match struct {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:49
  * @description: 正则信息
  */
@@ -33,7 +33,7 @@ type Regexp struct {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:49
  * @description: RegexpEngine Client
  */
@@ -42,7 +42,7 @@ type RegexpEngine struct {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:50
  * @params: regexps ...*Regexp
  * @return: *RegexpEngine, error
@@ -57,7 +57,7 @@ func New(regexps ...*Regexp) (*RegexpEngine, error) {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:50
  * @params: inputData string
  * @return: []*Match, error

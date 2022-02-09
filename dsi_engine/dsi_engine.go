@@ -18,14 +18,14 @@ import (
 )
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:27
  * @description: DsiEngine配置项选择器
  */
 type Option func(dsiEngine *DsiEngine)
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:28
  * @description: DsiEngine Client
  */
@@ -44,7 +44,7 @@ type DsiEngine struct {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:28
  * @params: sensitiveData *policy.SensitiveData, options ...Option
  * @return: *DsiEngine, error
@@ -72,7 +72,7 @@ func New(sensitiveData *policy.SensitiveData, options ...Option) (*DsiEngine, er
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:29
  * @params: fingerRatio int
  * @return: Option
@@ -85,7 +85,7 @@ func WithFingerRatio(fingerRatio int) Option {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:30
  * @params: snapLength int
  * @return: Option
@@ -98,7 +98,7 @@ func WithSnapLength(snapLength int) Option {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:30
  * @params: attachLength int
  * @return: Option
@@ -111,7 +111,7 @@ func WithAttachLength(attachLength int) Option {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:32
  * @return: []*policy.Alarm, error
  * @description: 运行检测

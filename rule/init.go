@@ -10,7 +10,7 @@ import (
 )
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:51
  * @description: Rule
  */
@@ -19,7 +19,7 @@ type Rule struct {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:51
  * @description: R
  */
@@ -29,7 +29,7 @@ type R struct {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:51
  * @return: *Rule, error
  * @description: 获取系统内置规则
@@ -59,7 +59,7 @@ func New() (*Rule, error) {
 }
 
 /**
- * @author: yasin
+ * @author: yasinWu
  * @date: 2022/1/13 13:52
  * @params: filePath string, ruleMap ...map[string]R
  * @return: error
