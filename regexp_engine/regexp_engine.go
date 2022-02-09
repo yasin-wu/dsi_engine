@@ -63,8 +63,8 @@ func New(regexps ...*Regexp) (*RegexpEngine, error) {
  * @return: []*Match, error
  * @description: 检测输入内容敏感信息
  */
-func (this *RegexpEngine) Run(inputData string) ([]*Match, error) {
-	db, err := hyperscan.NewBlockDatabase(this.patterns...)
+func (r *RegexpEngine) Run(inputData string) ([]*Match, error) {
+	db, err := hyperscan.NewBlockDatabase(r.patterns...)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("NewBlockDatabase err: %v", err.Error()))
 	}

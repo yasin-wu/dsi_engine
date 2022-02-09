@@ -11,17 +11,17 @@ type regexp struct {
 
 var _ matchEngine = (*regexp)(nil)
 
-func (this *regexp) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
-	inputData := this.dsiEngine.sensitiveData.FileName
-	matches, matched := this.regexp(rule, this.dsiEngine.sensitiveData.FileName)
+func (r *regexp) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
+	inputData := r.dsiEngine.sensitiveData.FileName
+	matches, matched := r.regexp(rule, r.dsiEngine.sensitiveData.FileName)
 	if !matched {
-		inputData = this.dsiEngine.sensitiveData.Content
-		matches, matched = this.regexp(rule, this.dsiEngine.sensitiveData.Content)
+		inputData = r.dsiEngine.sensitiveData.Content
+		matches, matched = r.regexp(rule, r.dsiEngine.sensitiveData.Content)
 	}
 	return matches, inputData, matched
 }
 
-func (this *regexp) regexp(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
+func (r *regexp) regexp(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
 	regexp := rule.Regexp
 	if regexp == "" {
 		return nil, false

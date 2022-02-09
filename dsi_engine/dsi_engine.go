@@ -116,12 +116,12 @@ func WithAttachLength(attachLength int) Option {
  * @return: []*policy.Alarm, error
  * @description: 运行检测
  */
-func (this *DsiEngine) Run() ([]*policy.Alarm, error) {
+func (d *DsiEngine) Run() ([]*policy.Alarm, error) {
 	var err error
 	var errMsg string
 	var alarms []*policy.Alarm
-	for _, policyInfo := range this.sensitiveData.Policies {
-		alarm, err := this.run(policyInfo)
+	for _, policyInfo := range d.sensitiveData.Policies {
+		alarm, err := d.run(policyInfo)
 		if err != nil {
 			errMsg += fmt.Sprintf("run err:%s;", err.Error())
 			continue
@@ -135,17 +135,17 @@ func (this *DsiEngine) Run() ([]*policy.Alarm, error) {
 	return alarms, err
 }
 
-func (this *DsiEngine) run(policyInfo *policy.Policy) (*policy.Alarm, error) {
+func (d *DsiEngine) run(policyInfo *policy.Policy) (*policy.Alarm, error) {
 	if policyInfo == nil {
 		return nil, errors.New("policyInfo is nil")
 	}
-	this.policy = policyInfo
-	rule, err := this.handlePolicy()
+	d.policy = policyInfo
+	rule, err := d.handlePolicy()
 	if err != nil {
 		return nil, err
 	}
 	dataContext := ast.NewDataContext()
-	err = dataContext.Add("Engine", this)
+	err = dataContext.Add("Engine", d)
 	if err != nil {
 		return nil, fmt.Errorf("dataContext.Add err: %v", err.Error())
 	}
@@ -162,18 +162,18 @@ func (this *DsiEngine) run(policyInfo *policy.Policy) (*policy.Alarm, error) {
 	if err != nil {
 		return nil, fmt.Errorf("eng.Execute err: %v", err.Error())
 	}
-	return this.alarm, nil
+	return d.alarm, nil
 }
 
-func (this *DsiEngine) DoMatch(ruleIndex int64) bool {
-	policyInfo := this.policy
+func (d *DsiEngine) DoMatch(ruleIndex int64) bool {
+	policyInfo := d.policy
 	rule := policyInfo.Rules[ruleIndex]
 	ruleType := rule.Type
 	matched := false
 	inputData := ""
 	distance := 100
 	var matches []*regexp_engine.Match
-	matchEngine := NewEngine(ruleType, this)
+	matchEngine := NewEngine(ruleType, d)
 	if matchEngine == nil {
 		return false
 	}
@@ -185,62 +185,62 @@ func (this *DsiEngine) DoMatch(ruleIndex int64) bool {
 		ruleSnap.Type = ruleType
 		ruleSnap.MatchTimes = len(matches)
 		ruleSnap.Level = rule.Level
-		ruleSnap.Snap = this.handleSnap(matches, inputData)
-		this.ruleSnaps = append(this.ruleSnaps, ruleSnap)
+		ruleSnap.Snap = d.handleSnap(matches, inputData)
+		d.ruleSnaps = append(d.ruleSnaps, ruleSnap)
 		if ruleType == enum.FINGERDNA_RULETYPE {
 			distance = matches[0].Distance
-			this.fingerRatio = distance
+			d.fingerRatio = distance
 		}
 	}
 	return matched
 }
 
-func (this *DsiEngine) HandleResult() {
-	this.alarm = this.handlePolicyAlarm()
+func (d *DsiEngine) HandleResult() {
+	d.alarm = d.handlePolicyAlarm()
 }
 
-func (this *DsiEngine) handlePolicy() (string, error) {
-	policyInfo := this.policy
+func (d *DsiEngine) handlePolicy() (string, error) {
+	policyInfo := d.policy
 	if len(policyInfo.Rules) != len(policyInfo.Operators)+1 {
 		return "", errors.New("policyInfo.Rules Or policyInfo.Operators Format Error ")
 	}
 	patterns := ""
 	if len(policyInfo.Operators) == 0 {
-		patterns = fmt.Sprintf(`%v(%d)`, this.matchFuncName, 0)
+		patterns = fmt.Sprintf(`%v(%d)`, d.matchFuncName, 0)
 	} else {
 		for i := 0; i < len(policyInfo.Operators); i++ {
 			operator := policyInfo.Operators[i]
 			if i == 0 {
-				patterns = fmt.Sprintf(`%v(%d)`, this.matchFuncName, i)
+				patterns = fmt.Sprintf(`%v(%d)`, d.matchFuncName, i)
 			}
 			if operator == enum.AND_OPERATOR {
-				patterns += fmt.Sprintf(` && %v(%d)`, this.matchFuncName, i+1)
+				patterns += fmt.Sprintf(` && %v(%d)`, d.matchFuncName, i+1)
 			} else if operator == enum.OR_OPERATOR {
-				patterns += fmt.Sprintf(` || %v(%d)`, this.matchFuncName, i+1)
+				patterns += fmt.Sprintf(` || %v(%d)`, d.matchFuncName, i+1)
 			}
 		}
 	}
 	rule := fmt.Sprintf(`rule Check "Check" { when %v then %v; %v; }`,
-		patterns, this.callbackFuncName+"()", `Retract("Check")`)
-	this.rule = rule
+		patterns, d.callbackFuncName+"()", `Retract("Check")`)
+	d.rule = rule
 	return rule, nil
 }
 
-func (this *DsiEngine) handlePolicyAlarm() *policy.Alarm {
+func (d *DsiEngine) handlePolicyAlarm() *policy.Alarm {
 	alarm := &policy.Alarm{}
-	sensitiveData := this.sensitiveData
-	policyInfo := this.policy
+	sensitiveData := d.sensitiveData
+	policyInfo := d.policy
 	matchTimes := 0
 	snapShot := ""
 	now := time.Now()
-	for _, rs := range this.ruleSnaps {
+	for _, rs := range d.ruleSnaps {
 		matchTimes += rs.MatchTimes
 		snapShot += rs.Snap
 	}
-	if this.attachLength > len(sensitiveData.Content) {
-		this.attachLength = len(sensitiveData.Content)
+	if d.attachLength > len(sensitiveData.Content) {
+		d.attachLength = len(sensitiveData.Content)
 	}
-	alarm.RuleSnaps = this.ruleSnaps
+	alarm.RuleSnaps = d.ruleSnaps
 	alarm.PolicyId = policyInfo.Id
 	alarm.FileName = sensitiveData.FileName
 	alarm.FileType = sensitiveData.FileType
@@ -249,15 +249,15 @@ func (this *DsiEngine) handlePolicyAlarm() *policy.Alarm {
 	alarm.MatchTimes = matchTimes
 	alarm.SnapShot = snapShot
 	alarm.CreatedAt = now
-	alarm.AttachWords = sensitiveData.Content[0:this.attachLength]
-	alarm.MatchNote = this.handleMatchNote()
-	alarm.FingerRatio = this.fingerRatio
+	alarm.AttachWords = sensitiveData.Content[0:d.attachLength]
+	alarm.MatchNote = d.handleMatchNote()
+	alarm.FingerRatio = d.fingerRatio
 	return alarm
 }
 
-func (this *DsiEngine) handleSnap(matches []*regexp_engine.Match, inputData string) string {
+func (d *DsiEngine) handleSnap(matches []*regexp_engine.Match, inputData string) string {
 	snap := ""
-	snapLength := uint64(this.snapLength)
+	snapLength := uint64(d.snapLength)
 	inputDataLength := uint64(len(inputData))
 	for _, match := range matches {
 		start := match.From - snapLength
@@ -271,25 +271,25 @@ func (this *DsiEngine) handleSnap(matches []*regexp_engine.Match, inputData stri
 			end = inputDataLength
 		}
 		snap += fmt.Sprintf("%s%s%s", inputData[start:from],
-			this.highlight(inputData[from:to]),
+			d.highlight(inputData[from:to]),
 			inputData[to:end]) + "......"
 		match.InputData = inputData
-		this.matches = append(this.matches, match)
+		d.matches = append(d.matches, match)
 	}
 
 	return snap
 }
 
-func (this *DsiEngine) highlight(s string) string {
+func (d *DsiEngine) highlight(s string) string {
 	return `<b style="background:red">` + s + `</b>`
 	//return fmt.Sprintf("%s%s%s", consts.Red, s, consts.Reset)
 	//return "\033[35m" + s + "\033[0m"
 }
 
-func (this *DsiEngine) handleMatchNote() string {
+func (d *DsiEngine) handleMatchNote() string {
 	matchNote := ""
 	matchNoteMap := make(map[string]int)
-	for _, m := range this.matches {
+	for _, m := range d.matches {
 		key := m.InputData[m.From:m.To]
 		matchNoteMap[key] += 1
 	}

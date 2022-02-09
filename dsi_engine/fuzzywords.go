@@ -14,20 +14,20 @@ type fuzzyWords struct {
 
 var _ matchEngine = (*fuzzyWords)(nil)
 
-func (this *fuzzyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
-	inputData := this.dsiEngine.sensitiveData.FileName
-	matches, matched := this.do(rule, this.dsiEngine.sensitiveData.FileName)
+func (f *fuzzyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
+	inputData := f.dsiEngine.sensitiveData.FileName
+	matches, matched := f.do(rule, f.dsiEngine.sensitiveData.FileName)
 	if !matched {
-		inputData = this.dsiEngine.sensitiveData.Content
-		matches, matched = this.do(rule, this.dsiEngine.sensitiveData.Content)
+		inputData = f.dsiEngine.sensitiveData.Content
+		matches, matched = f.do(rule, f.dsiEngine.sensitiveData.Content)
 	}
 	return matches, inputData, matched
 }
 
-func (this *fuzzyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
+func (f *fuzzyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
 	baseRegexp := rule.ForWardKeyList
 	characterSpace := rule.CharacterSpace
-	regexps := this.regexps(baseRegexp, fmt.Sprintf("%d", characterSpace))
+	regexps := f.regexps(baseRegexp, fmt.Sprintf("%d", characterSpace))
 	if regexps == nil {
 		return nil, false
 	}
@@ -45,7 +45,7 @@ func (this *fuzzyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engin
 	return matches, true
 }
 
-func (this *fuzzyWords) regexps(baseRegexp []string, characterSpace string) []*regexp_engine.Regexp {
+func (f *fuzzyWords) regexps(baseRegexp []string, characterSpace string) []*regexp_engine.Regexp {
 	characterSpace = fmt.Sprintf(`.{0,%s}`, characterSpace)
 	var regexps []*regexp_engine.Regexp
 	for _, b := range baseRegexp {

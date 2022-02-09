@@ -65,7 +65,7 @@ func New() (*Rule, error) {
  * @return: error
  * @description: 添加自定义规则集
  */
-func (this *Rule) Add(filePath string, ruleMap ...map[string]R) error {
+func (r *Rule) Add(filePath string, ruleMap ...map[string]R) error {
 	if filePath == "" {
 		return consts.ErrParameterEmpty
 	}
@@ -87,16 +87,16 @@ func (this *Rule) Add(filePath string, ruleMap ...map[string]R) error {
 		return err
 	}
 	for k, v := range m {
-		var r R
-		err = unmarshal(v, &r)
+		var rr R
+		err = unmarshal(v, &rr)
 		if err != nil {
 			continue
 		}
-		this.RuleMap[k] = r
+		r.RuleMap[k] = rr
 	}
 	for _, v := range ruleMap {
 		for k, v1 := range v {
-			this.RuleMap[k] = v1
+			r.RuleMap[k] = v1
 		}
 	}
 	return nil

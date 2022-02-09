@@ -11,20 +11,20 @@ type keyWords struct {
 
 var _ matchEngine = (*keyWords)(nil)
 
-func (this *keyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
-	inputData := this.dsiEngine.sensitiveData.FileName
-	matches, matched := this.do(rule, this.dsiEngine.sensitiveData.FileName)
+func (k *keyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
+	inputData := k.dsiEngine.sensitiveData.FileName
+	matches, matched := k.do(rule, k.dsiEngine.sensitiveData.FileName)
 	if !matched {
-		inputData = this.dsiEngine.sensitiveData.Content
-		matches, matched = this.do(rule, this.dsiEngine.sensitiveData.Content)
+		inputData = k.dsiEngine.sensitiveData.Content
+		matches, matched = k.do(rule, k.dsiEngine.sensitiveData.Content)
 	}
 	return matches, inputData, matched
 }
 
-func (this *keyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
+func (k *keyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.Match, bool) {
 	exitReverse := len(rule.ReverseKeyList) > 0
 	if exitReverse {
-		regexps := this.regexps(rule.ReverseKeyList)
+		regexps := k.regexps(rule.ReverseKeyList)
 		if regexps == nil {
 			return nil, false
 		}
@@ -40,7 +40,7 @@ func (this *keyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.
 			return nil, false
 		}
 	}
-	regexps := this.regexps(rule.ForWardKeyList)
+	regexps := k.regexps(rule.ForWardKeyList)
 	if regexps == nil {
 		return nil, false
 	}
@@ -58,7 +58,7 @@ func (this *keyWords) do(rule *policy.Rule, inputData string) ([]*regexp_engine.
 	return matches, true
 }
 
-func (this *keyWords) regexps(keyWords []string) []*regexp_engine.Regexp {
+func (k *keyWords) regexps(keyWords []string) []*regexp_engine.Regexp {
 	var regexps []*regexp_engine.Regexp
 	for _, word := range keyWords {
 		regexp := &regexp_engine.Regexp{
