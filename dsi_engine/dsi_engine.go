@@ -207,24 +207,22 @@ func (d *DsiEngine) handlePolicy() (string, error) {
 	}
 	patterns := ""
 	if len(policyInfo.Operators) == 0 {
-		patterns = fmt.Sprintf(`%v(%d)`, d.matchFuncName, 0)
+		patterns = fmt.Sprintf(` %s(%d) `, d.matchFuncName, 0)
 	} else {
 		for i := 0; i < len(policyInfo.Operators); i++ {
 			operator := policyInfo.Operators[i]
 			if i == 0 {
-				patterns = fmt.Sprintf(`%v(%d)`, d.matchFuncName, i)
+				patterns = fmt.Sprintf(`%s(%d) `, d.matchFuncName, i)
 			}
 			if operator == enum.AND_OPERATOR {
-				patterns += fmt.Sprintf(` && %v(%d)`, d.matchFuncName, i+1)
+				patterns += fmt.Sprintf(` && %s(%d) `, d.matchFuncName, i+1)
 			} else if operator == enum.OR_OPERATOR {
-				patterns += fmt.Sprintf(` || %v(%d)`, d.matchFuncName, i+1)
+				patterns += fmt.Sprintf(` || %s(%d) `, d.matchFuncName, i+1)
 			}
 		}
 	}
-	rule := fmt.Sprintf(`rule Check "Check" { when %v then %v; %v; }`,
-		patterns, d.callbackFuncName+"()", `Retract("Check")`)
-	d.rule = rule
-	return rule, nil
+	d.rule = fmt.Sprintf(`rule Check "Check" { when %s then %s(); Retract("Check"); }`, patterns, d.callbackFuncName)
+	return d.rule, nil
 }
 
 func (d *DsiEngine) handlePolicyAlarm() *policy.Alarm {
