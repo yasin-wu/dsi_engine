@@ -46,16 +46,12 @@ type DsiEngine struct {
 /**
  * @author: yasinWu
  * @date: 2022/1/13 13:28
- * @params: sensitiveData *policy.SensitiveData, options ...Option
- * @return: *DsiEngine, error
+ * @params: options ...Option
+ * @return: *DsiEngine
  * @description: 新建DsiEngine Client
  */
-func New(sensitiveData *policy.SensitiveData, options ...Option) (*DsiEngine, error) {
-	if sensitiveData == nil {
-		return nil, errors.New("sensitiveData is nil")
-	}
+func New(options ...Option) *DsiEngine {
 	dsiEngine := &DsiEngine{
-		sensitiveData:    sensitiveData,
 		matchFuncName:    consts.MatchFuncName,
 		callbackFuncName: consts.CallbackFuncName,
 	}
@@ -68,7 +64,7 @@ func New(sensitiveData *policy.SensitiveData, options ...Option) (*DsiEngine, er
 	if dsiEngine.snapLength == 0 {
 		dsiEngine.snapLength = consts.DefaultSnapLength
 	}
-	return dsiEngine, nil
+	return dsiEngine
 }
 
 /**
@@ -113,13 +109,18 @@ func WithAttachLength(attachLength int) Option {
 /**
  * @author: yasinWu
  * @date: 2022/1/13 13:32
+ * @params: sensitiveData *policy.SensitiveData
  * @return: []*policy.Alarm, error
  * @description: 运行检测
  */
-func (d *DsiEngine) Run() ([]*policy.Alarm, error) {
+func (d *DsiEngine) Run(sensitiveData *policy.SensitiveData) ([]*policy.Alarm, error) {
+	if sensitiveData == nil {
+		return nil, errors.New("sensitive data is nil")
+	}
 	var err error
 	var errMsg string
 	var alarms []*policy.Alarm
+	d.sensitiveData = sensitiveData
 	for _, policyInfo := range d.sensitiveData.Policies {
 		alarm, err := d.run(policyInfo)
 		if err != nil {

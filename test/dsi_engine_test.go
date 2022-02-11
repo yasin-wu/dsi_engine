@@ -30,11 +30,8 @@ func TestDsiEngine(t *testing.T) {
 	}
 	parser(sensitiveData)
 	sensitiveData.Policies = handlePolicies(rulesMap)
-	engine, err := dsi_engine.New(sensitiveData)
-	if err != nil {
-		log.Fatal(err)
-	}
-	alarms, err := engine.Run()
+	engine := dsi_engine.New()
+	alarms, err := engine.Run(sensitiveData)
 	if err != nil {
 		log.Fatal(err)
 	}
