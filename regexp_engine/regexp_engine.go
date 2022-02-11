@@ -66,12 +66,12 @@ func New(regexps ...*Regexp) (*RegexpEngine, error) {
 func (r *RegexpEngine) Run(inputData string) ([]*Match, error) {
 	db, err := hyperscan.NewBlockDatabase(r.patterns...)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("NewBlockDatabase err: %v", err.Error()))
+		return nil, fmt.Errorf("NewBlockDatabase err: %v", err.Error())
 	}
 	defer db.Close()
 	s, err := hyperscan.NewScratch(db)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("create scratch failed, err: %v", err.Error()))
+		return nil, fmt.Errorf("create scratch failed, err: %v", err.Error())
 	}
 	defer s.Free()
 	var matches []*Match
@@ -82,7 +82,7 @@ func (r *RegexpEngine) Run(inputData string) ([]*Match, error) {
 	}
 
 	if err := db.Scan([]byte(inputData), s, matched, nil); err != nil {
-		return nil, errors.New(fmt.Sprintf("database scan failed, err: %v", err.Error()))
+		return nil, fmt.Errorf("database scan failed, err: %v", err.Error())
 	}
 	return matches, nil
 }
