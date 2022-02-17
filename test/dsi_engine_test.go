@@ -15,10 +15,6 @@ import (
 	"github.com/yasin-wu/utils/file_parser"
 )
 
-func init() {
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-}
-
 func TestDsiEngine(t *testing.T) {
 	rule, err := rule2.New()
 	if err != nil {

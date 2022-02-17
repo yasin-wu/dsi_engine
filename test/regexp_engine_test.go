@@ -11,10 +11,6 @@ import (
 	rule2 "github.com/yasin-wu/dsi_engine/v2/rule"
 )
 
-func init() {
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-}
-
 func TestRegexpEngine(t *testing.T) {
 	rule, err := rule2.New()
 	if err != nil {

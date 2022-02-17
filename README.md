@@ -37,10 +37,6 @@ require github.com/yasin-wu/dsi_engine/v2 v2.1.5
 ## 使用DsiEngine
 
 ````go
-func init() {
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-}
-
 func TestDsiEngine(t *testing.T) {
 	rule, err := rule2.New()
 	if err != nil {
@@ -113,10 +109,6 @@ func handlePolicies(rulesMap map[string]rule2.R) []*policy.Policy {
 ## 使用RegexpEngine
 
 ````go
-func init() {
-	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
-}
-
 func main() {
 	rule, err := rule2.New()
 	if err != nil {
