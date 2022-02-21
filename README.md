@@ -6,7 +6,7 @@ Golang版本的自定义规则的敏感信息识别引擎(Detection Sensitive In
 
 可使用Dockerfile安装Hyperscan环境
 
-````
+```
 os:
     - linux
     - osx
@@ -26,17 +26,17 @@ package:
 go get -u github.com/flier/gohs
 go get -u github.com/hyperjumptech/grule-rule-engine
 go get -u github.com/yasin-wu/dsi_engine
-````
+```
 
 推荐使用go.mod
 
-````
+```
 require github.com/yasin-wu/dsi_engine/v2 v2.1.5
-````
+```
 
 ## 使用DsiEngine
 
-````go
+```go
 func TestDsiEngine(t *testing.T) {
 	rule, err := rule2.New()
 	if err != nil {
@@ -104,11 +104,11 @@ func handlePolicies(rulesMap map[string]rule2.R) []*policy.Policy {
 }
 
 
-````
+```
 
 ## 使用RegexpEngine
 
-````go
+```go
 func main() {
 	rule, err := rule2.New()
 	if err != nil {
@@ -159,4 +159,4 @@ func main() {
 	}
 }
 
-````
+```
