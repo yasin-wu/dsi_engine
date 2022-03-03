@@ -10,7 +10,7 @@ RUN  cd /usr/local/include/ && \
      ln -s /usr/local/include/boost_1_60_0/boost /usr/local/include/hyperscan/include/boost && \
      cd /usr/local/include/hs/ && cmake ../hyperscan && cmake -build . && make install
 RUN  cd /home/ && \
-     tar zxvf go.tar.gz -C /usr/local/ && \
+     tar -zxvf go.tar.gz -C /usr/local/ && \
      echo "export GOPATH=/home/gopath" >> /etc/profile && \
      echo "export PATH=$PATH:/usr/local/go/bin/" >> /etc/profile && \
      echo "export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig" >> /etc/profile
