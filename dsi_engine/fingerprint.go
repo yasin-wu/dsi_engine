@@ -17,7 +17,7 @@ type fingerPrint struct {
 	dsiEngine *DsiEngine
 }
 
-var _ matchEngine = (*fingerPrint)(nil)
+var _ MatchEngine = (*fingerPrint)(nil)
 
 func (f *fingerPrint) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := f.dsiEngine.sensitiveData.FileName

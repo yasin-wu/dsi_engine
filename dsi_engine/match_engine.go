@@ -6,11 +6,11 @@ import (
 	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
 )
 
-type matchEngine interface {
+type MatchEngine interface {
 	match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool)
 }
 
-func NewEngine(ruleType enum.RuleType, dsiEngine *DsiEngine) matchEngine {
+func NewEngine(ruleType enum.RuleType, dsiEngine *DsiEngine) MatchEngine {
 	switch ruleType {
 	case enum.KEYWORDS_RULETYPE:
 		return &keyWords{dsiEngine: dsiEngine}

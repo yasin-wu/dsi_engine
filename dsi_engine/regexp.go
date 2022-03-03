@@ -9,7 +9,7 @@ type regexp struct {
 	dsiEngine *DsiEngine
 }
 
-var _ matchEngine = (*regexp)(nil)
+var _ MatchEngine = (*regexp)(nil)
 
 func (r *regexp) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := r.dsiEngine.sensitiveData.FileName

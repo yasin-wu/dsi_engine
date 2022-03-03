@@ -12,7 +12,7 @@ type fuzzyWords struct {
 	dsiEngine *DsiEngine
 }
 
-var _ matchEngine = (*fuzzyWords)(nil)
+var _ MatchEngine = (*fuzzyWords)(nil)
 
 func (f *fuzzyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := f.dsiEngine.sensitiveData.FileName

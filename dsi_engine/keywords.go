@@ -9,7 +9,7 @@ type keyWords struct {
 	dsiEngine *DsiEngine
 }
 
-var _ matchEngine = (*keyWords)(nil)
+var _ MatchEngine = (*keyWords)(nil)
 
 func (k *keyWords) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
 	inputData := k.dsiEngine.sensitiveData.FileName
