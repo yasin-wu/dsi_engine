@@ -1,20 +1,19 @@
-package dsi_engine
+package engine
 
 import (
 	"errors"
 	"fmt"
 	"time"
 
-	"github.com/yasin-wu/dsi_engine/v2/enum"
-
-	"github.com/yasin-wu/dsi_engine/v2/consts"
-	"github.com/yasin-wu/dsi_engine/v2/policy"
-	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
+	"github.com/yasin-wu/dsi_engine/v2/match"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+	"github.com/yasin-wu/dsi_engine/v2/consts"
+	"github.com/yasin-wu/dsi_engine/v2/entity"
+	"github.com/yasin-wu/dsi_engine/v2/enum"
 )
 
 /**
@@ -36,11 +35,11 @@ type DsiEngine struct {
 	matchFuncName    string
 	callbackFuncName string
 	rule             string
-	alarm            *policy.Alarm
-	sensitiveData    *policy.SensitiveData
-	policy           *policy.Policy
-	matches          []*regexp_engine.Match
-	ruleSnaps        []*policy.RuleSnap
+	alarm            *entity.Alarm
+	policy           *entity.Policy
+	sensitiveData    *entity.SensitiveData
+	matches          []*entity.Match
+	ruleSnaps        []*entity.RuleSnap
 }
 
 /**
@@ -52,74 +51,31 @@ type DsiEngine struct {
  */
 func New(options ...Option) *DsiEngine {
 	dsiEngine := &DsiEngine{
-		matchFuncName:    consts.MatchFuncName,
-		callbackFuncName: consts.CallbackFuncName,
+		matchFuncName:    "Engine.DoMatch",
+		callbackFuncName: "Engine.HandleResult",
+		snapLength:       100,
+		attachLength:     1000,
 	}
 	for _, f := range options {
 		f(dsiEngine)
-	}
-	if dsiEngine.attachLength == 0 {
-		dsiEngine.attachLength = consts.DefaultAttachLength
-	}
-	if dsiEngine.snapLength == 0 {
-		dsiEngine.snapLength = consts.DefaultSnapLength
 	}
 	return dsiEngine
 }
 
 /**
  * @author: yasinWu
- * @date: 2022/1/13 13:29
- * @params: fingerRatio int
- * @return: Option
- * @description: 配置指纹相似度
- */
-func WithFingerRatio(fingerRatio int) Option {
-	return func(dsiEngine *DsiEngine) {
-		dsiEngine.fingerRatio = fingerRatio
-	}
-}
-
-/**
- * @author: yasinWu
- * @date: 2022/1/13 13:30
- * @params: snapLength int
- * @return: Option
- * @description: 配置告警信息快照长度
- */
-func WithSnapLength(snapLength int) Option {
-	return func(dsiEngine *DsiEngine) {
-		dsiEngine.snapLength = snapLength
-	}
-}
-
-/**
- * @author: yasinWu
- * @date: 2022/1/13 13:30
- * @params: attachLength int
- * @return: Option
- * @description: 配置附件信息长度
- */
-func WithAttachLength(attachLength int) Option {
-	return func(dsiEngine *DsiEngine) {
-		dsiEngine.attachLength = attachLength
-	}
-}
-
-/**
- * @author: yasinWu
  * @date: 2022/1/13 13:32
- * @params: sensitiveData *policy.SensitiveData
- * @return: []*policy.Alarm, error
+ * @params: sensitiveData *entity.SensitiveData
+ * @return: []*entity.Alarm, error
  * @description: 运行检测
  */
-func (d *DsiEngine) Run(sensitiveData *policy.SensitiveData) ([]*policy.Alarm, error) {
+func (d *DsiEngine) Run(sensitiveData *entity.SensitiveData) ([]*entity.Alarm, error) {
 	if sensitiveData == nil {
 		return nil, errors.New("sensitive data is nil")
 	}
 	var err error
 	var errMsg string
-	var alarms []*policy.Alarm
+	var alarms []*entity.Alarm
 	d.sensitiveData = sensitiveData
 	for _, policyInfo := range d.sensitiveData.Policies {
 		alarm, err := d.run(policyInfo)
@@ -136,7 +92,7 @@ func (d *DsiEngine) Run(sensitiveData *policy.SensitiveData) ([]*policy.Alarm, e
 	return alarms, err
 }
 
-func (d *DsiEngine) run(policyInfo *policy.Policy) (*policy.Alarm, error) {
+func (d *DsiEngine) run(policyInfo *entity.Policy) (*entity.Alarm, error) {
 	if policyInfo == nil {
 		return nil, errors.New("policyInfo is nil")
 	}
@@ -173,14 +129,14 @@ func (d *DsiEngine) DoMatch(ruleIndex int64) bool {
 	matched := false
 	inputData := ""
 	distance := 100
-	var matches []*regexp_engine.Match
-	matchEngine := NewEngine(ruleType, d)
+	var matches []*entity.Match
+	matchEngine, _ := match.New(ruleType)
 	if matchEngine == nil {
 		return false
 	}
-	matches, inputData, matched = matchEngine.match(rule)
+	matches, inputData, matched = matchEngine.Match(rule, *d.sensitiveData)
 	if matched {
-		ruleSnap := &policy.RuleSnap{}
+		ruleSnap := &entity.RuleSnap{}
 		ruleSnap.Id = rule.Id
 		ruleSnap.Name = rule.Name
 		ruleSnap.Type = ruleType
@@ -225,8 +181,8 @@ func (d *DsiEngine) handlePolicy() (string, error) {
 	return d.rule, nil
 }
 
-func (d *DsiEngine) handlePolicyAlarm() *policy.Alarm {
-	alarm := &policy.Alarm{}
+func (d *DsiEngine) handlePolicyAlarm() *entity.Alarm {
+	alarm := &entity.Alarm{}
 	sensitiveData := d.sensitiveData
 	policyInfo := d.policy
 	matchTimes := 0
@@ -254,7 +210,7 @@ func (d *DsiEngine) handlePolicyAlarm() *policy.Alarm {
 	return alarm
 }
 
-func (d *DsiEngine) handleSnap(matches []*regexp_engine.Match, inputData string) string {
+func (d *DsiEngine) handleSnap(matches []*entity.Match, inputData string) string {
 	snap := ""
 	snapLength := uint64(d.snapLength)
 	inputDataLength := uint64(len(inputData))

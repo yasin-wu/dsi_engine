@@ -1,34 +1,27 @@
-package dsi_engine
+package match
 
 import (
 	"fmt"
 	"hash/fnv"
 	"strings"
 
-	"github.com/yasin-wu/dsi_engine/v2/policy"
-
-	"github.com/yasin-wu/dsi_engine/v2/regexp_engine"
-
 	js "github.com/bitly/go-simplejson"
+	"github.com/yasin-wu/dsi_engine/v2/entity"
 	"github.com/yasin-wu/utils/similarity"
 )
 
-type fingerPrint struct {
-	dsiEngine *DsiEngine
-}
+type fingerPrint struct{}
 
-var _ MatchEngine = (*fingerPrint)(nil)
+var _ Engine = (*fingerPrint)(nil)
 
-func (f *fingerPrint) match(rule *policy.Rule) ([]*regexp_engine.Match, string, bool) {
-	inputData := f.dsiEngine.sensitiveData.FileName
-	distance, matched := f.do(rule.FingerPrints,
-		rule.FingerRatio, f.dsiEngine.sensitiveData.FileName)
+func (f *fingerPrint) Match(rule entity.Rule, sensitiveData entity.SensitiveData) ([]*entity.Match, string, bool) {
+	inputData := sensitiveData.FileName
+	distance, matched := f.do(rule.FingerPrints, rule.FingerRatio, sensitiveData.FileName)
 	if !matched {
-		inputData = f.dsiEngine.sensitiveData.Content
-		distance, matched = f.do(rule.FingerPrints,
-			rule.FingerRatio, f.dsiEngine.sensitiveData.Content)
+		inputData = sensitiveData.Content
+		distance, matched = f.do(rule.FingerPrints, rule.FingerRatio, sensitiveData.Content)
 	}
-	return []*regexp_engine.Match{{Distance: distance}}, inputData, matched
+	return []*entity.Match{{Distance: distance}}, inputData, matched
 }
 
 func (f *fingerPrint) do(fingerPrints *js.Json, fingerRatio int, inputData string) (int, bool) {
@@ -124,7 +117,7 @@ func (f *fingerPrint) sliceInnerPlus(arr1, arr2 []float64) (dstArr []float64, er
 		return
 	}
 	if len(arr1) != len(arr2) {
-		err = fmt.Errorf("sliceInnerPlus array Length NOT match, %v != %v", len(arr1), len(arr2))
+		err = fmt.Errorf("sliceInnerPlus array Length NOT Match, %v != %v", len(arr1), len(arr2))
 		return
 	}
 

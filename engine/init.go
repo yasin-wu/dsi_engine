@@ -1,4 +1,4 @@
-package dsi_engine
+package engine
 
 import "log"
 

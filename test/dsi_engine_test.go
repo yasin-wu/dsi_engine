@@ -8,8 +8,8 @@ import (
 
 	"github.com/yasin-wu/dsi_engine/v2/enum"
 
-	"github.com/yasin-wu/dsi_engine/v2/dsi_engine"
-	"github.com/yasin-wu/dsi_engine/v2/policy"
+	"github.com/yasin-wu/dsi_engine/v2/engine"
+	"github.com/yasin-wu/dsi_engine/v2/entity"
 	rule2 "github.com/yasin-wu/dsi_engine/v2/rule"
 
 	"github.com/yasin-wu/utils/file_parser"
@@ -21,12 +21,12 @@ func TestDsiEngine(t *testing.T) {
 		log.Fatal(err)
 	}
 	rulesMap := rule.RuleMap
-	sensitiveData := &policy.SensitiveData{
+	sensitiveData := &entity.SensitiveData{
 		FilePath: "../sample/test.docx",
 	}
 	parser(sensitiveData)
 	sensitiveData.Policies = handlePolicies(rulesMap)
-	engine := dsi_engine.New()
+	engine := engine.New()
 	alarms, err := engine.Run(sensitiveData)
 	if err != nil {
 		log.Fatal(err)
@@ -35,7 +35,7 @@ func TestDsiEngine(t *testing.T) {
 	fmt.Println(string(buff))
 }
 
-func parser(sensitiveData *policy.SensitiveData) {
+func parser(sensitiveData *entity.SensitiveData) {
 	parser := file_parser.New("http://47.108.155.25:9998")
 	f, err := parser.Parse(sensitiveData.FilePath, true)
 	if err != nil {
@@ -47,15 +47,15 @@ func parser(sensitiveData *policy.SensitiveData) {
 	sensitiveData.Content = f.Content
 }
 
-func handlePolicies(rulesMap map[string]rule2.R) []*policy.Policy {
-	rule1 := &policy.Rule{
+func handlePolicies(rulesMap map[string]rule2.R) []*entity.Policy {
+	rule1 := entity.Rule{
 		Id:               "1",
 		Name:             "正则匹配:地址信息",
 		Type:             enum.REGEXP_RULETYPE,
 		Regexp:           rulesMap["ADDRESS"].Regexp,
 		ForWardThreshold: 1,
 	}
-	rule2 := &policy.Rule{
+	rule2 := entity.Rule{
 		Id:               "2",
 		Name:             "模糊关键字:我们",
 		Type:             enum.FUZZYWORDS_RULETYPE,
@@ -63,17 +63,17 @@ func handlePolicies(rulesMap map[string]rule2.R) []*policy.Policy {
 		CharacterSpace:   5,
 		ForWardThreshold: 1,
 	}
-	policy1 := &policy.Policy{
+	policy1 := &entity.Policy{
 		Id:        "1",
 		Operators: []enum.Operator{enum.AND_OPERATOR},
-		Rules:     []*policy.Rule{rule1, rule2},
+		Rules:     []entity.Rule{rule1, rule2},
 	}
-	policy2 := &policy.Policy{
+	policy2 := &entity.Policy{
 		Id:        "2",
 		Operators: []enum.Operator{enum.OR_OPERATOR},
-		Rules:     []*policy.Rule{rule1, rule2},
+		Rules:     []entity.Rule{rule1, rule2},
 	}
-	var policies []*policy.Policy
+	var policies []*entity.Policy
 	policies = append(policies, policy1, policy2)
 	return policies
 }

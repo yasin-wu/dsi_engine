@@ -1,26 +1,13 @@
-package regexp_engine
+package regexp
 
 import (
 	"errors"
 	"fmt"
 
+	"github.com/yasin-wu/dsi_engine/v2/entity"
+
 	"github.com/flier/gohs/hyperscan"
 )
-
-/**
- * @author: yasinWu
- * @date: 2022/1/13 13:48
- * @description: 命中信息
- */
-type Match struct {
-	Id        uint        //命中信息id
-	From      uint64      //命中开始位置
-	To        uint64      //名字结束位置
-	Flags     uint        //flags
-	Context   interface{} //命中内容
-	InputData string      //输入内容
-	Distance  int         //汉明距离
-}
 
 /**
  * @author: yasinWu
@@ -35,9 +22,9 @@ type Regexp struct {
 /**
  * @author: yasinWu
  * @date: 2022/1/13 13:49
- * @description: RegexpEngine Client
+ * @description: Engine Client
  */
-type RegexpEngine struct {
+type Engine struct {
 	patterns []*hyperscan.Pattern
 }
 
@@ -45,15 +32,15 @@ type RegexpEngine struct {
  * @author: yasinWu
  * @date: 2022/1/13 13:50
  * @params: regexps ...*Regexp
- * @return: *RegexpEngine, error
+ * @return: *Engine, error
  * @description: 新建RegexpEngine Client
  */
-func New(regexps ...*Regexp) (*RegexpEngine, error) {
+func New(regexps ...*Regexp) (*Engine, error) {
 	patterns := addRegexps(regexps...)
 	if patterns == nil || len(patterns) == 0 {
 		return nil, errors.New("parameter is empty")
 	}
-	return &RegexpEngine{patterns: patterns}, nil
+	return &Engine{patterns: patterns}, nil
 }
 
 /**
@@ -63,7 +50,7 @@ func New(regexps ...*Regexp) (*RegexpEngine, error) {
  * @return: []*Match, error
  * @description: 检测输入内容敏感信息
  */
-func (r *RegexpEngine) Run(inputData string) ([]*Match, error) {
+func (r *Engine) Run(inputData string) ([]*entity.Match, error) {
 	db, err := hyperscan.NewBlockDatabase(r.patterns...)
 	if err != nil {
 		return nil, fmt.Errorf("NewBlockDatabase err: %v", err.Error())
@@ -74,9 +61,9 @@ func (r *RegexpEngine) Run(inputData string) ([]*Match, error) {
 		return nil, fmt.Errorf("create scratch failed, err: %v", err.Error())
 	}
 	defer s.Free()
-	var matches []*Match
+	var matches []*entity.Match
 	matched := func(id uint, from, to uint64, flags uint, context interface{}) error {
-		match := &Match{Id: id, From: from, To: to, Flags: flags, Context: context, InputData: inputData}
+		match := &entity.Match{Id: id, From: from, To: to, Flags: flags, Context: context, InputData: inputData}
 		matches = append(matches, match)
 		return nil
 	}
