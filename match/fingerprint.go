@@ -2,15 +2,15 @@ package match
 
 import (
 	"fmt"
-	"hash/fnv"
 	"strings"
 
 	js "github.com/bitly/go-simplejson"
 	"github.com/yasin-wu/dsi_engine/v2/entity"
-	"github.com/yasin-wu/utils/similarity"
 )
 
-type fingerPrint struct{}
+type fingerPrint struct {
+	wordRatio float64
+}
 
 var _ Engine = (*fingerPrint)(nil)
 
@@ -25,7 +25,7 @@ func (f *fingerPrint) Match(rule entity.Rule, sensitiveData entity.SensitiveData
 }
 
 func (f *fingerPrint) do(fingerPrints *js.Json, fingerRatio int, inputData string) (int, bool) {
-	_, dstFinger := similarity.ExtractWithWeight(inputData, 0, nil)
+	_, dstFinger := f.extractWithWeight(inputData, 0, nil)
 	distance := f.computeFileHammingDistance(fingerPrints, dstFinger)
 	distance2 := f.computeWordHammingDistance(fingerPrints, dstFinger)
 	if distance2 < distance {
@@ -49,7 +49,7 @@ func (f *fingerPrint) computeFileHammingDistance(fingerPrints *js.Json, dstFinge
 			break
 		}
 		srcFinger := strings.Split(fmt.Sprintf("%032b", file.Get("print").MustInt64()), "")
-		diff := similarity.HammingDistance(srcFinger, dstFinger)
+		diff := f.hammingDistance(srcFinger, dstFinger)
 		if diff < distance {
 			distance = diff
 		}
@@ -84,46 +84,6 @@ func (f *fingerPrint) computeWordHammingDistance(fingerPrints *js.Json, dstFinge
 			fingerPrint = append(fingerPrint, "0")
 		}
 	}
-	distance = similarity.HammingDistance(fingerPrint, dstFinger)
+	distance = f.hammingDistance(fingerPrint, dstFinger)
 	return distance
-}
-
-func (f *fingerPrint) strHashBitCode(str string) string {
-	h := fnv.New32a()
-	h.Write([]byte(str))
-	b := int64(h.Sum32())
-	return fmt.Sprintf("%032b", b)
-}
-
-func (f *fingerPrint) calcWithWeight(bitHash string, weight float64) []float64 {
-	bitHashes := strings.Split(bitHash, "")
-	binaries := make([]float64, 0)
-
-	for _, bit := range bitHashes {
-		if bit == "0" {
-			binaries = append(binaries, float64(-1)*weight)
-		} else {
-			binaries = append(binaries, weight)
-		}
-	}
-	return binaries
-}
-
-func (f *fingerPrint) sliceInnerPlus(arr1, arr2 []float64) (dstArr []float64, err error) {
-	dstArr = make([]float64, len(arr1), len(arr1))
-
-	if arr1 == nil || arr2 == nil {
-		err = fmt.Errorf("sliceInnerPlus array nil")
-		return
-	}
-	if len(arr1) != len(arr2) {
-		err = fmt.Errorf("sliceInnerPlus array Length NOT Match, %v != %v", len(arr1), len(arr2))
-		return
-	}
-
-	for i, v1 := range arr1 {
-		dstArr[i] = v1 + arr2[i]
-	}
-
-	return
 }

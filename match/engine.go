@@ -20,7 +20,7 @@ func New(ruleType enum.RuleType) (Engine, error) {
 	case enum.REGEXP_RULETYPE:
 		return &regexp{}, nil
 	case enum.FINGERDNA_RULETYPE:
-		return &fingerPrint{}, nil
+		return &fingerPrint{wordRatio: 0.05}, nil
 	default:
 		return nil, errors.New("not supported rule type")
 	}

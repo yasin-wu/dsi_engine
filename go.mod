@@ -6,12 +6,14 @@ require (
 	github.com/bitly/go-simplejson v0.5.0
 	github.com/flier/gohs v1.0.0
 	github.com/hyperjumptech/grule-rule-engine v1.7.2
-	github.com/yasin-wu/utils v1.9.2
+	github.com/yanyiwu/gojieba v1.1.2
+	golang.org/x/net v0.0.0-20220105145211-5b0dc2dfae98
 )
 
 require (
 	github.com/antlr/antlr4 v0.0.0-20200801005519-2ba38605b949 // indirect
 	github.com/bmatcuk/doublestar v1.3.2 // indirect
+	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
@@ -28,9 +30,7 @@ require (
 	github.com/src-d/gcfg v1.4.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/xanzy/ssh-agent v0.2.1 // indirect
-	github.com/yanyiwu/gojieba v1.1.2 // indirect
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
-	golang.org/x/net v0.0.0-20220105145211-5b0dc2dfae98 // indirect
 	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
 	gopkg.in/src-d/go-billy.v4 v4.3.2 // indirect
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect

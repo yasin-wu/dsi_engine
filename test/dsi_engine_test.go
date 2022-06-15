@@ -8,11 +8,11 @@ import (
 
 	"github.com/yasin-wu/dsi_engine/v2/enum"
 
-	"github.com/yasin-wu/dsi_engine/v2/engine"
+	engine2 "github.com/yasin-wu/dsi_engine/v2/engine"
 	"github.com/yasin-wu/dsi_engine/v2/entity"
 	rule2 "github.com/yasin-wu/dsi_engine/v2/rule"
 
-	"github.com/yasin-wu/utils/file_parser"
+	parser2 "github.com/yasin-wu/dsi_engine/v2/parser"
 )
 
 func TestDsiEngine(t *testing.T) {
@@ -26,7 +26,7 @@ func TestDsiEngine(t *testing.T) {
 	}
 	parser(sensitiveData)
 	sensitiveData.Policies = handlePolicies(rulesMap)
-	engine := engine.New()
+	engine := engine2.New()
 	alarms, err := engine.Run(sensitiveData)
 	if err != nil {
 		log.Fatal(err)
@@ -36,7 +36,7 @@ func TestDsiEngine(t *testing.T) {
 }
 
 func parser(sensitiveData *entity.SensitiveData) {
-	parser := file_parser.New("http://47.108.155.25:9998")
+	parser := parser2.New("http://47.108.155.25:9998")
 	f, err := parser.Parse(sensitiveData.FilePath, true)
 	if err != nil {
 		log.Fatal(err)
