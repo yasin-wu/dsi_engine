@@ -1,3 +1,4 @@
+[![OSCS Status](https://www.oscs1024.com/platform/badge/yasin-wu/dsi_engine.svg?size=small)](https://www.murphysec.com/dr/Qy5A7cERejgZNnm0Nw)
 ## 介绍
 
 Golang版本的自定义规则的敏感信息识别引擎(Detection Sensitive Information Engine)，使用了Intel的高性能正则表达式匹配库Hyperscan；只适用X86架构。
