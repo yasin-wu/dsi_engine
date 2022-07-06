@@ -144,7 +144,7 @@ func (d *DsiEngine) DoMatch(ruleIndex int64) bool {
 		ruleSnap.Level = rule.Level
 		ruleSnap.Snap = d.handleSnap(matches, inputData)
 		d.ruleSnaps = append(d.ruleSnaps, ruleSnap)
-		if ruleType == enum.FINGERDNA_RULETYPE {
+		if ruleType == enum.FingerdnaRuletype {
 			distance = matches[0].Distance
 			d.fingerRatio = distance
 		}
@@ -170,9 +170,9 @@ func (d *DsiEngine) handlePolicy() (string, error) {
 			if i == 0 {
 				patterns = fmt.Sprintf(`%s(%d) `, d.matchFuncName, i)
 			}
-			if operator == enum.AND_OPERATOR {
+			if operator == enum.AndOperator {
 				patterns += fmt.Sprintf(` && %s(%d) `, d.matchFuncName, i+1)
-			} else if operator == enum.OR_OPERATOR {
+			} else if operator == enum.OrOperator {
 				patterns += fmt.Sprintf(` || %s(%d) `, d.matchFuncName, i+1)
 			}
 		}

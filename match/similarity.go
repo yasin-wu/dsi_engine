@@ -29,7 +29,7 @@ func (f *fingerPrint) extractWithWeight(input string, topKey int, addWords []str
 		g.AddWord(addWord)
 	}
 	defer g.Free()
-	input = util.RemoveHtml(input)
+	input = util.RemoveHTML(input)
 	wordWeights := g.ExtractWithWeight(input, topKey)
 	binaryWeights := make([]float64, 32)
 	wordWeightList := make([]wordWeight, 0)

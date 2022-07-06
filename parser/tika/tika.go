@@ -207,7 +207,7 @@ func (c *Client) MetaRecursiveType(ctx context.Context, input io.Reader, content
 	if err := json.Unmarshal(body, &m); err != nil {
 		return nil, err
 	}
-	var r []map[string][]string
+	var r []map[string][]string //nolint:prealloc
 	for _, d := range m {
 		doc := make(map[string][]string)
 		r = append(r, doc)

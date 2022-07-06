@@ -8,10 +8,10 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[KEYWORDS_RULETYPE-1]
-	_ = x[FUZZYWORDS_RULETYPE-2]
-	_ = x[REGEXP_RULETYPE-3]
-	_ = x[FINGERDNA_RULETYPE-4]
+	_ = x[KeywordsRuletype-1]
+	_ = x[FuzzywordsRuletype-2]
+	_ = x[RegexpRuletype-3]
+	_ = x[FingerdnaRuletype-4]
 }
 
 const _RuleType_name = "关键字模糊关键字正则表达式指纹相似度"

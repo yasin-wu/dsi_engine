@@ -6,20 +6,20 @@ import (
 	"strings"
 )
 
-func RemoveHtml(src string) string {
-	re, _ := regexp2.Compile(`\\<[\\S\\s]+?\\>`)
+func RemoveHTML(src string) string {
+	re := regexp2.MustCompile(`\\<[\\S\\s]+?\\>`)
 	src = re.ReplaceAllStringFunc(src, strings.ToLower)
 
-	re, _ = regexp2.Compile(`\\<style[\\S\\s]+?\\</style\\>`)
+	re = regexp2.MustCompile(`\\<style[\\S\\s]+?\\</style\\>`)
 	src = re.ReplaceAllString(src, "")
 
-	re, _ = regexp2.Compile(`\\<script[\\S\\s]+?\\</script\\>`)
+	re = regexp2.MustCompile(`\\<script[\\S\\s]+?\\</script\\>`)
 	src = re.ReplaceAllString(src, "")
 
-	re, _ = regexp2.Compile(`\\<[\\S\\s]+?\\>`)
+	re = regexp2.MustCompile(`\\<[\\S\\s]+?\\>`)
 	src = re.ReplaceAllString(src, "\n")
 
-	re, _ = regexp2.Compile(`\\s{2,}`)
+	re = regexp2.MustCompile(`\\s{2,}`)
 	src = re.ReplaceAllString(src, "\n")
 
 	return src
@@ -62,7 +62,7 @@ func sq(in <-chan int) <-chan int {
 }
 
 func stringToIntArray(input string) []int {
-	var output []int
+	var output []int //nolint:prealloc
 	for _, v := range input {
 		output = append(output, int(v))
 	}

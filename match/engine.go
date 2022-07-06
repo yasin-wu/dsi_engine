@@ -13,13 +13,13 @@ type Engine interface {
 
 func New(ruleType enum.RuleType) (Engine, error) {
 	switch ruleType {
-	case enum.KEYWORDS_RULETYPE:
+	case enum.KeywordsRuletype:
 		return &keyWords{}, nil
-	case enum.FUZZYWORDS_RULETYPE:
+	case enum.FuzzywordsRuletype:
 		return &fuzzyWords{}, nil
-	case enum.REGEXP_RULETYPE:
+	case enum.RegexpRuletype:
 		return &regexp{}, nil
-	case enum.FINGERDNA_RULETYPE:
+	case enum.FingerdnaRuletype:
 		return &fingerPrint{wordRatio: 0.05}, nil
 	default:
 		return nil, errors.New("not supported rule type")

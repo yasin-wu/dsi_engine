@@ -98,7 +98,7 @@ func NewServer(jar, port string) (*Server, error) {
 	urlString := "http://localhost:" + port
 	u, err := url.Parse(urlString)
 	if err != nil {
-		return nil, fmt.Errorf("invalid port %q: %v", port, err)
+		return nil, fmt.Errorf("invalid port %q: %w", port, err)
 	}
 
 	s := &Server{
@@ -134,7 +134,7 @@ func (s *Server) Start(ctx context.Context) error {
 	}
 
 	// Create a slice of Java system properties to be passed to the JVM.
-	props := []string{}
+	var props []string //nolint:prealloc
 	for k, v := range s.JavaProps {
 		props = append(props, fmt.Sprintf("-D%s=%q", k, v))
 	}
@@ -150,10 +150,10 @@ func (s *Server) Start(ctx context.Context) error {
 	if err := s.waitForStart(ctx); err != nil {
 		out, readErr := cmd.CombinedOutput()
 		if readErr != nil {
-			return fmt.Errorf("error reading output: %v", readErr)
+			return fmt.Errorf("error reading output: %w", readErr)
 		}
 		// Report stderr since sometimes the server says why it failed to start.
-		return fmt.Errorf("error starting server: %v\nserver stderr:\n\n%s", err, out)
+		return fmt.Errorf("error starting server: %w\nserver stderr:\n\n%s", err, out)
 	}
 	return nil
 }
@@ -183,10 +183,10 @@ func (s Server) waitForStart(ctx context.Context) error {
 // for a more graceful shutdown of the Java process.
 func (s *Server) Stop() error {
 	if err := s.cmd.Process.Kill(); err != nil {
-		return fmt.Errorf("could not kill server: %v", err)
+		return fmt.Errorf("could not kill server: %w", err)
 	}
 	if err := s.cmd.Wait(); err != nil {
-		return fmt.Errorf("could not wait for server to finish: %v", err)
+		return fmt.Errorf("could not wait for server to finish: %w", err)
 	}
 	return nil
 }
@@ -195,7 +195,7 @@ func (s *Server) Stop() error {
 // Stop() uses SIGKILL right away, which causes the kernal to stop the java process instantly.
 func (s *Server) Shutdown(ctx context.Context) error {
 	if err := s.cmd.Process.Signal(os.Interrupt); err != nil {
-		return fmt.Errorf("could not interrupt server: %v", err)
+		return fmt.Errorf("could not interrupt server: %w", err)
 	}
 	errChannel := make(chan error)
 	go func() {
@@ -207,11 +207,11 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	select {
 	case err := <-errChannel:
 		if err != nil {
-			return fmt.Errorf("could not wait for server to finish: %v", err)
+			return fmt.Errorf("could not wait for server to finish: %w", err)
 		}
 	case <-ctx.Done():
 		if err := s.cmd.Process.Kill(); err != nil {
-			return fmt.Errorf("could not kill server: %v", err)
+			return fmt.Errorf("could not kill server: %w", err)
 		}
 	}
 	return nil
@@ -268,19 +268,19 @@ func DownloadServer(ctx context.Context, v Version, path string) error {
 	}
 	out, err := os.Create(path)
 	if err != nil {
-		return fmt.Errorf("error creating file: %v", err)
+		return fmt.Errorf("error creating file: %w", err)
 	}
 	defer out.Close()
 
 	url := fmt.Sprintf("http://search.maven.org/remotecontent?filepath=org/apache/tika/tika-server/%s/tika-server-%s.jar", v, v)
 	resp, err := ctxhttp.Get(ctx, nil, url)
 	if err != nil {
-		return fmt.Errorf("unable to download %q: %v", url, err)
+		return fmt.Errorf("unable to download %q: %w", url, err)
 	}
 	defer resp.Body.Close()
 
 	if _, err := io.Copy(out, resp.Body); err != nil {
-		return fmt.Errorf("error saving download: %v", err)
+		return fmt.Errorf("error saving download: %w", err)
 	}
 
 	h, err := sha512Hash(path)
@@ -290,7 +290,7 @@ func DownloadServer(ctx context.Context, v Version, path string) error {
 	}
 	if h != hash {
 		if err := os.Remove(path); err != nil {
-			return fmt.Errorf("invalid sha512: %s: error removing %s: %v", h, path, err)
+			return fmt.Errorf("invalid sha512: %s: error removing %s: %w", h, path, err)
 		}
 		return fmt.Errorf("invalid sha512: %s", h)
 	}

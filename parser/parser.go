@@ -104,7 +104,7 @@ func (p *Parser) Parse(filePath string, isFormat bool) (*FileInfo, error) {
 	client := tika.NewClient(p.client, p.tika)
 	body, err := client.Parse(p.ctx, file, p.header)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("client parse err:%v", err.Error()))
+		return nil, fmt.Errorf("client parse err:%w", err)
 	}
 	if isFormat {
 		body = p.handleBody(body)
@@ -116,11 +116,11 @@ func (p *Parser) Parse(filePath string, isFormat bool) (*FileInfo, error) {
 func (p *Parser) parseFileInfo(file *os.File) *FileInfo {
 	fileName := file.Name()
 	f, err := os.Stat(fileName)
-	var size int64 = 0
+	var size int64
 	if err == nil {
 		size = f.Size()
 	}
-	fileType := strings.Replace(path.Ext(path.Base(fileName)), ".", "", -1)
+	fileType := strings.ReplaceAll(path.Ext(path.Base(fileName)), ".", "")
 	fileInfo := &FileInfo{
 		Name:     path.Base(fileName),
 		Path:     fileName,
@@ -140,12 +140,12 @@ func (p *Parser) checkFileType(fileType string) bool {
 }
 
 func (p *Parser) handleBody(body string) string {
-	body = strings.Replace(body, "\n", "", -1)
-	body = strings.Replace(body, "\t", "", -1)
-	body = strings.Replace(body, "\r", "", -1)
-	body = strings.Replace(body, " ", "", -1)
-	body = strings.Replace(body, "\u00a0", "", -1)
-	body = strings.Replace(body, "\u200b", "", -1)
-	body = util.RemoveHtml(body)
+	body = strings.ReplaceAll(body, "\n", "")
+	body = strings.ReplaceAll(body, "\t", "")
+	body = strings.ReplaceAll(body, "\r", "")
+	body = strings.ReplaceAll(body, " ", "")
+	body = strings.ReplaceAll(body, "\u00a0", "")
+	body = strings.ReplaceAll(body, "\u200b", "")
+	body = util.RemoveHTML(body)
 	return body
 }

@@ -8,8 +8,8 @@ func _() {
 	// An "invalid array index" compiler error signifies that the constant values have changed.
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
-	_ = x[AND_OPERATOR-0]
-	_ = x[OR_OPERATOR-1]
+	_ = x[AndOperator-0]
+	_ = x[OrOperator-1]
 }
 
 const _Operator_name = "并或"

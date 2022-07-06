@@ -15,8 +15,8 @@ import (
  * @description: 正则信息
  */
 type Regexp struct {
-	Id     int    //正则id
-	Regexp string //正则表达式
+	Id     int    // 正则id
+	Regexp string // 正则表达式
 }
 
 /**
