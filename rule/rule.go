@@ -102,7 +102,7 @@ func (r *Rule) Add(filePath string, ruleMap ...map[string]R) error {
 	return nil
 }
 
-func unmarshal(data interface{}, v *R) error {
+func unmarshal(data any, v *R) error {
 	buff, err := json.Marshal(data)
 	if err != nil {
 		return err

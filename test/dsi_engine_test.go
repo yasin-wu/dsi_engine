@@ -1,10 +1,12 @@
-package dsi_engine
+package test
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
 	"testing"
+
+	"github.com/yasin-wu/dsi_engine/v2"
 
 	"github.com/yasin-wu/dsi_engine/v2/enum"
 
@@ -21,11 +23,11 @@ func TestDsiEngine(t *testing.T) {
 	}
 	rulesMap := rule.RuleMap
 	sensitiveData := &entity.SensitiveData{
-		FilePath: "./sample/test.docx",
+		FilePath: "../sample/test.docx",
 	}
 	parser(sensitiveData)
 	sensitiveData.Policies = handlePolicies(rulesMap)
-	engine := New()
+	engine := dsi_engine.New()
 	alarms, err := engine.Run(sensitiveData)
 	if err != nil {
 		log.Fatal(err)
@@ -35,7 +37,7 @@ func TestDsiEngine(t *testing.T) {
 }
 
 func parser(sensitiveData *entity.SensitiveData) {
-	parser := parser2.New("http://47.108.155.25:9998")
+	parser := parser2.New("http://localhost:9998")
 	f, err := parser.Parse(sensitiveData.FilePath, true)
 	if err != nil {
 		log.Fatal(err)

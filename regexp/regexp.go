@@ -62,7 +62,7 @@ func (r *Engine) Run(inputData string) ([]*entity.Match, error) {
 	}
 	defer s.Free()
 	var matches []*entity.Match
-	matched := func(id uint, from, to uint64, flags uint, context interface{}) error {
+	matched := func(id uint, from, to uint64, flags uint, context any) error {
 		match := &entity.Match{Id: id, From: from, To: to, Flags: flags, Context: context, InputData: inputData}
 		matches = append(matches, match)
 		return nil

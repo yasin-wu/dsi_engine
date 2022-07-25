@@ -203,7 +203,7 @@ func (c *Client) MetaRecursiveType(ctx context.Context, input io.Reader, content
 	if err != nil {
 		return nil, err
 	}
-	var m []map[string]interface{}
+	var m []map[string]any
 	if err := json.Unmarshal(body, &m); err != nil {
 		return nil, err
 	}
@@ -215,7 +215,7 @@ func (c *Client) MetaRecursiveType(ctx context.Context, input io.Reader, content
 			switch vt := v.(type) {
 			case string:
 				doc[k] = []string{vt}
-			case []interface{}:
+			case []any:
 				for _, i := range vt {
 					s, ok := i.(string)
 					if !ok {
@@ -245,7 +245,7 @@ func (c *Client) Version(ctx context.Context) (string, error) {
 var jsonHeader = http.Header{"Accept": []string{"application/json"}}
 
 // callUnmarshal is like call, but unmarshals the JSON response into v.
-func (c *Client) callUnmarshal(ctx context.Context, path string, v interface{}) error {
+func (c *Client) callUnmarshal(ctx context.Context, path string, v any) error {
 	body, err := c.call(ctx, nil, "GET", path, jsonHeader)
 	if err != nil {
 		return err

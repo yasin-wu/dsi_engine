@@ -1,4 +1,4 @@
-package dsi_engine
+package test
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ func TestRegexpEngine(t *testing.T) {
 		Regexp: "测试",
 		Desc:   "测试",
 	}
-	err = rule.Add("./conf/rules.json", m)
+	err = rule.Add("../conf/rules.json", m)
 	if err != nil {
 		log.Fatal(err)
 	}
