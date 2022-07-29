@@ -6,7 +6,7 @@ package entity
  * @description: 命中信息
  */
 type Match struct {
-	Id        uint   // 命中信息id
+	ID        uint   // 命中信息id
 	From      uint64 // 命中开始位置
 	To        uint64 // 名字结束位置
 	Flags     uint   // flags

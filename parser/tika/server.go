@@ -127,7 +127,7 @@ var command = exec.Command
 // Start starts the given server. Start will start a new Java process. The
 // caller must call Stop() to shut down the process when finished with the
 // Server. Start will wait for the server to be available or until ctx is
-// cancelled.
+// canceled.
 func (s *Server) Start(ctx context.Context) error {
 	if _, err := os.Stat(s.jar); os.IsNotExist(err) {
 		return err

@@ -83,7 +83,7 @@ func (d *DsiEngine) Run(sensitiveData *entity.SensitiveData) ([]*entity.Alarm, e
 			errMsg += fmt.Sprintf("run err:%s;", err.Error())
 			continue
 		}
-		alarm.Id = fmt.Sprintf("alarm-%s", policyInfo.Id)
+		alarm.ID = fmt.Sprintf("alarm-%s", policyInfo.ID)
 		alarms = append(alarms, alarm)
 	}
 	if len(errMsg) > 0 {
@@ -137,7 +137,7 @@ func (d *DsiEngine) DoMatch(ruleIndex int64) bool {
 	matches, inputData, matched = matchEngine.Match(rule, *d.sensitiveData)
 	if matched {
 		ruleSnap := &entity.RuleSnap{}
-		ruleSnap.Id = rule.Id
+		ruleSnap.ID = rule.ID
 		ruleSnap.Name = rule.Name
 		ruleSnap.Type = ruleType
 		ruleSnap.MatchTimes = len(matches)
@@ -196,7 +196,7 @@ func (d *DsiEngine) handlePolicyAlarm() *entity.Alarm {
 		d.attachLength = len(sensitiveData.Content)
 	}
 	alarm.RuleSnaps = d.ruleSnaps
-	alarm.PolicyId = policyInfo.Id
+	alarm.PolicyID = policyInfo.ID
 	alarm.FileName = sensitiveData.FileName
 	alarm.FileType = sensitiveData.FileType
 	alarm.FilePath = sensitiveData.FilePath

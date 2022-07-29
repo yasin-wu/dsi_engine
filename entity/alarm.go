@@ -12,14 +12,14 @@ import (
  * @description: 告警信息
  */
 type Alarm struct {
-	Id          string      `json:"id"`           //  告警信息id
+	ID          string      `json:"id"`           //  告警信息id
 	FileName    string      `json:"file_name"`    // 文件名
 	FilePath    string      `json:"file_path"`    // 文件路径
 	FileType    string      `json:"file_type"`    // 文件类型
 	FileSize    int64       `json:"file_size"`    // 文件大小,单位byte
 	MatchNote   string      `json:"match_note"`   // 命中笔记
 	MatchTimes  int         `json:"match_times"`  // 命中次数
-	PolicyId    string      `json:"policy_id"`    // 策略id
+	PolicyID    string      `json:"policy_id"`    // 策略id
 	AttachWords string      `json:"attach_words"` // 命中单词
 	RuleSnaps   []*RuleSnap `json:"rule_snaps"`   // 命中规则快照
 	SnapShot    string      `json:"snap_shot"`    // 文件内容快照
@@ -33,7 +33,7 @@ type Alarm struct {
  * @description: 命中规则快照
  */
 type RuleSnap struct {
-	Id         string        `json:"id"`          // 规则id
+	ID         string        `json:"id"`          // 规则id
 	Name       string        `json:"name"`        // 规则名字
 	Type       enum.RuleType `json:"type"`        // 规则类型
 	MatchTimes int           `json:"match_times"` // 命中次数

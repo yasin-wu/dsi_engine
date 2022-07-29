@@ -11,7 +11,7 @@ import (
  * @description: 策略信息
  */
 type Policy struct {
-	Id        string          `json:"id"`        // 策略id
+	ID        string          `json:"id"`        // 策略id
 	Operators []enum.Operator `json:"operators"` // 规则之间关系
 	Rules     []Rule          `json:"rules"`     // 规则组
 }
@@ -22,7 +22,7 @@ type Policy struct {
  * @description: 规则信息
  */
 type Rule struct {
-	Id               string        `json:"id"`                // 规则id
+	ID               string        `json:"id"`                // 规则id
 	Name             string        `json:"name"`              // 规则名字
 	Type             enum.RuleType `json:"type"`              // 规则类型
 	Level            int           `json:"level"`             // 规则等级

@@ -50,14 +50,14 @@ func parser(sensitiveData *entity.SensitiveData) {
 
 func handlePolicies(rulesMap map[string]rule2.R) []*entity.Policy {
 	rule1 := entity.Rule{
-		Id:               "1",
+		ID:               "1",
 		Name:             "正则匹配:地址信息",
 		Type:             enum.RegexpRuletype,
 		Regexp:           rulesMap["ADDRESS"].Regexp,
 		ForWardThreshold: 1,
 	}
 	rule2 := entity.Rule{
-		Id:               "2",
+		ID:               "2",
 		Name:             "模糊关键字:我们",
 		Type:             enum.FuzzywordsRuletype,
 		ForWardKeyList:   []string{"我们"},
@@ -65,12 +65,12 @@ func handlePolicies(rulesMap map[string]rule2.R) []*entity.Policy {
 		ForWardThreshold: 1,
 	}
 	policy1 := &entity.Policy{
-		Id:        "1",
+		ID:        "1",
 		Operators: []enum.Operator{enum.AndOperator},
 		Rules:     []entity.Rule{rule1, rule2},
 	}
 	policy2 := &entity.Policy{
-		Id:        "2",
+		ID:        "2",
 		Operators: []enum.Operator{enum.OrOperator},
 		Rules:     []entity.Rule{rule1, rule2},
 	}

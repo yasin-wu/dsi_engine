@@ -6,7 +6,7 @@ package entity
  * @description: 敏感数据
  */
 type SensitiveData struct {
-	Id       string    `json:"id"`        // 敏感数据id
+	ID       string    `json:"id"`        // 敏感数据id
 	FileName string    `json:"file_name"` // 文件名字
 	FileType string    `json:"file_type"` // 文件类型
 	FilePath string    `json:"file_path"` // 文件路径

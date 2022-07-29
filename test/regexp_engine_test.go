@@ -57,6 +57,6 @@ func TestRegexpEngine(t *testing.T) {
 	}
 	for _, m := range matches {
 		fmt.Printf("命中规则ID:%s%v%s;命中内容:%s%v%s\n",
-			consts.Red, m.Id, consts.Reset, consts.Red, m.InputData[m.From:m.To], consts.Reset)
+			consts.Red, m.ID, consts.Reset, consts.Red, m.InputData[m.From:m.To], consts.Reset)
 	}
 }
