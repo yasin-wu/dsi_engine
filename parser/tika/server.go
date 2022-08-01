@@ -244,6 +244,7 @@ const (
 // Versions is a list of supported versions of Apache Tika.
 var Versions = []Version{Version119, Version120, Version121}
 
+// nolint:lll
 var sha512s = map[Version]string{
 	Version119: "a9e2b6186cdb9872466d3eda791d0e1cd059da923035940d4b51bb1adc4a356670fde46995725844a2dd500a09f3a5631d0ca5fbc2d61a59e8e0bd95c9dfa6c2",
 	Version120: "a7ef35317aba76be8606f9250893efece8b93384e835a18399da18a095b19a15af591e3997828d4ebd3023f21d5efad62a91918610c44e692cfd9bed01d68382",
@@ -272,6 +273,7 @@ func DownloadServer(ctx context.Context, v Version, path string) error {
 	}
 	defer out.Close()
 
+	// nolint:lll
 	url := fmt.Sprintf("http://search.maven.org/remotecontent?filepath=org/apache/tika/tika-server/%s/tika-server-%s.jar", v, v)
 	resp, err := ctxhttp.Get(ctx, nil, url)
 	if err != nil {

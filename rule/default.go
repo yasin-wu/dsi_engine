@@ -1,5 +1,6 @@
 package rule
 
+// nolint:lll
 var defaultRule = `{
   "SECRET_DOCUMENT": {
     "desc": "绝密文件",

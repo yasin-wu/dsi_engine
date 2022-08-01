@@ -114,6 +114,7 @@ func (c *Client) call(ctx context.Context, input io.Reader, method, path string,
 
 // callString makes the given request to c and returns the result as a string
 // and error. callString returns an error if the response code is not 200 StatusOK.
+// nolint:lll
 func (c *Client) callString(ctx context.Context, input io.Reader, method, path string, header http.Header) (string, error) {
 	body, err := c.call(ctx, input, method, path, header)
 	if err != nil {
@@ -194,6 +195,7 @@ func (c *Client) MetaRecursive(ctx context.Context, input io.Reader) ([]map[stri
 // by the contentType parameter An empty string can be passed in for a default
 // type of XML. See ParseRecursive to just get the content of each document. If
 // the error is not nil, the result list is undefined.
+// nolint:lll
 func (c *Client) MetaRecursiveType(ctx context.Context, input io.Reader, contentType string) ([]map[string][]string, error) {
 	path := "/rmeta"
 	if contentType != "" {
@@ -233,6 +235,7 @@ func (c *Client) MetaRecursiveType(ctx context.Context, input io.Reader, content
 
 // Translate returns an error and the translated input from src language to
 // dst language using t. If the error is not nil, the translation is undefined.
+// nolint:lll
 func (c *Client) Translate(ctx context.Context, input io.Reader, t Translator, src, dst string, header http.Header) (string, error) {
 	return c.callString(ctx, input, "POST", fmt.Sprintf("/translate/all/%s/%s/%s", t, src, dst), header)
 }
