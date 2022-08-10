@@ -6,14 +6,14 @@ import (
 	"log"
 	"testing"
 
-	"github.com/yasin-wu/dsi_engine/v2"
+	parser2 "github.com/yasin-wu/dsi_engine/v2/pkg/parser"
 
-	"github.com/yasin-wu/dsi_engine/v2/enum"
+	rule2 "github.com/yasin-wu/dsi_engine/v2/pkg/rule"
 
-	"github.com/yasin-wu/dsi_engine/v2/entity"
-	rule2 "github.com/yasin-wu/dsi_engine/v2/rule"
+	"github.com/yasin-wu/dsi_engine/v2/engine"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/enum"
 
-	parser2 "github.com/yasin-wu/dsi_engine/v2/parser"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 )
 
 func TestDsiEngine(t *testing.T) {
@@ -27,7 +27,7 @@ func TestDsiEngine(t *testing.T) {
 	}
 	parser(sensitiveData)
 	sensitiveData.Policies = handlePolicies(rulesMap)
-	engine := dsi_engine.New()
+	engine := engine.New()
 	alarms, err := engine.Run(sensitiveData)
 	if err != nil {
 		log.Fatal(err)

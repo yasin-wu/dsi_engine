@@ -1,8 +1,8 @@
 package match
 
 import (
-	"github.com/yasin-wu/dsi_engine/v2/entity"
-	regexp2 "github.com/yasin-wu/dsi_engine/v2/regexp"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
+	regexp2 "github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
 )
 
 type keyWords struct{}

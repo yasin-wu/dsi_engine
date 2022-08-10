@@ -3,7 +3,7 @@ package entity
 import (
 	"time"
 
-	"github.com/yasin-wu/dsi_engine/v2/enum"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/enum"
 )
 
 /**

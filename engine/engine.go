@@ -1,19 +1,20 @@
-package dsi_engine
+package engine
 
 import (
 	"errors"
 	"fmt"
 	"time"
 
-	"github.com/yasin-wu/dsi_engine/v2/match"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/consts"
+
+	"github.com/yasin-wu/dsi_engine/v2/internal/match"
+	enum2 "github.com/yasin-wu/dsi_engine/v2/pkg/enum"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
-	"github.com/yasin-wu/dsi_engine/v2/consts"
-	"github.com/yasin-wu/dsi_engine/v2/entity"
-	"github.com/yasin-wu/dsi_engine/v2/enum"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 )
 
 /**
@@ -144,7 +145,7 @@ func (d *DsiEngine) DoMatch(ruleIndex int64) bool {
 		ruleSnap.Level = rule.Level
 		ruleSnap.Snap = d.handleSnap(matches, inputData)
 		d.ruleSnaps = append(d.ruleSnaps, ruleSnap)
-		if ruleType == enum.FingerdnaRuletype {
+		if ruleType == enum2.FingerdnaRuletype {
 			distance = matches[0].Distance
 			d.fingerRatio = distance
 		}
@@ -170,9 +171,9 @@ func (d *DsiEngine) handlePolicy() (string, error) {
 			if i == 0 {
 				patterns = fmt.Sprintf(`%s(%d) `, d.matchFuncName, i)
 			}
-			if operator == enum.AndOperator {
+			if operator == enum2.AndOperator {
 				patterns += fmt.Sprintf(` && %s(%d) `, d.matchFuncName, i+1)
-			} else if operator == enum.OrOperator {
+			} else if operator == enum2.OrOperator {
 				patterns += fmt.Sprintf(` || %s(%d) `, d.matchFuncName, i+1)
 			}
 		}

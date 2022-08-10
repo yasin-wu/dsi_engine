@@ -5,8 +5,9 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/yasin-wu/dsi_engine/v2/pkg/consts"
+
 	js "github.com/bitly/go-simplejson"
-	"github.com/yasin-wu/dsi_engine/v2/consts"
 )
 
 /**

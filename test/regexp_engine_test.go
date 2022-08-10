@@ -5,10 +5,10 @@ import (
 	"log"
 	"testing"
 
-	"github.com/yasin-wu/dsi_engine/v2/consts"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/consts"
 
-	"github.com/yasin-wu/dsi_engine/v2/regexp"
-	rule2 "github.com/yasin-wu/dsi_engine/v2/rule"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
+	rule2 "github.com/yasin-wu/dsi_engine/v2/pkg/rule"
 )
 
 func TestRegexpEngine(t *testing.T) {
@@ -21,7 +21,7 @@ func TestRegexpEngine(t *testing.T) {
 		Regexp: "测试",
 		Desc:   "测试",
 	}
-	err = rule.Add("../conf/rules.json", m)
+	err = rule.Add("../config/rules.json", m)
 	if err != nil {
 		log.Fatal(err)
 	}

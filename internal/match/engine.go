@@ -3,8 +3,9 @@ package match
 import (
 	"errors"
 
-	"github.com/yasin-wu/dsi_engine/v2/entity"
-	"github.com/yasin-wu/dsi_engine/v2/enum"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/enum"
+
+	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 )
 
 type Engine interface {

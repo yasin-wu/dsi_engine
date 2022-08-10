@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/yasin-wu/dsi_engine/v2/util"
+	"github.com/yasin-wu/dsi_engine/v2/internal/util"
 
 	"github.com/yanyiwu/gojieba"
 )

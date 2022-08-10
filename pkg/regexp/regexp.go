@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/yasin-wu/dsi_engine/v2/entity"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 
 	"github.com/flier/gohs/hyperscan"
 )

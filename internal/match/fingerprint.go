@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	js "github.com/bitly/go-simplejson"
-	"github.com/yasin-wu/dsi_engine/v2/entity"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 )
 
 type fingerPrint struct {

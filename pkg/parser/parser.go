@@ -9,9 +9,13 @@ import (
 	"path"
 	"strings"
 
-	"github.com/yasin-wu/dsi_engine/v2/util"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/consts"
 
-	"github.com/yasin-wu/dsi_engine/v2/parser/tika"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
+
+	"github.com/yasin-wu/dsi_engine/v2/internal/tika"
+
+	"github.com/yasin-wu/dsi_engine/v2/internal/util"
 )
 
 /**
@@ -57,37 +61,11 @@ func New(tika string, options ...Option) *Parser {
 /**
  * @author: yasinWu
  * @date: 2022/1/13 14:42
- * @params: header http.Header
- * @return: Option
- * @description: 配置http header
- */
-func WithHeader(header http.Header) Option {
-	return func(parser *Parser) {
-		parser.header = header
-	}
-}
-
-/**
- * @author: yasinWu
- * @date: 2022/1/13 14:42
- * @params: client *http.Client
- * @return: Option
- * @description: 配置http client
- */
-func WithClient(client *http.Client) Option {
-	return func(parser *Parser) {
-		parser.client = client
-	}
-}
-
-/**
- * @author: yasinWu
- * @date: 2022/1/13 14:42
  * @params: filePath string, isFormat bool
  * @return: *FileInfo, error
  * @description: 解析文件
  */
-func (p *Parser) Parse(filePath string, isFormat bool) (*FileInfo, error) {
+func (p *Parser) Parse(filePath string, isFormat bool) (*entity.FileInfo, error) {
 	if filePath == "" {
 		return nil, errors.New("filePath is nil")
 	}
@@ -113,7 +91,7 @@ func (p *Parser) Parse(filePath string, isFormat bool) (*FileInfo, error) {
 	return fileInfo, nil
 }
 
-func (p *Parser) parseFileInfo(file *os.File) *FileInfo {
+func (p *Parser) parseFileInfo(file *os.File) *entity.FileInfo {
 	fileName := file.Name()
 	f, err := os.Stat(fileName)
 	var size int64
@@ -121,7 +99,7 @@ func (p *Parser) parseFileInfo(file *os.File) *FileInfo {
 		size = f.Size()
 	}
 	fileType := strings.ReplaceAll(path.Ext(path.Base(fileName)), ".", "")
-	fileInfo := &FileInfo{
+	fileInfo := &entity.FileInfo{
 		Name:     path.Base(fileName),
 		Path:     fileName,
 		FileType: fileType,
@@ -131,7 +109,7 @@ func (p *Parser) parseFileInfo(file *os.File) *FileInfo {
 }
 
 func (p *Parser) checkFileType(fileType string) bool {
-	for _, o := range FileTypes {
+	for _, o := range consts.FileTypes {
 		if o == fileType {
 			return true
 		}

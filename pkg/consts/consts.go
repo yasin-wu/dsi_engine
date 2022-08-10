@@ -1,12 +1,21 @@
-package parser
+package consts
 
-import "net/http"
+import "errors"
 
-var defaultHeader = http.Header{
-	"Accept": []string{"text/plain"},
-}
+const (
+	GRuleName     = "DSIEngine"
+	GRuleVersion  = "1.0.0"
+	GRuleMaxCycle = 1
+)
 
-const defaultTika = "http://localhost:9998"
+var (
+	ErrParameterEmpty = errors.New("parameter is empty")
+)
+
+var (
+	Red   = string([]byte{27, 91, 51, 49, 109})
+	Reset = string([]byte{27, 91, 48, 109})
+)
 
 var FileTypes = []string{
 	"pdf", "csv", "xls",
