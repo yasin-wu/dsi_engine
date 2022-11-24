@@ -3,9 +3,9 @@ module github.com/yasin-wu/dsi_engine/v2
 go 1.18
 
 require (
-	github.com/bitly/go-simplejson v0.5.0
 	github.com/flier/gohs v1.0.0
 	github.com/hyperjumptech/grule-rule-engine v1.7.2
+	github.com/pkg/errors v0.9.1
 	github.com/yanyiwu/gojieba v1.1.2
 	golang.org/x/net v0.0.0-20220105145211-5b0dc2dfae98
 )
@@ -13,7 +13,6 @@ require (
 require (
 	github.com/antlr/antlr4 v0.0.0-20200801005519-2ba38605b949 // indirect
 	github.com/bmatcuk/doublestar v1.3.2 // indirect
-	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect

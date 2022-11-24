@@ -6,8 +6,6 @@ import (
 	"os"
 
 	"github.com/yasin-wu/dsi_engine/v2/pkg/consts"
-
-	js "github.com/bitly/go-simplejson"
 )
 
 /**
@@ -37,19 +35,14 @@ type R struct {
  */
 func New() (*Rule, error) {
 	ruleBytes := []byte(defaultRule)
-	j, err := js.NewJson(ruleBytes)
-	if err != nil {
+	ruleMap := make(map[string]interface{})
+	rm := make(map[string]R)
+	if err := json.Unmarshal(ruleBytes, &ruleMap); err != nil {
 		return nil, err
 	}
-	ruleMap, err := j.Map()
-	if err != nil {
-		return nil, err
-	}
-	var rm = make(map[string]R)
 	for k, v := range ruleMap {
 		var r R
-		err = unmarshal(v, &r)
-		if err != nil {
+		if err := unmarshal(v, &r); err != nil {
 			continue
 		}
 		rm[k] = r
@@ -79,18 +72,13 @@ func (r *Rule) Add(filePath string, ruleMap ...map[string]R) error {
 	if err != nil {
 		return err
 	}
-	j, err := js.NewJson(content)
-	if err != nil {
+	contentMap := make(map[string]interface{})
+	if err := json.Unmarshal(content, &contentMap); err != nil {
 		return err
 	}
-	m, err := j.Map()
-	if err != nil {
-		return err
-	}
-	for k, v := range m {
+	for k, v := range contentMap {
 		var rr R
-		err = unmarshal(v, &rr)
-		if err != nil {
+		if err = unmarshal(v, &rr); err != nil {
 			continue
 		}
 		r.RuleMap[k] = rr

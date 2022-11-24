@@ -2,9 +2,9 @@ package match
 
 import (
 	"fmt"
+	"github.com/yasin-wu/dsi_engine/v2/internal/util"
 	"strings"
 
-	js "github.com/bitly/go-simplejson"
 	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 )
 
@@ -24,7 +24,7 @@ func (f *fingerPrint) Match(rule entity.Rule, sensitiveData entity.SensitiveData
 	return []*entity.Match{{Distance: distance}}, inputData, matched
 }
 
-func (f *fingerPrint) do(fingerPrints *js.Json, fingerRatio int, inputData string) (int, bool) {
+func (f *fingerPrint) do(fingerPrints entity.FingerPrints, fingerRatio int, inputData string) (int, bool) {
 	_, dstFinger := f.extractWithWeight(inputData, 0, nil)
 	distance := f.computeFileHammingDistance(fingerPrints, dstFinger)
 	distance2 := f.computeWordHammingDistance(fingerPrints, dstFinger)
@@ -37,18 +37,21 @@ func (f *fingerPrint) do(fingerPrints *js.Json, fingerRatio int, inputData strin
 	return distance, false
 }
 
-func (f *fingerPrint) computeFileHammingDistance(fingerPrints *js.Json, dstFinger []string) int {
+func (f *fingerPrint) computeFileHammingDistance(fingerPrints entity.FingerPrints, dstFinger []string) int {
 	distance := 100
-	fileList, ok := fingerPrints.CheckGet("filelist")
+	fileList, ok := fingerPrints["filelist"]
 	if !ok {
 		return distance
 	}
-	for i := 0; ; i++ {
-		file := fileList.GetIndex(i)
-		if file.Interface() == nil {
+	var fileListMap []map[string]interface{}
+	if err := util.Unmarshal(fileList, &fileListMap); err != nil {
+		return distance
+	}
+	for _, file := range fileListMap {
+		if file == nil {
 			break
 		}
-		srcFinger := strings.Split(fmt.Sprintf("%032b", file.Get("print").MustInt64()), "")
+		srcFinger := strings.Split(fmt.Sprintf("%032b", file["print"].(int64)), "")
 		diff := f.hammingDistance(srcFinger, dstFinger)
 		if diff < distance {
 			distance = diff
@@ -56,21 +59,24 @@ func (f *fingerPrint) computeFileHammingDistance(fingerPrints *js.Json, dstFinge
 	}
 	return distance
 }
-func (f *fingerPrint) computeWordHammingDistance(fingerPrints *js.Json, dstFinger []string) int {
+func (f *fingerPrint) computeWordHammingDistance(fingerPrints entity.FingerPrints, dstFinger []string) int {
 	var err error
 	distance := 100
-	keyList, ok := fingerPrints.CheckGet("keylist")
+	keyList, ok := fingerPrints["keylist"]
 	if !ok {
 		return distance
 	}
+	var keyListMap []map[string]interface{}
+	if err := util.Unmarshal(keyList, &keyListMap); err != nil {
+		return distance
+	}
 	binaryWeights := make([]float64, 32)
-	for i := 0; ; i++ {
-		key := keyList.GetIndex(i)
-		if key.Interface() == nil {
+	for _, key := range keyListMap {
+		if key == nil {
 			break
 		}
-		bitHash := f.strHashBitCode(key.Get("name").MustString())
-		weights := f.calcWithWeight(bitHash, key.Get("weight").MustFloat64())
+		bitHash := f.strHashBitCode(key["name"].(string))
+		weights := f.calcWithWeight(bitHash, key["weight"].(float64))
 		binaryWeights, err = f.sliceInnerPlus(binaryWeights, weights)
 		if err != nil {
 			return distance

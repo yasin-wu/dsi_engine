@@ -1,6 +1,8 @@
 package util
 
 import (
+	"encoding/json"
+	"github.com/pkg/errors"
 	"math"
 	regexp2 "regexp"
 	"strings"
@@ -70,4 +72,15 @@ func stringToIntArray(input string) []int {
 		output[i], output[j] = output[j], output[i]
 	}
 	return output
+}
+
+func Unmarshal(data interface{}, v interface{}) error {
+	if data == nil {
+		return errors.New("data is nil")
+	}
+	buffer, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(buffer, v)
 }
