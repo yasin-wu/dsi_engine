@@ -51,7 +51,8 @@ func (f *fingerPrint) computeFileHammingDistance(fingerPrints entity.FingerPrint
 		if file == nil {
 			break
 		}
-		srcFinger := strings.Split(fmt.Sprintf("%032b", file["print"].(int64)), "")
+		print, _ := file["print"].(int64)
+		srcFinger := strings.Split(fmt.Sprintf("%032b", print), "")
 		diff := f.hammingDistance(srcFinger, dstFinger)
 		if diff < distance {
 			distance = diff
@@ -75,8 +76,10 @@ func (f *fingerPrint) computeWordHammingDistance(fingerPrints entity.FingerPrint
 		if key == nil {
 			break
 		}
-		bitHash := f.strHashBitCode(key["name"].(string))
-		weights := f.calcWithWeight(bitHash, key["weight"].(float64))
+		name, _ := key["name"].(string)
+		weight, _ := key["weight"].(float64)
+		bitHash := f.strHashBitCode(name)
+		weights := f.calcWithWeight(bitHash, weight)
 		binaryWeights, err = f.sliceInnerPlus(binaryWeights, weights)
 		if err != nil {
 			return distance
