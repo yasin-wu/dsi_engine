@@ -18,10 +18,10 @@ addons:
             - libpcap-dev
             - tree
             - gcc
+            - g++
             - clang
             - ca-certificates 
             - openssl
-            - g++
     homebrew:
         packages:
             - pkg-config
