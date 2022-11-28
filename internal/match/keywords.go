@@ -50,7 +50,7 @@ func (k *keyWords) do(rule entity.Rule, inputData string) ([]*entity.Match, bool
 	if err != nil {
 		return nil, false
 	}
-	if len(matches) < rule.ForWardThreshold {
+	if len(matches) < rule.ForwardThreshold {
 		return nil, false
 	}
 	return matches, true

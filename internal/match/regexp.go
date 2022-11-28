@@ -32,7 +32,7 @@ func (r *regexp) regexp(rule entity.Rule, inputData string) ([]*entity.Match, bo
 	if err != nil {
 		return nil, false
 	}
-	if len(matches) < rule.ForWardThreshold {
+	if len(matches) < rule.ForwardThreshold {
 		return nil, false
 	}
 	return matches, true

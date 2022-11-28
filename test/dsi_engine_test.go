@@ -54,15 +54,15 @@ func handlePolicies(rulesMap map[string]rule2.R) []*entity.Policy {
 		Name:             "正则匹配:地址信息",
 		Type:             enum.RegexpRuletype,
 		Regexp:           rulesMap["ADDRESS"].Regexp,
-		ForWardThreshold: 1,
+		ForwardThreshold: 1,
 	}
 	rule2 := entity.Rule{
 		ID:               "2",
 		Name:             "模糊关键字:我们",
 		Type:             enum.FuzzywordsRuletype,
-		ForWardKeyList:   []string{"我们"},
+		ForwardKeyList:   []string{"我们"},
 		CharacterSpace:   5,
-		ForWardThreshold: 1,
+		ForwardThreshold: 1,
 	}
 	policy1 := &entity.Policy{
 		ID:        "1",
