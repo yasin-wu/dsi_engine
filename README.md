@@ -17,6 +17,11 @@ addons:
             - libhyperscan-dev
             - libpcap-dev
             - tree
+            - gcc
+            - clang
+            - ca-certificates 
+            - openssl
+            - g++
     homebrew:
         packages:
             - pkg-config
