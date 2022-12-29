@@ -38,7 +38,7 @@ func (k *keyWords) do(rule entity.Rule, inputData string) ([]*entity.Match, bool
 			return nil, false
 		}
 	}
-	regexps := k.regexps(rule.ForWardKeyList)
+	regexps := k.regexps(rule.ForwardKeyList)
 	if regexps == nil {
 		return nil, false
 	}

@@ -24,7 +24,7 @@ func (f *fuzzyWords) Match(rule entity.Rule, sensitiveData entity.SensitiveData)
 }
 
 func (f *fuzzyWords) do(rule entity.Rule, inputData string) ([]*entity.Match, bool) {
-	baseRegexp := rule.ForWardKeyList
+	baseRegexp := rule.ForwardKeyList
 	characterSpace := rule.CharacterSpace
 	regexps := f.regexps(baseRegexp, fmt.Sprintf("%d", characterSpace))
 	if regexps == nil {
