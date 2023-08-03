@@ -8,7 +8,7 @@ import (
 	"github.com/yasin-wu/dsi_engine/v2/pkg/consts"
 
 	"github.com/yasin-wu/dsi_engine/v2/internal/match"
-	enum2 "github.com/yasin-wu/dsi_engine/v2/pkg/enum"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/enum"
 
 	"github.com/hyperjumptech/grule-rule-engine/ast"
 	"github.com/hyperjumptech/grule-rule-engine/builder"
@@ -145,7 +145,7 @@ func (d *DsiEngine) DoMatch(ruleIndex int64) bool {
 		ruleSnap.Level = rule.Level
 		ruleSnap.Snap = d.handleSnap(matches, inputData)
 		d.ruleSnaps = append(d.ruleSnaps, ruleSnap)
-		if ruleType == enum2.FingerdnaRuletype {
+		if ruleType == enum.FingerdnaRuletype {
 			distance = matches[0].Distance
 			d.fingerRatio = distance
 		}
@@ -171,9 +171,9 @@ func (d *DsiEngine) handlePolicy() (string, error) {
 			if i == 0 {
 				patterns = fmt.Sprintf(`%s(%d) `, d.matchFuncName, i)
 			}
-			if operator == enum2.AndOperator {
+			if operator == enum.AndOperator {
 				patterns += fmt.Sprintf(` && %s(%d) `, d.matchFuncName, i+1)
-			} else if operator == enum2.OrOperator {
+			} else if operator == enum.OrOperator {
 				patterns += fmt.Sprintf(` || %s(%d) `, d.matchFuncName, i+1)
 			}
 		}

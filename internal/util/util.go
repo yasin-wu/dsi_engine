@@ -2,26 +2,26 @@ package util
 
 import (
 	"encoding/json"
-	"github.com/pkg/errors"
+	"errors"
 	"math"
-	regexp2 "regexp"
+	"regexp"
 	"strings"
 )
 
 func RemoveHTML(src string) string {
-	re := regexp2.MustCompile(`\\<[\\S\\s]+?\\>`)
+	re := regexp.MustCompile(`\\<[\\S\\s]+?\\>`)
 	src = re.ReplaceAllStringFunc(src, strings.ToLower)
 
-	re = regexp2.MustCompile(`\\<style[\\S\\s]+?\\</style\\>`)
+	re = regexp.MustCompile(`\\<style[\\S\\s]+?\\</style\\>`)
 	src = re.ReplaceAllString(src, "")
 
-	re = regexp2.MustCompile(`\\<script[\\S\\s]+?\\</script\\>`)
+	re = regexp.MustCompile(`\\<script[\\S\\s]+?\\</script\\>`)
 	src = re.ReplaceAllString(src, "")
 
-	re = regexp2.MustCompile(`\\<[\\S\\s]+?\\>`)
+	re = regexp.MustCompile(`\\<[\\S\\s]+?\\>`)
 	src = re.ReplaceAllString(src, "\n")
 
-	re = regexp2.MustCompile(`\\s{2,}`)
+	re = regexp.MustCompile(`\\s{2,}`)
 	src = re.ReplaceAllString(src, "\n")
 
 	return src
