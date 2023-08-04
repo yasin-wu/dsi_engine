@@ -215,22 +215,22 @@ func (d *DsiEngine) handleSnap(matches []*entity.Match, inputData string) string
 	snap := ""
 	snapLength := uint64(d.snapLength)
 	inputDataLength := uint64(len(inputData))
-	for _, match := range matches {
-		start := match.From - snapLength
+	for _, m := range matches {
+		start := m.From - snapLength
 		if start > inputDataLength {
 			start = 0
 		}
-		from := match.From
-		to := match.To
-		end := match.To + snapLength
+		from := m.From
+		to := m.To
+		end := m.To + snapLength
 		if end > inputDataLength {
 			end = inputDataLength
 		}
 		snap += fmt.Sprintf("%s%s%s", inputData[start:from],
 			d.highlight(inputData[from:to]),
 			inputData[to:end]) + "......"
-		match.InputData = inputData
-		d.matches = append(d.matches, match)
+		m.InputData = inputData
+		d.matches = append(d.matches, m)
 	}
 
 	return snap

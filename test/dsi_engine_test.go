@@ -8,7 +8,7 @@ import (
 
 	parser2 "github.com/yasin-wu/dsi_engine/v2/pkg/parser"
 
-	rule2 "github.com/yasin-wu/dsi_engine/v2/pkg/rule"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/rule"
 
 	"github.com/yasin-wu/dsi_engine/v2/engine"
 	"github.com/yasin-wu/dsi_engine/v2/pkg/enum"
@@ -17,18 +17,18 @@ import (
 )
 
 func TestDsiEngine(t *testing.T) {
-	rule, err := rule2.New()
+	r, err := rule.New()
 	if err != nil {
 		log.Fatal(err)
 	}
-	rulesMap := rule.RuleMap
+	rulesMap := r.RuleMap
 	sensitiveData := &entity.SensitiveData{
 		FilePath: "../sample/test.docx",
 	}
 	parser(sensitiveData)
 	sensitiveData.Policies = handlePolicies(rulesMap)
-	engine := engine.New()
-	alarms, err := engine.Run(sensitiveData)
+	e := engine.New()
+	alarms, err := e.Run(sensitiveData)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -48,15 +48,15 @@ func parser(sensitiveData *entity.SensitiveData) {
 	sensitiveData.Content = f.Content
 }
 
-func handlePolicies(rulesMap map[string]rule2.R) []*entity.Policy {
-	rule1 := entity.Rule{
+func handlePolicies(rulesMap map[string]rule.R) []*entity.Policy {
+	r1 := entity.Rule{
 		ID:               "1",
 		Name:             "正则匹配:地址信息",
 		Type:             enum.RegexpRuletype,
 		Regexp:           rulesMap["ADDRESS"].Regexp,
 		ForwardThreshold: 1,
 	}
-	rule2 := entity.Rule{
+	r2 := entity.Rule{
 		ID:               "2",
 		Name:             "模糊关键字:我们",
 		Type:             enum.FuzzywordsRuletype,
@@ -67,12 +67,12 @@ func handlePolicies(rulesMap map[string]rule2.R) []*entity.Policy {
 	policy1 := &entity.Policy{
 		ID:        "1",
 		Operators: []enum.Operator{enum.AndOperator},
-		Rules:     []entity.Rule{rule1, rule2},
+		Rules:     []entity.Rule{r1, r2},
 	}
 	policy2 := &entity.Policy{
 		ID:        "2",
 		Operators: []enum.Operator{enum.OrOperator},
-		Rules:     []entity.Rule{rule1, rule2},
+		Rules:     []entity.Rule{r1, r2},
 	}
 	var policies []*entity.Policy
 	policies = append(policies, policy1, policy2)
