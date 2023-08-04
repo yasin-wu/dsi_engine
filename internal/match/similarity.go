@@ -80,7 +80,7 @@ func (f *fingerPrint) getAllWords(input string, hmm bool, addWords []string) ([]
 
 func (f *fingerPrint) strHashBitCode(str string) string {
 	h := fnv.New32a()
-	h.Write([]byte(str))
+	_, _ = h.Write([]byte(str))
 	b := int64(h.Sum32())
 	return fmt.Sprintf("%032b", b)
 }
@@ -93,7 +93,7 @@ func (f *fingerPrint) calcWithWeight(bitHash string, weight float64) []float64 {
 		if bit == "0" {
 			binarys = append(binarys, float64(-1)*weight)
 		} else {
-			binarys = append(binarys, float64(weight))
+			binarys = append(binarys, weight)
 		}
 	}
 
@@ -101,7 +101,7 @@ func (f *fingerPrint) calcWithWeight(bitHash string, weight float64) []float64 {
 }
 
 func (f *fingerPrint) sliceInnerPlus(arr1, arr2 []float64) (dstArr []float64, err error) {
-	dstArr = make([]float64, len(arr1), len(arr1))
+	dstArr = make([]float64, len(arr1))
 
 	if arr1 == nil || arr2 == nil {
 		err = fmt.Errorf("sliceInnerPlus array nil")
