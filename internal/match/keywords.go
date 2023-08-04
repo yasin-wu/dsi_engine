@@ -2,7 +2,7 @@ package match
 
 import (
 	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
-	regexp2 "github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
+	pkgregexp "github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
 )
 
 type keyWords struct{}
@@ -26,7 +26,7 @@ func (k *keyWords) do(rule entity.Rule, inputData string) ([]*entity.Match, bool
 		if regexps == nil {
 			return nil, false
 		}
-		engine, err := regexp2.New(regexps...)
+		engine, err := pkgregexp.New(regexps...)
 		if err != nil {
 			return nil, false
 		}
@@ -42,7 +42,7 @@ func (k *keyWords) do(rule entity.Rule, inputData string) ([]*entity.Match, bool
 	if regexps == nil {
 		return nil, false
 	}
-	engine, err := regexp2.New(regexps...)
+	engine, err := pkgregexp.New(regexps...)
 	if err != nil {
 		return nil, false
 	}
@@ -56,13 +56,12 @@ func (k *keyWords) do(rule entity.Rule, inputData string) ([]*entity.Match, bool
 	return matches, true
 }
 
-func (k *keyWords) regexps(keyWords []string) []*regexp2.Regexp {
-	var regexps []*regexp2.Regexp
+func (k *keyWords) regexps(keyWords []string) []*entity.Regexp {
+	var regexps []*entity.Regexp
 	for _, word := range keyWords {
-		regexp := &regexp2.Regexp{
+		regexps = append(regexps, &entity.Regexp{
 			Regexp: word,
-		}
-		regexps = append(regexps, regexp)
+		})
 	}
 	return regexps
 }

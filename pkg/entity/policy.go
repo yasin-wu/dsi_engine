@@ -35,4 +35,4 @@ type Rule struct {
 	FingerPrints     FingerPrints  `json:"finger_prints"`     // 指纹
 }
 
-type FingerPrints map[string]interface{}
+type FingerPrints map[string]any

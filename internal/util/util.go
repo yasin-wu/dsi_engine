@@ -74,7 +74,7 @@ func stringToIntArray(input string) []int {
 	return output
 }
 
-func Unmarshal(data interface{}, v interface{}) error {
+func Unmarshal(data any, v any) error {
 	if data == nil {
 		return errors.New("data is nil")
 	}

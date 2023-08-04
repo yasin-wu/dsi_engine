@@ -9,20 +9,10 @@ import (
 /**
  * @author: yasinWu
  * @date: 2022/1/13 13:49
- * @description: 正则信息
- */
-type Regexp struct {
-	ID     int    // 正则id
-	Regexp string // 正则表达式
-}
-
-/**
- * @author: yasinWu
- * @date: 2022/1/13 13:49
  * @description: Engine Client
  */
 type Engine struct {
-	regexps []*Regexp
+	regexps []*entity.Regexp
 }
 
 /**
@@ -32,7 +22,7 @@ type Engine struct {
  * @return: *Engine, error
  * @description: 新建RegexpEngine Client
  */
-func New(regexps ...*Regexp) (*Engine, error) {
+func New(regexps ...*entity.Regexp) (*Engine, error) {
 	if len(regexps) == 0 {
 		return nil, errors.New("regexps is empty")
 	}

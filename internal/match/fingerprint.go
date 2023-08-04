@@ -43,7 +43,7 @@ func (f *fingerPrint) computeFileHammingDistance(fingerPrints entity.FingerPrint
 	if !ok {
 		return distance
 	}
-	var fileListMap []map[string]interface{}
+	var fileListMap []map[string]any
 	if err := util.Unmarshal(fileList, &fileListMap); err != nil {
 		return distance
 	}
@@ -51,8 +51,8 @@ func (f *fingerPrint) computeFileHammingDistance(fingerPrints entity.FingerPrint
 		if file == nil {
 			break
 		}
-		print, _ := file["print"].(int64)
-		srcFinger := strings.Split(fmt.Sprintf("%032b", print), "")
+		pt, _ := file["print"].(int64)
+		srcFinger := strings.Split(fmt.Sprintf("%032b", pt), "")
 		diff := f.hammingDistance(srcFinger, dstFinger)
 		if diff < distance {
 			distance = diff
@@ -67,7 +67,7 @@ func (f *fingerPrint) computeWordHammingDistance(fingerPrints entity.FingerPrint
 	if !ok {
 		return distance
 	}
-	var keyListMap []map[string]interface{}
+	var keyListMap []map[string]any
 	if err := util.Unmarshal(keyList, &keyListMap); err != nil {
 		return distance
 	}

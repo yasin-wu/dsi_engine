@@ -2,7 +2,7 @@ package match
 
 import (
 	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
-	regexp2 "github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
+	pkgregexp "github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
 )
 
 type regexp struct{}
@@ -20,11 +20,10 @@ func (r *regexp) Match(rule entity.Rule, sensitiveData entity.SensitiveData) ([]
 }
 
 func (r *regexp) regexp(rule entity.Rule, inputData string) ([]*entity.Match, bool) {
-	regexp := rule.Regexp
-	if regexp == "" {
+	if rule.Regexp == "" {
 		return nil, false
 	}
-	engine, err := regexp2.New(&regexp2.Regexp{Regexp: regexp})
+	engine, err := pkgregexp.New(&entity.Regexp{Regexp: rule.Regexp})
 	if err != nil {
 		return nil, false
 	}

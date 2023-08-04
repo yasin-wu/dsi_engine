@@ -2,7 +2,7 @@ package rule
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/yasin-wu/dsi_engine/v2/pkg/consts"
@@ -35,7 +35,7 @@ type R struct {
  */
 func New() (*Rule, error) {
 	ruleBytes := []byte(defaultRule)
-	ruleMap := make(map[string]interface{})
+	ruleMap := make(map[string]any)
 	rm := make(map[string]R)
 	if err := json.Unmarshal(ruleBytes, &ruleMap); err != nil {
 		return nil, err
@@ -68,11 +68,11 @@ func (r *Rule) Add(filePath string, ruleMap ...map[string]R) error {
 		return err
 	}
 	defer file.Close()
-	content, err := ioutil.ReadAll(file)
+	content, err := io.ReadAll(file)
 	if err != nil {
 		return err
 	}
-	contentMap := make(map[string]interface{})
+	contentMap := make(map[string]any)
 	if err := json.Unmarshal(content, &contentMap); err != nil {
 		return err
 	}

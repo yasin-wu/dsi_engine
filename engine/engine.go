@@ -129,7 +129,6 @@ func (d *DsiEngine) DoMatch(ruleIndex int64) bool {
 	ruleType := rule.Type
 	matched := false
 	inputData := ""
-	distance := 100
 	var matches []*entity.Match
 	matchEngine, _ := match.New(ruleType)
 	if matchEngine == nil {
@@ -146,8 +145,7 @@ func (d *DsiEngine) DoMatch(ruleIndex int64) bool {
 		ruleSnap.Snap = d.handleSnap(matches, inputData)
 		d.ruleSnaps = append(d.ruleSnaps, ruleSnap)
 		if ruleType == enum.FingerdnaRuletype {
-			distance = matches[0].Distance
-			d.fingerRatio = distance
+			d.fingerRatio = matches[0].Distance
 		}
 	}
 	return matched
@@ -247,7 +245,7 @@ func (d *DsiEngine) handleMatchNote() string {
 	matchNoteMap := make(map[string]int)
 	for _, m := range d.matches {
 		key := m.InputData[m.From:m.To]
-		matchNoteMap[key] += 1
+		matchNoteMap[key]++
 	}
 	for k, v := range matchNoteMap {
 		matchNote += fmt.Sprintf("%s:%d", k, v)

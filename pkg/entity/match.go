@@ -13,3 +13,13 @@ type Match struct {
 	InputData string // 输入内容
 	Distance  int    // 汉明距离
 }
+
+/**
+ * @author: yasinWu
+ * @date: 2022/1/13 13:49
+ * @description: 正则信息
+ */
+type Regexp struct {
+	ID     int    // 正则id
+	Regexp string // 正则表达式
+}
