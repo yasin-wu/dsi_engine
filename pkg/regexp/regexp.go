@@ -2,11 +2,8 @@ package regexp
 
 import (
 	"errors"
-	"fmt"
-
 	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
-
-	"github.com/flier/gohs/hyperscan"
+	"regexp"
 )
 
 /**
@@ -15,7 +12,7 @@ import (
  * @description: 正则信息
  */
 type Regexp struct {
-	Id     int    // 正则id
+	ID     int    // 正则id
 	Regexp string // 正则表达式
 }
 
@@ -25,7 +22,7 @@ type Regexp struct {
  * @description: Engine Client
  */
 type Engine struct {
-	patterns []*hyperscan.Pattern
+	regexps []*Regexp
 }
 
 /**
@@ -36,11 +33,10 @@ type Engine struct {
  * @description: 新建RegexpEngine Client
  */
 func New(regexps ...*Regexp) (*Engine, error) {
-	patterns := addRegexps(regexps...)
-	if patterns == nil || len(patterns) == 0 {
-		return nil, errors.New("parameter is empty")
+	if len(regexps) == 0 {
+		return nil, errors.New("regexps is empty")
 	}
-	return &Engine{patterns: patterns}, nil
+	return &Engine{regexps: regexps}, nil
 }
 
 /**
@@ -51,38 +47,20 @@ func New(regexps ...*Regexp) (*Engine, error) {
  * @description: 检测输入内容敏感信息
  */
 func (r *Engine) Run(inputData string) ([]*entity.Match, error) {
-	db, err := hyperscan.NewBlockDatabase(r.patterns...)
-	if err != nil {
-		return nil, fmt.Errorf("NewBlockDatabase err: %v", err.Error())
-	}
-	defer db.Close()
-	s, err := hyperscan.NewScratch(db)
-	if err != nil {
-		return nil, fmt.Errorf("create scratch failed, err: %v", err.Error())
-	}
-	defer s.Free()
 	var matches []*entity.Match
-	matched := func(id uint, from, to uint64, flags uint, context any) error {
-		match := &entity.Match{ID: id, From: from, To: to, Flags: flags, Context: context, InputData: inputData}
-		matches = append(matches, match)
-		return nil
-	}
-
-	if err := db.Scan([]byte(inputData), s, matched, nil); err != nil {
-		return nil, fmt.Errorf("database scan failed, err: %v", err.Error())
+	for _, v := range r.regexps {
+		reg := regexp.MustCompile(v.Regexp)
+		loc := reg.FindStringIndex(inputData)
+		if len(loc) == 2 {
+			matches = append(matches, &entity.Match{
+				ID:        v.ID,
+				From:      loc[0],
+				To:        loc[1],
+				Context:   inputData[loc[0]:loc[1]],
+				InputData: inputData,
+				Distance:  0,
+			})
+		}
 	}
 	return matches, nil
-}
-
-func addRegexps(regexps ...*Regexp) []*hyperscan.Pattern {
-	var patterns []*hyperscan.Pattern
-	for _, v := range regexps {
-		if v.Regexp == "" {
-			continue
-		}
-		pattern := hyperscan.NewPattern(v.Regexp, hyperscan.SomLeftMost|hyperscan.Utf8Mode)
-		pattern.Id = v.Id
-		patterns = append(patterns, pattern)
-	}
-	return patterns
 }

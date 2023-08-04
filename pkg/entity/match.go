@@ -6,10 +6,9 @@ package entity
  * @description: 命中信息
  */
 type Match struct {
-	ID        uint   // 命中信息id
-	From      uint64 // 命中开始位置
-	To        uint64 // 名字结束位置
-	Flags     uint   // flags
+	ID        int    // 命中信息id
+	From      int    // 命中开始位置
+	To        int    // 命中结束位置
 	Context   any    // 命中内容
 	InputData string // 输入内容
 	Distance  int    // 汉明距离

@@ -3,9 +3,7 @@ module github.com/yasin-wu/dsi_engine/v2
 go 1.18
 
 require (
-	github.com/flier/gohs v1.0.0
 	github.com/hyperjumptech/grule-rule-engine v1.7.2
-	github.com/pkg/errors v0.9.1
 	github.com/yanyiwu/gojieba v1.1.2
 	golang.org/x/net v0.0.0-20220105145211-5b0dc2dfae98
 )
@@ -15,17 +13,12 @@ require (
 	github.com/bmatcuk/doublestar v1.3.2 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
-	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
-	github.com/hashicorp/errwrap v1.0.0 // indirect
-	github.com/hashicorp/go-multierror v1.0.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
-	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/sirupsen/logrus v1.6.0 // indirect
-	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/src-d/gcfg v1.4.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/xanzy/ssh-agent v0.2.1 // indirect

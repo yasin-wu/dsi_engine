@@ -213,8 +213,8 @@ func (d *DsiEngine) handlePolicyAlarm() *entity.Alarm {
 
 func (d *DsiEngine) handleSnap(matches []*entity.Match, inputData string) string {
 	snap := ""
-	snapLength := uint64(d.snapLength)
-	inputDataLength := uint64(len(inputData))
+	snapLength := d.snapLength
+	inputDataLength := len(inputData)
 	for _, m := range matches {
 		start := m.From - snapLength
 		if start > inputDataLength {
