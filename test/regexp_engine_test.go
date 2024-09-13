@@ -2,10 +2,12 @@ package test
 
 import (
 	"fmt"
-	"github.com/yasin-wu/dsi_engine/v2/pkg/consts"
-	"github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
 	"log"
 	"testing"
+
+	"github.com/yasin-wu/dsi_engine/v2/pkg/consts"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
+	"github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
 
 	rule2 "github.com/yasin-wu/dsi_engine/v2/pkg/rule"
 )
@@ -26,23 +28,23 @@ func TestRegexpEngine(t *testing.T) {
 	}
 	rulesMap := rule.RuleMap
 	inputData := "My name is Bob;电话号码:18108379230;测试IPV6地址正则:fe80::ec61:c1d1:9827:82be%13;地址信息:四川省成都市武侯区府城大道天府新谷8号楼1007室."
-	regexp1 := &regexp.Regexp{
+	regexp1 := &entity.Regexp{
 		ID:     1,
 		Regexp: rulesMap["IPV6"].Regexp,
 	}
-	regexp2 := &regexp.Regexp{
+	regexp2 := &entity.Regexp{
 		ID:     2,
 		Regexp: rulesMap["USER_NAME"].Regexp,
 	}
-	regexp3 := &regexp.Regexp{
+	regexp3 := &entity.Regexp{
 		ID:     3,
 		Regexp: rulesMap["PHONE_NUMBER"].Regexp,
 	}
-	regexp4 := &regexp.Regexp{
+	regexp4 := &entity.Regexp{
 		ID:     4,
 		Regexp: rulesMap["ADDRESS"].Regexp,
 	}
-	regexp5 := &regexp.Regexp{
+	regexp5 := &entity.Regexp{
 		ID:     5,
 		Regexp: rulesMap["TEST"].Regexp,
 	}
