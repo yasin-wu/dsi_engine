@@ -44,9 +44,9 @@ func (f *fuzzyWords) do(rule entity.Rule, inputData string) ([]*entity.Match, bo
 	return matches, true
 }
 
-func (f *fuzzyWords) regexps(baseRegexp []string, characterSpace string) []*regexp2.Regexp {
+func (f *fuzzyWords) regexps(baseRegexp []string, characterSpace string) []*entity.Regexp {
 	characterSpace = fmt.Sprintf(`.{0,%s}`, characterSpace)
-	var regexps []*regexp2.Regexp
+	var regexps []*entity.Regexp
 	for _, b := range baseRegexp {
 		wordList := strings.Split(b, "")
 		word := ""
@@ -54,7 +54,7 @@ func (f *fuzzyWords) regexps(baseRegexp []string, characterSpace string) []*rege
 			word += w + characterSpace
 		}
 		word = word[0:strings.LastIndex(word, characterSpace)]
-		regexp := &regexp2.Regexp{
+		regexp := &entity.Regexp{
 			Regexp: word,
 		}
 		regexps = append(regexps, regexp)
