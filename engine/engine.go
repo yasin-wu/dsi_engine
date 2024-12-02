@@ -14,6 +14,7 @@ import (
 	"github.com/hyperjumptech/grule-rule-engine/builder"
 	"github.com/hyperjumptech/grule-rule-engine/engine"
 	"github.com/hyperjumptech/grule-rule-engine/pkg"
+
 	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 )
 

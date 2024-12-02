@@ -2,8 +2,9 @@ package regexp
 
 import (
 	"errors"
-	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 	"regexp"
+
+	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 )
 
 /**

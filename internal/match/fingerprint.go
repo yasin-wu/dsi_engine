@@ -2,8 +2,9 @@ package match
 
 import (
 	"fmt"
-	"github.com/yasin-wu/dsi_engine/v2/internal/util"
 	"strings"
+
+	"github.com/yasin-wu/dsi_engine/v2/internal/util"
 
 	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 )

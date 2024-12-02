@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	regexp2 "github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
+	pkgregexp "github.com/yasin-wu/dsi_engine/v2/pkg/regexp"
 
 	"github.com/yasin-wu/dsi_engine/v2/pkg/entity"
 )
@@ -30,7 +30,7 @@ func (f *fuzzyWords) do(rule entity.Rule, inputData string) ([]*entity.Match, bo
 	if regexps == nil {
 		return nil, false
 	}
-	engine, err := regexp2.New(regexps...)
+	engine, err := pkgregexp.New(regexps...)
 	if err != nil {
 		return nil, false
 	}
@@ -54,10 +54,9 @@ func (f *fuzzyWords) regexps(baseRegexp []string, characterSpace string) []*enti
 			word += w + characterSpace
 		}
 		word = word[0:strings.LastIndex(word, characterSpace)]
-		regexp := &entity.Regexp{
+		regexps = append(regexps, &entity.Regexp{
 			Regexp: word,
-		}
-		regexps = append(regexps, regexp)
+		})
 	}
 	return regexps
 }
