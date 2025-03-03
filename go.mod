@@ -1,6 +1,8 @@
 module github.com/yasin-wu/dsi_engine/v2
 
-go 1.18
+go 1.21
+
+toolchain go1.21.12
 
 require (
 	github.com/hyperjumptech/grule-rule-engine v1.7.2
