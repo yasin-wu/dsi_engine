@@ -1,3 +1,5 @@
+
+
 [![OSCS Status](https://www.oscs1024.com/platform/badge/yasin-wu/dsi_engine.svg?size=small)](https://www.murphysec.com/dr/Qy5A7cERejgZNnm0Nw)
 ## 介绍
 
@@ -100,7 +102,7 @@ func TestRegexpEngine(t *testing.T) {
 		Regexp: "测试",
 		Desc:   "测试",
 	}
-	err = rule.Add("../conf/rules.json", m)
+	err = rule.Add("../config/rules.json", m)
 	if err != nil {
 		log.Fatal(err)
 	}
